@@ -35,49 +35,29 @@ function Options(props) {
 }
 
 function Timer(props) {
-  const [timerSeconds, setTimerSeconds] = useState(10);
-  const [timerMinuts, setTimerMinuts] = useState(0);
+  const [timerSeconds, setTimerSeconds] = useState(0);
+  const [timerMinuts, setTimerMinuts] = useState(25);
   const [timerState, setTimerState] = useState(false);
-  const [clockType, setClockType] = useState("pomodoro")
+  const [clockType, setClockType] = useState("pomodoro");
   console.log(timerState);
 
   function changeTimerState() {
     setTimerState(!timerState);
   }
 
-  function decreaseMinute() {
-    setTimerMinuts(timerMinuts - 1);
-    setTimerSeconds(59);
-  }
-  function increaseMinute() {
-    setTimerMinuts(timerMinuts + 1);
-    setTimerSeconds(0);
-  }
-
-  function resetTimer() {
-    if (clockType === "pomodoro") {
-      changeTimerState();
-      setTimerMinuts(25);
-      setTimerSeconds(0);
-    }
-    else {
-      changeTimerState();
-      setTimerMinuts(0);
-      setTimerSeconds(0);
-    }
-
+  function setTime(minutes, seconds){
+    setTimerMinuts(minutes);
+    setTimerSeconds(seconds);
   }
 
   function establishTimerType(type) {
     setClockType(type);
     console.log("Clock type changed to... ", type)
     if (type === "pomodoro") {
-      setTimerMinuts(25);
-      setTimerSeconds(0);
+      setTime(25, 0)
     }
     else {
-      setTimerMinuts(0)
-      setTimerSeconds(0)
+      setTime(0, 0)
     }
   }
 
@@ -89,10 +69,10 @@ function Timer(props) {
           if (timerSeconds === 0) {
             if (timerMinuts === 0) {
               console.log("Ended!")
-              resetTimer();
+              setClockType("rest")
             }
             else {
-              decreaseMinute();
+              setTime(timerMinuts-1, 59)
             }
           }
           else {
@@ -101,7 +81,7 @@ function Timer(props) {
         }
         else {
           if (timerSeconds === 60) {
-            increaseMinute();
+            setTime(timerMinuts+1)
           }
           else {
             setTimerSeconds(timerSeconds + 1);
@@ -118,7 +98,7 @@ function Timer(props) {
     <div>
       <Start clockRunning={timerState} stopTimer={changeTimerState} resetTimer={resetTimer}></Start>
       <Options changeTimerType={establishTimerType} timerType={clockType}></Options>
-      {timerMinuts}:{timerSeconds}
+      {String(timerMinuts).padStart(2, "0")}:{String(timerSeconds).padStart(2, "0")}
     </div>
   )
 }
