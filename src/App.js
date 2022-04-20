@@ -8,7 +8,6 @@ function Start(props) {
     return (
       <div>
         <button type="button" onClick={props.stopTimer}>Stop</button>
-        <button type="button" onClick={props.resetTimer}>Reset</button>
         <button type="button" onClick={props.resetTimer}>End</button>
       </div>
     )
@@ -24,19 +23,24 @@ function Start(props) {
 
 function Options(props) {
   return (
-    <select onChange={props.changeTimerType} className="dropdown" name="timer type" id="timer type">
-      <option value="1">Pomodoro</option>
-      <option value="2">Free timer</option>
+    <select
+      value={props.timerType} onChange={(e) => props.changeTimerType(e.target.value)}
+      className="dropdown"
+      name="timer type"
+      id="timer type">
+      <option value="pomodoro">Pomodoro</option>
+      <option value="free timer">Free timer</option>
     </select>
   )
 }
 
 function Timer(props) {
+
   return (
     <div>
       <Start clockRunning={props.clockRunning} stopTimer={props.stopTimer} resetTimer={props.resetTimer}></Start>
-      <Options changeTimerType={props.changeTimerType}></Options>
-      {props.minutes} {props.seconds}
+      <Options changeTimerType={props.changeTimerType} timerType={props.timerType}></Options>
+      {props.minutes}:{props.seconds}
     </div>
   )
 }
@@ -53,25 +57,25 @@ function Links(props) {
 function Header(props) {
   return (
     <div className='App-header'>
-      <Timer minutes={props.minutes} seconds={props.seconds} stopTimer={props.stopTimer} clockRunning={props.clockRunning} resetTimer={props.resetTimer} changeTimerType={props.changeTimerType}></Timer>
+      <Timer minutes={props.minutes} seconds={props.seconds} stopTimer={props.stopTimer} clockRunning={props.clockRunning} resetTimer={props.resetTimer} changeTimerType={props.changeTimerType} timerType={props.timerType}></Timer>
       <Links></Links>
     </div>
   )
 }
 
 function CurrentTask(props) {
-  if(Object.keys(props.nameAssignment).length > 0){
-  return (
-    <div>
-      <h2>Name:{props.nameAssignment.name}</h2>
-      <p>Tag:{props.nameAssignment.tag}</p>
-      <p>Time:{props.nameAssignment.time}</p>
-      <input type="checkbox"></input>
-    </div>
-  )
+  if (Object.keys(props.nameAssignment).length > 0) {
+    return (
+      <div>
+        <h2>Name:{props.nameAssignment.name}</h2>
+        <p>Tag:{props.nameAssignment.tag}</p>
+        <p>Time:{props.nameAssignment.time}</p>
+        <input type="checkbox"></input>
+      </div>
+    )
   }
-  else{
-    return(
+  else {
+    return (
       <div>
         <h2>What are we working on today?</h2>
       </div>
@@ -89,6 +93,7 @@ function Task(props) {
 Takes in an array of objects (with childdren) iterates over it and returns a hierarchical unordered list.
 */
 function HierarchicalUlist(props) {
+  console.log("Rendering Ulist....")
   function recurseTasks(entry, previousIndex) {
     let formattedTasks = []
     entry.forEach((object, i) => {
@@ -130,7 +135,7 @@ function App() {
   const [timerState, setTimerState] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [currentAssignment, setCurrentAssignment] = useState({})
-  const [clockType, setClockTime] = useState(1)
+  const [clockType, setClockType] = useState("pomodoro")
   console.log(timerState);
 
   function changeTimerState() {
@@ -141,16 +146,28 @@ function App() {
     setTimerMinuts(timerMinuts - 1);
     setTimerSeconds(59);
   }
+  function increaseMinute() {
+    setTimerMinuts(timerMinuts + 1);
+    setTimerSeconds(0);
+  }
 
   function resetTimer() {
-    changeTimerState();
-    setTimerMinuts(25);
-    setTimerSeconds(0);
+    if (clockType === "pomodoro") {
+      changeTimerState();
+      setTimerMinuts(25);
+      setTimerSeconds(0);
+    }
+    else {
+      changeTimerState();
+      setTimerMinuts(0);
+      setTimerSeconds(0);
+    }
+
   }
 
   /* Takes in the unformatted "name" of the react tree, parses it to navigate the information document and returns it iteratively. */
   function returnTask(id, currentIndex, currentTask) { ///Assignment probably needs more optimization
-    console.log(`Id is: ${id}`, `Current index is: ${currentIndex}`, `Current task is: ${currentTask}`,  )
+    console.log(`Id is: ${id}`, `Current index is: ${currentIndex}`, `Current task is: ${currentTask}`,)
     if (currentTask[id[currentIndex]].children.length) {
       return (returnTask(id, currentIndex + 2, currentTask[id[currentIndex]].children))
     }
@@ -159,22 +176,47 @@ function App() {
     }
   }
 
+  function establishTimerType(type) {
+    setClockType(type);
+    console.log("Clock type changed to... ", type)
+    if (type === "pomodoro") {
+      setTimerMinuts(25);
+      setTimerSeconds(0);
+    }
+    else {
+      setTimerMinuts(0)
+      setTimerSeconds(0)
+    }
+  }
+
   useEffect(() => {
     console.log(timerMinuts, timerSeconds)
     if (timerState) {
       const interval = setInterval(() => {
-        if (timerSeconds === 0) {
-          if (timerMinuts === 0) {
-            console.log("Ended!")
-            resetTimer();
+        if (clockType === "pomodoro") {
+          if (timerSeconds === 0) {
+            if (timerMinuts === 0) {
+              console.log("Ended!")
+              resetTimer();
+            }
+            else {
+              decreaseMinute();
+            }
           }
           else {
-            decreaseMinute();
+            setTimerSeconds(timerSeconds - 1);
           }
         }
         else {
-          setTimerSeconds(timerSeconds - 1);
+          if (timerSeconds === 60) {
+            increaseMinute();
+          }
+          else {
+            setTimerSeconds(timerSeconds+1);
+          }
+
         }
+
       }, 1000);
       return () => clearInterval(interval);
     }
@@ -192,8 +234,20 @@ function App() {
 
   return (
     <div className='App'>
-      <Header minutes={timerMinuts} seconds={timerSeconds} stopTimer={changeTimerState} clockRunning={timerState} resetTimer={resetTimer} changeTimerType=></Header>
-      <TaskSection tasks={tasks} onClick={(id, currentIndex, currentTask)=>setCurrentAssignment(returnTask(id, currentIndex, currentTask))} nameAssignment={currentAssignment}></TaskSection>
+      <Header
+        minutes={timerMinuts}
+        seconds={timerSeconds}
+        stopTimer={changeTimerState}
+        clockRunning={timerState}
+        resetTimer={resetTimer}
+        changeTimerType={establishTimerType}
+        timerType={clockType}>
+      </Header>
+      <TaskSection
+        tasks={tasks}
+        onClick={(id, currentIndex, currentTask) => setCurrentAssignment(returnTask(id, currentIndex, currentTask))}
+        nameAssignment={currentAssignment}>
+      </TaskSection>
     </div>
   );
 }
