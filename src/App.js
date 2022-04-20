@@ -1,0 +1,200 @@
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
+import './App.css'
+
+function Start(props) {
+  console.log(props.clockRunning)
+  if (props.clockRunning) {
+    return (
+      <div>
+        <button type="button" onClick={props.stopTimer}>Stop</button>
+        <button type="button" onClick={props.resetTimer}>Reset</button>
+        <button type="button" onClick={props.resetTimer}>End</button>
+      </div>
+    )
+  }
+  else {
+    return (
+      <div>
+        <button type="button" onClick={props.stopTimer}>Start</button>
+      </div>
+    )
+  }
+}
+
+function Options(props) {
+  return (
+    <select onChange={props.changeTimerType} className="dropdown" name="timer type" id="timer type">
+      <option value="1">Pomodoro</option>
+      <option value="2">Free timer</option>
+    </select>
+  )
+}
+
+function Timer(props) {
+  return (
+    <div>
+      <Start clockRunning={props.clockRunning} stopTimer={props.stopTimer} resetTimer={props.resetTimer}></Start>
+      <Options changeTimerType={props.changeTimerType}></Options>
+      {props.minutes} {props.seconds}
+    </div>
+  )
+}
+
+function Links(props) {
+  return (
+    <div>
+      <button type="button">Statistics</button>
+      <button type="button">Configuration</button>
+    </div>
+  )
+}
+
+function Header(props) {
+  return (
+    <div className='App-header'>
+      <Timer minutes={props.minutes} seconds={props.seconds} stopTimer={props.stopTimer} clockRunning={props.clockRunning} resetTimer={props.resetTimer} changeTimerType={props.changeTimerType}></Timer>
+      <Links></Links>
+    </div>
+  )
+}
+
+function CurrentTask(props) {
+  if(Object.keys(props.nameAssignment).length > 0){
+  return (
+    <div>
+      <h2>Name:{props.nameAssignment.name}</h2>
+      <p>Tag:{props.nameAssignment.tag}</p>
+      <p>Time:{props.nameAssignment.time}</p>
+      <input type="checkbox"></input>
+    </div>
+  )
+  }
+  else{
+    return(
+      <div>
+        <h2>What are we working on today?</h2>
+      </div>
+    )
+  }
+}
+
+function Task(props) {
+  return (
+    <li>{props.name}</li>
+  )
+}
+
+/*
+Takes in an array of objects (with childdren) iterates over it and returns a hierarchical unordered list.
+*/
+function HierarchicalUlist(props) {
+  function recurseTasks(entry, previousIndex) {
+    let formattedTasks = []
+    entry.forEach((object, i) => {
+      const currentName = previousIndex ? previousIndex + "-" + i : i.toString();
+      console.log(previousIndex, currentName);
+      if (!object.children.length) {
+        const reference = () => props.onClick(currentName, 0, props.tasks)
+        formattedTasks.push(<li key={object.name} name={currentName}><button onClick={reference}>{object.name}</button></li>)
+      }
+      else {
+        formattedTasks.push(<li key={object.name} name={currentName}>{object.name}<ul>{recurseTasks(object.children, currentName)}</ul></li>)
+      }
+    })
+    return formattedTasks;
+  }
+
+  const mappedTasks = recurseTasks(props.tasks, "")
+  //const mappedTasks = props.tasks.map(currentElement => <Task key={currentElement.name} name={currentElement.name}></Task>)
+  console.log(mappedTasks)
+  return (
+    <ul>
+      {mappedTasks}
+    </ul>
+  )
+}
+
+function TaskSection(props) {
+  return (
+    <div>
+      <CurrentTask nameAssignment={props.nameAssignment}></CurrentTask>
+      <HierarchicalUlist tasks={props.tasks} onClick={props.onClick}></HierarchicalUlist>
+    </div>)
+}
+
+function App() {
+
+  const [timerSeconds, setTimerSeconds] = useState(10);
+  const [timerMinuts, setTimerMinuts] = useState(0);
+  const [timerState, setTimerState] = useState(false);
+  const [tasks, setTasks] = useState([]);
+  const [currentAssignment, setCurrentAssignment] = useState({})
+  const [clockType, setClockTime] = useState(1)
+  console.log(timerState);
+
+  function changeTimerState() {
+    setTimerState(!timerState);
+  }
+
+  function decreaseMinute() {
+    setTimerMinuts(timerMinuts - 1);
+    setTimerSeconds(59);
+  }
+
+  function resetTimer() {
+    changeTimerState();
+    setTimerMinuts(25);
+    setTimerSeconds(0);
+  }
+
+  /* Takes in the unformatted "name" of the react tree, parses it to navigate the information document and returns it iteratively. */
+  function returnTask(id, currentIndex, currentTask) { ///Assignment probably needs more optimization
+    console.log(`Id is: ${id}`, `Current index is: ${currentIndex}`, `Current task is: ${currentTask}`,  )
+    if (currentTask[id[currentIndex]].children.length) {
+      return (returnTask(id, currentIndex + 2, currentTask[id[currentIndex]].children))
+    }
+    else {
+      return (currentTask[id[currentIndex]])
+    }
+  }
+
+  useEffect(() => {
+    console.log(timerMinuts, timerSeconds)
+    if (timerState) {
+      const interval = setInterval(() => {
+        if (timerSeconds === 0) {
+          if (timerMinuts === 0) {
+            console.log("Ended!")
+            resetTimer();
+          }
+          else {
+            decreaseMinute();
+          }
+        }
+        else {
+          setTimerSeconds(timerSeconds - 1);
+        }
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timerState, timerSeconds]);
+
+  useEffect(() => {
+    axios.get('http://localhost:3001/tasks')
+      .then(response => {
+        const tasksData = response.data;
+        console.log(tasksData);
+        setTasks(tasksData);
+      })
+  }, [])
+
+
+  return (
+    <div className='App'>
+      <Header minutes={timerMinuts} seconds={timerSeconds} stopTimer={changeTimerState} clockRunning={timerState} resetTimer={resetTimer} changeTimerType=></Header>
+      <TaskSection tasks={tasks} onClick={(id, currentIndex, currentTask)=>setCurrentAssignment(returnTask(id, currentIndex, currentTask))} nameAssignment={currentAssignment}></TaskSection>
+    </div>
+  );
+}
+export default App;
