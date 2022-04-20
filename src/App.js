@@ -4,6 +4,25 @@ import './App.css'
 
 function Start(props) {
   console.log(props.clockRunning)
+  const buttons = (<></>)
+  if (props.clockType === "rest") {
+    if (props.clockRunning) {
+      return (
+        <div>
+          <button type="button" onClick={props.stopTimer}>Stop</button>
+          <button type="button" onClick={props.resetTimer}>Skip</button>
+        </div>
+      )
+    }
+    else {
+      return (
+        <div>
+          <button type="button" onClick={props.stopTimer}>Start</button>
+          <button type="button" onClick={props.resetTimer}>Skip</button>
+        </div>
+      )
+    }
+  }
   if (props.clockRunning) {
     return (
       <div>
@@ -35,19 +54,39 @@ function Options(props) {
 }
 
 function Timer(props) {
-  const [timerSeconds, setTimerSeconds] = useState(0);
-  const [timerMinuts, setTimerMinuts] = useState(25);
+  const [timerSeconds, setTimerSeconds] = useState(5);
+  const [timerMinuts, setTimerMinuts] = useState(0);
   const [timerState, setTimerState] = useState(false);
   const [clockType, setClockType] = useState("pomodoro");
+  const [clockStarted, setClockStarted] = useState(false);
   console.log(timerState);
 
   function changeTimerState() {
     setTimerState(!timerState);
   }
+  function changeClockStarted(){
+    setClockStarted(!clockStarted)
+  }
 
-  function setTime(minutes, seconds){
+  function setTime(minutes, seconds) {
     setTimerMinuts(minutes);
     setTimerSeconds(seconds);
+  }
+
+  function resetTimer() {
+    if (clockType === "pomodoro") {
+      setTime(25, 0);
+      changeTimerState()
+    }
+    else if (clockType === "free timer") {
+      setTime(0, 0);
+      changeTimerState()
+    }
+    else{
+      setClockType("pomodoro")
+      setTime(25, 0);
+      changeTimerState()
+    }
   }
 
   function establishTimerType(type) {
@@ -65,14 +104,17 @@ function Timer(props) {
     console.log(timerMinuts, timerSeconds)
     if (timerState) {
       const interval = setInterval(() => {
-        if (clockType === "pomodoro") {
+        if (clockType === "pomodoro" || clockType === "rest") {
           if (timerSeconds === 0) {
             if (timerMinuts === 0) {
+              ///Insert communication to db
               console.log("Ended!")
+              changeTimerState();
+              setTime(5, 0)
               setClockType("rest")
             }
             else {
-              setTime(timerMinuts-1, 59)
+              setTime(timerMinuts - 1, 59)
             }
           }
           else {
@@ -81,7 +123,7 @@ function Timer(props) {
         }
         else {
           if (timerSeconds === 60) {
-            setTime(timerMinuts+1)
+            setTime(timerMinuts + 1)
           }
           else {
             setTimerSeconds(timerSeconds + 1);
@@ -96,7 +138,7 @@ function Timer(props) {
 
   return (
     <div>
-      <Start clockRunning={timerState} stopTimer={changeTimerState} resetTimer={resetTimer}></Start>
+      <Start clockRunning={timerState} stopTimer={changeTimerState} resetTimer={resetTimer} clockStarted={clockStarted}></Start>
       <Options changeTimerType={establishTimerType} timerType={clockType}></Options>
       {String(timerMinuts).padStart(2, "0")}:{String(timerSeconds).padStart(2, "0")}
     </div>
