@@ -35,12 +35,90 @@ function Options(props) {
 }
 
 function Timer(props) {
+  const [timerSeconds, setTimerSeconds] = useState(10);
+  const [timerMinuts, setTimerMinuts] = useState(0);
+  const [timerState, setTimerState] = useState(false);
+  const [clockType, setClockType] = useState("pomodoro")
+  console.log(timerState);
+
+  function changeTimerState() {
+    setTimerState(!timerState);
+  }
+
+  function decreaseMinute() {
+    setTimerMinuts(timerMinuts - 1);
+    setTimerSeconds(59);
+  }
+  function increaseMinute() {
+    setTimerMinuts(timerMinuts + 1);
+    setTimerSeconds(0);
+  }
+
+  function resetTimer() {
+    if (clockType === "pomodoro") {
+      changeTimerState();
+      setTimerMinuts(25);
+      setTimerSeconds(0);
+    }
+    else {
+      changeTimerState();
+      setTimerMinuts(0);
+      setTimerSeconds(0);
+    }
+
+  }
+
+  function establishTimerType(type) {
+    setClockType(type);
+    console.log("Clock type changed to... ", type)
+    if (type === "pomodoro") {
+      setTimerMinuts(25);
+      setTimerSeconds(0);
+    }
+    else {
+      setTimerMinuts(0)
+      setTimerSeconds(0)
+    }
+  }
+
+  useEffect(() => {
+    console.log(timerMinuts, timerSeconds)
+    if (timerState) {
+      const interval = setInterval(() => {
+        if (clockType === "pomodoro") {
+          if (timerSeconds === 0) {
+            if (timerMinuts === 0) {
+              console.log("Ended!")
+              resetTimer();
+            }
+            else {
+              decreaseMinute();
+            }
+          }
+          else {
+            setTimerSeconds(timerSeconds - 1);
+          }
+        }
+        else {
+          if (timerSeconds === 60) {
+            increaseMinute();
+          }
+          else {
+            setTimerSeconds(timerSeconds + 1);
+          }
+
+        }
+
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [timerState, timerSeconds]);
 
   return (
     <div>
-      <Start clockRunning={props.clockRunning} stopTimer={props.stopTimer} resetTimer={props.resetTimer}></Start>
-      <Options changeTimerType={props.changeTimerType} timerType={props.timerType}></Options>
-      {props.minutes}:{props.seconds}
+      <Start clockRunning={timerState} stopTimer={changeTimerState} resetTimer={resetTimer}></Start>
+      <Options changeTimerType={establishTimerType} timerType={clockType}></Options>
+      {timerMinuts}:{timerSeconds}
     </div>
   )
 }
@@ -57,7 +135,7 @@ function Links(props) {
 function Header(props) {
   return (
     <div className='App-header'>
-      <Timer minutes={props.minutes} seconds={props.seconds} stopTimer={props.stopTimer} clockRunning={props.clockRunning} resetTimer={props.resetTimer} changeTimerType={props.changeTimerType} timerType={props.timerType}></Timer>
+      <Timer></Timer>
       <Links></Links>
     </div>
   )
@@ -130,40 +208,8 @@ function TaskSection(props) {
 
 function App() {
 
-  const [timerSeconds, setTimerSeconds] = useState(10);
-  const [timerMinuts, setTimerMinuts] = useState(0);
-  const [timerState, setTimerState] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [currentAssignment, setCurrentAssignment] = useState({})
-  const [clockType, setClockType] = useState("pomodoro")
-  console.log(timerState);
-
-  function changeTimerState() {
-    setTimerState(!timerState);
-  }
-
-  function decreaseMinute() {
-    setTimerMinuts(timerMinuts - 1);
-    setTimerSeconds(59);
-  }
-  function increaseMinute() {
-    setTimerMinuts(timerMinuts + 1);
-    setTimerSeconds(0);
-  }
-
-  function resetTimer() {
-    if (clockType === "pomodoro") {
-      changeTimerState();
-      setTimerMinuts(25);
-      setTimerSeconds(0);
-    }
-    else {
-      changeTimerState();
-      setTimerMinuts(0);
-      setTimerSeconds(0);
-    }
-
-  }
 
   /* Takes in the unformatted "name" of the react tree, parses it to navigate the information document and returns it iteratively. */
   function returnTask(id, currentIndex, currentTask) { ///Assignment probably needs more optimization
@@ -175,52 +221,6 @@ function App() {
       return (currentTask[id[currentIndex]])
     }
   }
-
-  function establishTimerType(type) {
-    setClockType(type);
-    console.log("Clock type changed to... ", type)
-    if (type === "pomodoro") {
-      setTimerMinuts(25);
-      setTimerSeconds(0);
-    }
-    else {
-      setTimerMinuts(0)
-      setTimerSeconds(0)
-    }
-  }
-
-  useEffect(() => {
-    console.log(timerMinuts, timerSeconds)
-    if (timerState) {
-      const interval = setInterval(() => {
-        if (clockType === "pomodoro") {
-          if (timerSeconds === 0) {
-            if (timerMinuts === 0) {
-              console.log("Ended!")
-              resetTimer();
-            }
-            else {
-              decreaseMinute();
-            }
-          }
-          else {
-            setTimerSeconds(timerSeconds - 1);
-          }
-        }
-        else {
-          if (timerSeconds === 60) {
-            increaseMinute();
-          }
-          else {
-            setTimerSeconds(timerSeconds+1);
-          }
-
-        }
-
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [timerState, timerSeconds]);
 
   useEffect(() => {
     axios.get('http://localhost:3001/tasks')
@@ -234,15 +234,7 @@ function App() {
 
   return (
     <div className='App'>
-      <Header
-        minutes={timerMinuts}
-        seconds={timerSeconds}
-        stopTimer={changeTimerState}
-        clockRunning={timerState}
-        resetTimer={resetTimer}
-        changeTimerType={establishTimerType}
-        timerType={clockType}>
-      </Header>
+      <Header></Header>
       <TaskSection
         tasks={tasks}
         onClick={(id, currentIndex, currentTask) => setCurrentAssignment(returnTask(id, currentIndex, currentTask))}
