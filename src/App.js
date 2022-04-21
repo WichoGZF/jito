@@ -208,6 +208,7 @@ Takes in an array of objects (with childdren) iterates over it and returns a hie
 */
 function HierarchicalUlist(props) {
   console.log("Rendering Ulist....", props.tasks)
+
   let formattedTasks = []
   /*function recurseTasks(entry, previousIndex) {
     
@@ -235,7 +236,7 @@ function HierarchicalUlist(props) {
       )
     }
     else {
-      return(<li key={task.id} name={task.name}><button>{task.name}</button> </li>)
+      return(<li key={task.id} name={task.name}><button onClick={() => props.onClick(task.id)}>{task.name} </button> </li>)
     }
   }
 
@@ -273,13 +274,15 @@ function App() {
         setTasks(tasksData);
       })
   }, [])
-  if(tasks.length>0){
-    
+  
+  const selectTask = (id) => {
+    setCurrentAssignment(tasks.find(x => x.id === id))
   }
+
   return (
     <div className='App'>
       <Header></Header>
-      <TaskSection tasks={tasks} nameAssignment={currentAssignment}></TaskSection>
+      <TaskSection tasks={tasks} nameAssignment={currentAssignment} onClick={selectTask}></TaskSection>
     </div>
   );
 }
