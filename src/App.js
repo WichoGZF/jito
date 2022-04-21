@@ -2,42 +2,47 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import './App.css'
 
+function Button(props) {
+  return (<button type="button" onClick={props.onClick}>{props.name}</button>)
+}
+
 function Start(props) {
-  console.log(props.clockRunning)
-  const buttons = (<></>)
+  console.log("is clock running?", props.clockRunning, props.clockType)
+  let buttonName1 = "Stop";
+  let buttonName2 = "Finish";
+
+
   if (props.clockType === "rest") {
-    if (props.clockRunning) {
-      return (
-        <div>
-          <button type="button" onClick={props.stopTimer}>Stop</button>
-          <button type="button" onClick={props.resetTimer}>Skip</button>
-        </div>
-      )
-    }
-    else {
-      return (
-        <div>
-          <button type="button" onClick={props.stopTimer}>Start</button>
-          <button type="button" onClick={props.resetTimer}>Skip</button>
-        </div>
-      )
+    buttonName2 = "Skip"
+    if(!props.clockRunning){
+      if(!props.clockStarted){
+        buttonName1 = "Start"
+      }
+      else{
+        buttonName1 = "Continue"
+      }
     }
   }
-  if (props.clockRunning) {
-    return (
-      <div>
-        <button type="button" onClick={props.stopTimer}>Stop</button>
-        <button type="button" onClick={props.resetTimer}>End</button>
-      </div>
-    )
+  else{
+    if(!props.clockRunning){
+      if(!props.clockStarted){
+        return (
+          <div>
+            <Button onClick={props.stopTimer} name="Start"></Button>
+          </div>
+        )
+      }
+      else{
+        buttonName1 = "Continue"
+      }
+    }
   }
-  else {
-    return (
-      <div>
-        <button type="button" onClick={props.stopTimer}>Start</button>
-      </div>
-    )
-  }
+    
+  return (
+    <div>
+      <Button onClick={props.stopTimer} name={buttonName1}></Button>
+      <Button onClick={props.resetTimer} name={buttonName2}></Button>
+    </div>)
 }
 
 function Options(props) {
@@ -62,10 +67,10 @@ function Timer(props) {
   console.log(timerState);
 
   function changeTimerState() {
+    if(clockStarted === false){
+      setClockStarted(true);
+    }
     setTimerState(!timerState);
-  }
-  function changeClockStarted(){
-    setClockStarted(!clockStarted)
   }
 
   function setTime(minutes, seconds) {
@@ -76,17 +81,19 @@ function Timer(props) {
   function resetTimer() {
     if (clockType === "pomodoro") {
       setTime(25, 0);
-      changeTimerState()
+      setTimerState(false)
     }
     else if (clockType === "free timer") {
       setTime(0, 0);
-      changeTimerState()
+      setTimerState(false)
     }
-    else{
+    else {
       setClockType("pomodoro")
       setTime(25, 0);
-      changeTimerState()
+      setTimerState(false)
     }
+    setClockStarted(false)
+    console.log("Inside resetTimer, logging timer and clock state", timerState, clockStarted)
   }
 
   function establishTimerType(type) {
@@ -112,6 +119,7 @@ function Timer(props) {
               changeTimerState();
               setTime(5, 0)
               setClockType("rest")
+              setClockStarted(false)
             }
             else {
               setTime(timerMinuts - 1, 59)
@@ -138,7 +146,13 @@ function Timer(props) {
 
   return (
     <div>
-      <Start clockRunning={timerState} stopTimer={changeTimerState} resetTimer={resetTimer} clockStarted={clockStarted}></Start>
+      <Start
+        clockRunning={timerState}
+        stopTimer={changeTimerState}
+        resetTimer={resetTimer}
+        clockStarted={clockStarted}
+        clockType={clockType}>
+      </Start>
       <Options changeTimerType={establishTimerType} timerType={clockType}></Options>
       {String(timerMinuts).padStart(2, "0")}:{String(timerSeconds).padStart(2, "0")}
     </div>
