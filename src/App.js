@@ -14,30 +14,30 @@ function Start(props) {
 
   if (props.clockType === "rest") {
     buttonName2 = "Skip"
-    if(!props.clockRunning){
-      if(!props.clockStarted){
+    if (!props.clockRunning) {
+      if (!props.clockStarted) {
         buttonName1 = "Start"
       }
-      else{
+      else {
         buttonName1 = "Continue"
       }
     }
   }
-  else{
-    if(!props.clockRunning){
-      if(!props.clockStarted){
+  else {
+    if (!props.clockRunning) {
+      if (!props.clockStarted) {
         return (
           <div>
             <Button onClick={props.stopTimer} name="Start"></Button>
           </div>
         )
       }
-      else{
+      else {
         buttonName1 = "Continue"
       }
     }
   }
-    
+
   return (
     <div>
       <Button onClick={props.stopTimer} name={buttonName1}></Button>
@@ -67,7 +67,7 @@ function Timer(props) {
   console.log(timerState);
 
   function changeTimerState() {
-    if(clockStarted === false){
+    if (clockStarted === false) {
       setClockStarted(true);
     }
     setTimerState(!timerState);
@@ -207,9 +207,10 @@ function Task(props) {
 Takes in an array of objects (with childdren) iterates over it and returns a hierarchical unordered list.
 */
 function HierarchicalUlist(props) {
-  console.log("Rendering Ulist....")
-  function recurseTasks(entry, previousIndex) {
-    let formattedTasks = []
+  console.log("Rendering Ulist....", props.tasks)
+  let formattedTasks = []
+  /*function recurseTasks(entry, previousIndex) {
+    
     entry.forEach((object, i) => {
       const currentName = previousIndex ? previousIndex + "-" + i : i.toString();
       console.log(previousIndex, currentName);
@@ -221,17 +222,35 @@ function HierarchicalUlist(props) {
         formattedTasks.push(<li key={object.name} name={currentName}>{object.name}<ul>{recurseTasks(object.children, currentName)}</ul></li>)
       }
     })
-    return formattedTasks;
+    */
+  function recurseTasks(task) {
+    if (task.children.length > 0) {
+      let formattedChildren = []
+      for(const i of task.children){
+        formattedChildren.push(recurseTasks(props.tasks.find(x => x.id === i)))
+      }
+      console.log("printing formatted children", formattedChildren)
+      return (
+        <li>{task.name}<ul key={task.id} name={task.name}>{formattedChildren}</ul></li>
+      )
+    }
+    else {
+      return(<li key={task.id} name={task.name}><button>{task.name}</button> </li>)
+    }
   }
 
-  const mappedTasks = recurseTasks(props.tasks, "")
-  //const mappedTasks = props.tasks.map(currentElement => <Task key={currentElement.name} name={currentElement.name}></Task>)
-  console.log(mappedTasks)
+  for (const i of props.tasks) {
+    if (i.origin) {
+      console.log("iteration of for in hielist", i)
+      formattedTasks.push(recurseTasks(i))
+    }
+  }
+
   return (
     <ul>
-      {mappedTasks}
+      {formattedTasks}
     </ul>
-  )
+  );
 }
 
 function TaskSection(props) {
@@ -243,20 +262,8 @@ function TaskSection(props) {
 }
 
 function App() {
-
   const [tasks, setTasks] = useState([]);
   const [currentAssignment, setCurrentAssignment] = useState({})
-
-  /* Takes in the unformatted "name" of the react tree, parses it to navigate the information document and returns it iteratively. */
-  function returnTask(id, currentIndex, currentTask) { ///Assignment probably needs more optimization
-    console.log(`Id is: ${id}`, `Current index is: ${currentIndex}`, `Current task is: ${currentTask}`,)
-    if (currentTask[id[currentIndex]].children.length) {
-      return (returnTask(id, currentIndex + 2, currentTask[id[currentIndex]].children))
-    }
-    else {
-      return (currentTask[id[currentIndex]])
-    }
-  }
 
   useEffect(() => {
     axios.get('http://localhost:3001/tasks')
@@ -266,16 +273,13 @@ function App() {
         setTasks(tasksData);
       })
   }, [])
-
-
+  if(tasks.length>0){
+    
+  }
   return (
     <div className='App'>
       <Header></Header>
-      <TaskSection
-        tasks={tasks}
-        onClick={(id, currentIndex, currentTask) => setCurrentAssignment(returnTask(id, currentIndex, currentTask))}
-        nameAssignment={currentAssignment}>
-      </TaskSection>
+      <TaskSection tasks={tasks} nameAssignment={currentAssignment}></TaskSection>
     </div>
   );
 }
