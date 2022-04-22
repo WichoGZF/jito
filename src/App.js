@@ -59,8 +59,8 @@ function Options(props) {
 }
 
 function Timer(props) {
-  const [timerSeconds, setTimerSeconds] = useState(5);
-  const [timerMinuts, setTimerMinuts] = useState(0);
+  const [timerSeconds, setTimerSeconds] = useState(0);
+  const [timerMinuts, setTimerMinuts] = useState(25);
   const [timerState, setTimerState] = useState(false);
   const [clockType, setClockType] = useState("pomodoro");
   const [clockStarted, setClockStarted] = useState(false);
@@ -79,15 +79,15 @@ function Timer(props) {
   }
 
   function resetTimer() {
-    if (clockType === "pomodoro") {
-      setTime(25, 0);
-      setTimerState(false)
-    }
-    else if (clockType === "free timer") {
+    if (clockType === "free timer") {
+      props.updateTimeHandler(timerMinuts, timerSeconds)
       setTime(0, 0);
       setTimerState(false)
+      
     }
     else {
+      const minutesElapsed = timerSeconds? 25-(timerMinuts+1): timerMinuts; 
+      props.updateTimeHandler(minutesElapsed, 60-timerSeconds)
       setClockType("pomodoro")
       setTime(25, 0);
       setTimerState(false)
@@ -107,6 +107,7 @@ function Timer(props) {
     }
   }
 
+
   useEffect(() => {
     console.log(timerMinuts, timerSeconds)
     if (timerState) {
@@ -114,12 +115,17 @@ function Timer(props) {
         if (clockType === "pomodoro" || clockType === "rest") {
           if (timerSeconds === 0) {
             if (timerMinuts === 0) {
-              ///Insert communication to db
-              console.log("Ended!")
-              changeTimerState();
-              setTime(5, 0)
-              setClockType("rest")
-              setClockStarted(false)
+              if (clockType === "pomodoro") {
+                console.log("Ended!")
+                changeTimerState();
+                setTime(5, 0)
+                setClockType("rest")
+                setClockStarted(false)
+                props.updateTimeHandler(25, 0)
+              }
+              else {
+                resetTimer() //Sets to pomodoro
+              }
             }
             else {
               setTime(timerMinuts - 1, 59)
@@ -169,17 +175,17 @@ function Links(props) {
 }
 
 function Header(props) {
-  if(Object.keys(props.currentAssignment).length === 0){
-    return(
+  if (Object.keys(props.currentAssignment).length === 0) {
+    return (
       <div className='App-header'>
         <Links></Links>
       </div>
     )
   }
-  else{
+  else {
     return (
       <div className='App-header'>
-        <Timer></Timer>
+        <Timer updateTimeHandler={props.updateTimeHandler}></Timer>
         <Links></Links>
       </div>
     )
@@ -262,8 +268,10 @@ function App() {
   const [tasks, setTasks] = useState([]);
   const [currentAssignment, setCurrentAssignment] = useState({})
 
+  const url = 'http://localhost:3001/tasks'
+
   useEffect(() => {
-    axios.get('http://localhost:3001/tasks')
+    axios.get(url)
       .then(response => {
         const tasksData = response.data;
         console.log(tasksData);
@@ -275,9 +283,19 @@ function App() {
     setCurrentAssignment(tasks.find(x => x.id === id))
   }
 
+  const updateTimeHandler = (minutes, seconds) => {
+    console.log("Updating time handler...... by", minutes, seconds)
+    const updatedNote = { ...currentAssignment, time: currentAssignment + (minutes * 60) + seconds }
+    //Below method needs further optimization
+    axios.put(url + '/' + String(currentAssignment.id), updatedNote).then(response => {
+      console.log("Sucess, updating tasks")
+      setTasks(tasks.map(task => task.id === currentAssignment.id ? response.data : task))
+    }).catch(alert("Whoops. Time couldn't be updated"))
+  }
+
   return (
     <div className='App'>
-      <Header currentAssignment={currentAssignment}></Header>
+      <Header currentAssignment={currentAssignment} updateTime={updateTimeHandler}></Header>
       <TaskSection tasks={tasks} nameAssignment={currentAssignment} onClick={selectTask}></TaskSection>
     </div>
   );
