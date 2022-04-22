@@ -169,12 +169,22 @@ function Links(props) {
 }
 
 function Header(props) {
-  return (
-    <div className='App-header'>
-      <Timer></Timer>
-      <Links></Links>
-    </div>
-  )
+  if(Object.keys(props.currentAssignment).length === 0){
+    return(
+      <div className='App-header'>
+        <Links></Links>
+      </div>
+    )
+  }
+  else{
+    return (
+      <div className='App-header'>
+        <Timer></Timer>
+        <Links></Links>
+      </div>
+    )
+  }
+
 }
 
 function CurrentTask(props) {
@@ -210,24 +220,10 @@ function HierarchicalUlist(props) {
   console.log("Rendering Ulist....", props.tasks)
 
   let formattedTasks = []
-  /*function recurseTasks(entry, previousIndex) {
-    
-    entry.forEach((object, i) => {
-      const currentName = previousIndex ? previousIndex + "-" + i : i.toString();
-      console.log(previousIndex, currentName);
-      if (!object.children.length) {
-        const reference = () => props.onClick(currentName, 0, props.tasks)
-        formattedTasks.push(<li key={object.name} name={currentName}><button onClick={reference}>{object.name}</button></li>)
-      }
-      else {
-        formattedTasks.push(<li key={object.name} name={currentName}>{object.name}<ul>{recurseTasks(object.children, currentName)}</ul></li>)
-      }
-    })
-    */
   function recurseTasks(task) {
     if (task.children.length > 0) {
       let formattedChildren = []
-      for(const i of task.children){
+      for (const i of task.children) {
         formattedChildren.push(recurseTasks(props.tasks.find(x => x.id === i)))
       }
       console.log("printing formatted children", formattedChildren)
@@ -236,7 +232,7 @@ function HierarchicalUlist(props) {
       )
     }
     else {
-      return(<li key={task.id} name={task.name}><button onClick={() => props.onClick(task.id)}>{task.name} </button> </li>)
+      return (<li key={task.id} name={task.name}><button onClick={() => props.onClick(task.id)}>{task.name} </button> </li>)
     }
   }
 
@@ -274,14 +270,14 @@ function App() {
         setTasks(tasksData);
       })
   }, [])
-  
+
   const selectTask = (id) => {
     setCurrentAssignment(tasks.find(x => x.id === id))
   }
 
   return (
     <div className='App'>
-      <Header></Header>
+      <Header currentAssignment={currentAssignment}></Header>
       <TaskSection tasks={tasks} nameAssignment={currentAssignment} onClick={selectTask}></TaskSection>
     </div>
   );
