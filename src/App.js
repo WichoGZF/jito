@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import './App.css'
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import AppBar from '@mui/material/AppBar';
 
-function Button(props) {
-  return (<button type="button" onClick={props.onClick}>{props.name}</button>)
-}
+
 
 function Start(props) {
   console.log("is clock running?", props.clockRunning, props.clockType)
@@ -28,7 +34,7 @@ function Start(props) {
       if (!props.clockStarted) {
         return (
           <div>
-            <Button onClick={props.stopTimer} name="Start"></Button>
+            <Button variant="contained" onClick={props.stopTimer}>Start</Button>
           </div>
         )
       }
@@ -40,13 +46,15 @@ function Start(props) {
 
   return (
     <div>
-      <Button onClick={props.stopTimer} name={buttonName1}></Button>
-      <Button onClick={props.resetTimer} name={buttonName2}></Button>
+      <Button onClick={props.stopTimer} variant="contained">{buttonName1}</Button>
+      <Button onClick={props.resetTimer} variant="contained">{buttonName2}</Button>
     </div>)
 }
 
 function Options(props) {
+
   return (
+    /*
     <select
       value={props.timerType} onChange={(e) => props.changeTimerType(e.target.value)}
       className="dropdown"
@@ -55,7 +63,24 @@ function Options(props) {
       <option value="pomodoro">Pomodoro</option>
       <option value="free timer">Free timer</option>
     </select>
+    */
+    <Box sx={{ minWidth: 120 }}>
+      <FormControl fullWidth>
+        <InputLabel id="timer-type">Timer</InputLabel>
+        <Select
+          labelId="timer-type-select-label"
+          id="timer-type-select"
+          value={props.timerType}
+          label="Timer"
+          onChange={(e) => props.changeTimerType(e.target.value)}
+        >
+          <MenuItem value="pomodoro">Pomodoro</MenuItem>
+          <MenuItem value="free timer">Free timer</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
   )
+
 }
 
 function Timer(props) {
@@ -83,11 +108,11 @@ function Timer(props) {
       props.updateTimeHandler(timerMinuts, timerSeconds)
       setTime(0, 0);
       setTimerState(false)
-      
+
     }
     else {
-      const minutesElapsed = timerSeconds? 25-(timerMinuts+1): timerMinuts; 
-      props.updateTimeHandler(minutesElapsed, 60-timerSeconds)
+      const minutesElapsed = timerSeconds ? 25 - (timerMinuts + 1) : timerMinuts;
+      props.updateTimeHandler(minutesElapsed, 60 - timerSeconds)
       setClockType("pomodoro")
       setTime(25, 0);
       setTimerState(false)
@@ -166,31 +191,46 @@ function Timer(props) {
 }
 
 function Links(props) {
-  return (
-    <div>
-      <button type="button">Statistics</button>
-      <button type="button">Configuration</button>
-    </div>
-  )
-}
-
-function Header(props) {
-  if (Object.keys(props.currentAssignment).length === 0) {
+  if (props.loggedIn) {
     return (
-      <div className='App-header'>
-        <Links></Links>
+      <div>
+        <Button variant="contained">Statistics</Button>
+        <Button variant="contained">Configuration</Button>
       </div>
     )
   }
   else {
     return (
-      <div className='App-header'>
-        <Timer updateTimeHandler={props.updateTimeHandler}></Timer>
-        <Links></Links>
+      <div>
+        <Button variant="contained" disabled>Statistics</Button>
+        <Button variant="contained" disabled>Configuration</Button>
+        <Button variant="contained">Log in</Button>
       </div>
     )
   }
 
+}
+
+function Header(props) {
+  if (Object.keys(props.currentAssignment).length === 0) {
+    return (
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Links></Links>
+        </AppBar>
+      </Box>
+    )
+  }
+  else {
+    return (
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static" >
+          <Timer updateTimeHandler={props.updateTimeHandler}></Timer>
+          <Links></Links>
+        </AppBar>
+      </Box>
+    )
+  }
 }
 
 function CurrentTask(props) {
@@ -208,16 +248,12 @@ function CurrentTask(props) {
     return (
       <div>
         <h2>What are we working on today?</h2>
+        <p>Select a task to start working!</p>
       </div>
     )
   }
 }
 
-function Task(props) {
-  return (
-    <li>{props.name}</li>
-  )
-}
 
 /*
 Takes in an array of objects (with childdren) iterates over it and returns a hierarchical unordered list.
@@ -238,7 +274,7 @@ function HierarchicalUlist(props) {
       )
     }
     else {
-      return (<li key={task.id} name={task.name}><button onClick={() => props.onClick(task.id)}>{task.name} </button> </li>)
+      return (<li key={task.id} name={task.name}><Button variant="contained" onClick={() => props.onClick(task.id)}>{task.name} </Button> </li>)
     }
   }
 
@@ -267,6 +303,7 @@ function TaskSection(props) {
 function App() {
   const [tasks, setTasks] = useState([]);
   const [currentAssignment, setCurrentAssignment] = useState({})
+  const [loggedIn, setLoggedIn] = useState(false)
 
   const url = 'http://localhost:3001/tasks'
 
