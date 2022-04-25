@@ -9,7 +9,24 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import AppBar from '@mui/material/AppBar';
-
+import Grid from '@mui/material/Grid';
+import { Typography } from '@mui/material';
+import ListSubheader from '@mui/material/ListSubheader';
+import List from '@mui/material/List';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import Collapse from '@mui/material/Collapse';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import DraftsIcon from '@mui/icons-material/Drafts';
+import SendIcon from '@mui/icons-material/Send';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import StarBorder from '@mui/icons-material/StarBorder';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
 
 
 function Start(props) {
@@ -104,6 +121,7 @@ function Timer(props) {
   }
 
   function resetTimer() {
+    console.log(props.updateTimeHandler)
     if (clockType === "free timer") {
       props.updateTimeHandler(timerMinuts, timerSeconds)
       setTime(0, 0);
@@ -177,15 +195,23 @@ function Timer(props) {
 
   return (
     <div>
-      <Start
-        clockRunning={timerState}
-        stopTimer={changeTimerState}
-        resetTimer={resetTimer}
-        clockStarted={clockStarted}
-        clockType={clockType}>
-      </Start>
-      <Options changeTimerType={establishTimerType} timerType={clockType}></Options>
-      {String(timerMinuts).padStart(2, "0")}:{String(timerSeconds).padStart(2, "0")}
+      <Grid container spacing={3} alignItems="center">
+        <Grid item>
+          <Start
+            clockRunning={timerState}
+            stopTimer={changeTimerState}
+            resetTimer={resetTimer}
+            clockStarted={clockStarted}
+            clockType={clockType}>
+          </Start>
+        </Grid>
+        <Grid item>
+          <Options changeTimerType={establishTimerType} timerType={clockType}></Options>
+        </Grid>
+        <Grid item>
+          <Typography variant="h4">{String(timerMinuts).padStart(2, "0")}:{String(timerSeconds).padStart(2, "0")}</Typography>
+        </Grid>
+      </Grid>
     </div>
   )
 }
@@ -202,9 +228,12 @@ function Links(props) {
   else {
     return (
       <div>
-        <Button variant="contained" disabled>Statistics</Button>
-        <Button variant="contained" disabled>Configuration</Button>
-        <Button variant="contained">Log in</Button>
+        <ButtonGroup variant="contained">
+          <Button variant="contained" disabled>Statistics</Button>
+          <Button variant="contained" disabled>Configuration</Button>
+          <Button variant="contained">Log in</Button>
+        </ButtonGroup>
+
       </div>
     )
   }
@@ -224,9 +253,15 @@ function Header(props) {
   else {
     return (
       <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static" >
-          <Timer updateTimeHandler={props.updateTimeHandler}></Timer>
-          <Links></Links>
+        <AppBar position="static" sx={{ p: 1 }}>
+          <Grid container justifyContent="space-between" >
+            <Grid item xs="auto">
+              <Timer updateTimeHandler={props.updateTimeHandler}></Timer>
+            </Grid>
+            <Grid item xs={4}>
+              <Links></Links>
+            </Grid>
+          </Grid>
         </AppBar>
       </Box>
     )
@@ -295,8 +330,15 @@ function HierarchicalUlist(props) {
 function TaskSection(props) {
   return (
     <div>
-      <CurrentTask nameAssignment={props.nameAssignment}></CurrentTask>
-      <HierarchicalUlist tasks={props.tasks} onClick={props.onClick}></HierarchicalUlist>
+      <Grid container direction="column" alignItems="flex-start" sx={{ p: 2 }}>
+        <Grid item>
+          <CurrentTask nameAssignment={props.nameAssignment}></CurrentTask>
+        </Grid>
+        <Grid item>
+          <HierarchicalUlist tasks={props.tasks} onClick={props.onClick}></HierarchicalUlist>
+        </Grid>
+
+      </Grid>
     </div>)
 }
 
@@ -320,19 +362,25 @@ function App() {
     setCurrentAssignment(tasks.find(x => x.id === id))
   }
 
-  const updateTimeHandler = (minutes, seconds) => {
+  function updateTimeHandler(minutes, seconds) {
     console.log("Updating time handler...... by", minutes, seconds)
     const updatedNote = { ...currentAssignment, time: currentAssignment + (minutes * 60) + seconds }
     //Below method needs further optimization
-    axios.put(url + '/' + String(currentAssignment.id), updatedNote).then(response => {
-      console.log("Sucess, updating tasks")
-      setTasks(tasks.map(task => task.id === currentAssignment.id ? response.data : task))
-    }).catch(alert("Whoops. Time couldn't be updated"))
+    if (loggedIn) {
+      axios.put(url + '/' + String(currentAssignment.id), updatedNote).then(response => {
+        console.log("Sucess, updating tasks")
+        setTasks(tasks.map(task => task.id === currentAssignment.id ? response.data : task))
+      }).catch(alert("Whoops. Time couldn't be updated"))
+    }
+    else { //Not logged in: using local storage
+
+    }
+
   }
 
   return (
     <div className='App'>
-      <Header currentAssignment={currentAssignment} updateTime={updateTimeHandler}></Header>
+      <Header currentAssignment={currentAssignment} updateTimeHandler={updateTimeHandler}></Header>
       <TaskSection tasks={tasks} nameAssignment={currentAssignment} onClick={selectTask}></TaskSection>
     </div>
   );
