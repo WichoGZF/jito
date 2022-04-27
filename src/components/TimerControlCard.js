@@ -9,7 +9,7 @@ import SkipNextIcon from "@mui/icons-material/SkipNext";
 
 export default function TimerControlCard(props) {
   return (
-    <Card variant="outlined" sx={{ display: "flex", justifyContent: "center", width: "60vw" }}>
+    <Card variant="outlined" sx={{ display: "flex", justifyContent: "center", width: "50vw" }}>
       <Box
         sx={{
           display: "flex",
