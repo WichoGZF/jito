@@ -12,7 +12,7 @@ import IconButton from "@mui/material/IconButton";
 import Grid from '@mui/material/Grid';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-
+import Input from '@mui/material/Input';
 const bull = (
     <Box
         component="span"
@@ -33,22 +33,28 @@ export default function CurrentTaskBox() {
                     <IconButton aria-label="complete" size="large" sx={{ height: "50px" }}>
                         <CheckCircleOutlineIcon />
                     </IconButton>
-                    <Typography variant="h5" component="div" sx={{ flexGrow: 9 }}>
-                        Finish this app because youre rtard longer longer longre
-                    </Typography>
-                    <Typography sx={{ fontSize: 14, gridColumn: '2', gridRow: '2'  }} color="text.secondary" gutterBottom>
-                    The details are i'm locked up please help goddamint i cant make it D::
-                </Typography>
+                    <Input id="task-name"
+                        value="Finish this app because youre rtard longer longer "
+                        sx={{ flexGrow: 9}}
+                        disableUnderline
+                        multiline
+                    />
+                    <Input id="task-description"
+                        value="The details are i'm locked up please help goddamint i cant make it D::"
+                        sx={{ fontSize: 14, gridColumn: '2', gridRow: '2', color:"GrayText" }}
+                        disableUnderline
+                        multiline
+                    />
 
-                    <Stack direction="row" spacing={1} sx={{ gridColumn: '2', gridRow: "3", alignItems: "center"}}>
-                        <Chip label="primary" color="primary"/>
-                        <Chip label="secondary" color="success"/>
-                        <IconButton aria-label="complete" size="large" sx={{ height: "50px", width: "50px"}}>
+                    <Stack direction="row" spacing={1} sx={{ gridColumn: '2', gridRow: "3", alignItems: "center" }}>
+                        <Chip label="primary" color="primary" />
+                        <Chip label="secondary" color="success" />
+                        <IconButton aria-label="complete" size="large" sx={{ height: "50px", width: "50px" }}>
                             <LocalOfferIcon></LocalOfferIcon>
                         </IconButton>
-                        <Button startIcon={<CalendarMonthIcon/>}>mon. apr 29</Button>
+                        <Button startIcon={<CalendarMonthIcon />}>mon. apr 29</Button>
                     </Stack>
-                    
+
                 </Box>
             </CardContent>
         </Card >
