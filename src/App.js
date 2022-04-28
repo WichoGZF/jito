@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import ResponsiveAppBar from "./components/ResponsiveAppBar";
 import TimerControlCard from './components/TimerControlCard';
-import CurrentTaskBox from './components/CurrentTaskBox';
 import './App.css';
 import Box from "@mui/material/Box";
-import TaskList from './components/TaskList';
+import TaskSection from './components/TaskSection';
 
 
 function App() {
@@ -19,8 +18,7 @@ function App() {
       }}>
       <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
       <TimerControlCard></TimerControlCard>
-      <CurrentTaskBox></CurrentTaskBox>
-      <TaskList></TaskList>
+      <TaskSection></TaskSection>
     </Box>
   );
 }

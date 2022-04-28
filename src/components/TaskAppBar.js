@@ -74,6 +74,26 @@ return (
 
                 <FormControl variant="standard" sx={{ m: 1, minWidth: 80 }}>
 
+                    <InputLabel id="sort-by-input-label">Sort by</InputLabel>
+                    <Select
+                        labelId="sort-by-select-label"
+                        id="sort-by-select"
+                        value={sortBy}
+                        onChange={handleChangeSort}
+                        label="sort-by"
+                        autoWidth
+                    >
+                        <MenuItem value={"Personal order"}>None</MenuItem>
+                        <MenuItem value={"Addition"}>Addition</MenuItem>
+                        <MenuItem value={"Date"}>Date</MenuItem>
+                    </Select>
+                </FormControl>
+                <IconButton onClick={changeIcon} >
+                {returnIcon()}
+                </IconButton>
+                <FormControl variant="standard" sx={{ m: 1, minWidth: 80 }}>
+                
+
                     <InputLabel id="filter-by-input-label">Filter by</InputLabel>
                     <Select
                         labelId="filter-by-select-label"

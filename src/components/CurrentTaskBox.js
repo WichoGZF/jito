@@ -22,7 +22,7 @@ const bull = (
     </Box>
 );
 
-export default function CurrentTaskBox() {
+export default function CurrentTaskBox(props) {
     return (
         <Card sx={{ width: "80vw", minWidth: 275 }}>
             <CardContent>
@@ -49,7 +49,7 @@ export default function CurrentTaskBox() {
                     <Stack direction="row" spacing={1} sx={{ gridColumn: '2', gridRow: "3", alignItems: "center" }}>
                         <Chip label="primary" color="primary" />
                         <Chip label="secondary" color="success" />
-                        <IconButton aria-label="complete" size="large" sx={{ height: "50px", width: "50px" }}>
+                        <IconButton onClick={()=> props.handlePopUp(1)}>
                             <LocalOfferIcon></LocalOfferIcon>
                         </IconButton>
                         <Button startIcon={<CalendarMonthIcon />}>mon. apr 29</Button>

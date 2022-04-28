@@ -5,7 +5,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import { FixedSizeList } from 'react-window';
 import TaskAppBar from './TaskAppBar';
-
+import Input from '@mui/material/Input';
 
 
 function renderRow(props) {
@@ -14,12 +14,11 @@ function renderRow(props) {
   return (
     <ListItem style={style} key={index} component="div" disablePadding>
       <ListItemButton>
-        <ListItemText primary={`Item ${index + 1}`} />
+        <Input value={`Task ${index + 1}`} disableUnderline multiline></Input>
       </ListItemButton>
     </ListItem>
   );
 }
-
 export default function TaskList() {
   return (
     <Box
