@@ -4,6 +4,7 @@ import TimerControlCard from './components/TimerControlCard';
 import CurrentTaskBox from './components/CurrentTaskBox';
 import './App.css';
 import Box from "@mui/material/Box";
+import TaskList from './components/TaskList';
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
       <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
       <TimerControlCard></TimerControlCard>
       <CurrentTaskBox></CurrentTaskBox>
+      <TaskList></TaskList>
     </Box>
   );
 }
