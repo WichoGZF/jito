@@ -62,7 +62,7 @@ export default function CurrentTaskBox(props) {
                     <Stack direction="row" spacing={1} sx={{ gridColumn: '2', gridRow: "3", alignItems: "center" }}>
                         <Chip label="primary" color="primary" />
                         <Chip label="secondary" color="success" />
-                        <IconButton onClick={()=> props.handlePopUp(1)}>
+                        <IconButton onClick={()=> props.openTagSelect(true)}>
                             <LocalOfferIcon></LocalOfferIcon>
                         </IconButton>
                         <LocalizationProvider dateAdapter={AdapterDateFns}>

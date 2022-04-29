@@ -24,7 +24,7 @@ export default function TaskList() {
     <Box
       sx={{ width: '80vw', height: 400, bgcolor: 'background.paper' }}
     >
-    <TaskAppBar></TaskAppBar>
+    
       <FixedSizeList
         height={400}
         itemSize={46}

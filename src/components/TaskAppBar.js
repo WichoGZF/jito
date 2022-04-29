@@ -23,7 +23,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 
-export default function TaskAppBar() {
+export default function TaskAppBar(props) {
     const [sortBy, setSortBy] = React.useState('Addition');
     const [filterBy, setFilterBy] = React.useState('None');
     const [sortOrder, setSortOrder] = React.useState(1) //1 is up-down 2 is down-top
@@ -64,55 +64,55 @@ export default function TaskAppBar() {
     }
 
 
-return (
-    <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-            <Toolbar sx={{ gap: "10px" }}>
-                <IconButton size="small" >
-                    <AddCircleOutlineIcon />
-                </IconButton>
+    return (
+        <Box sx={{ flexGrow: 1 }}>
+            <AppBar position="static">
+                <Toolbar sx={{ gap: "10px" }}>
+                    <IconButton onClick={()=> props.openTaskSelect(true)} size="small" >
+                        <AddCircleOutlineIcon />
+                    </IconButton>
 
-                <FormControl variant="standard" sx={{ m: 1, minWidth: 80 }}>
+                    <FormControl variant="standard" sx={{ m: 1, minWidth: 80 }}>
 
-                    <InputLabel id="sort-by-input-label">Sort by</InputLabel>
-                    <Select
-                        labelId="sort-by-select-label"
-                        id="sort-by-select"
-                        value={sortBy}
-                        onChange={handleChangeSort}
-                        label="sort-by"
-                        autoWidth
-                    >
-                        <MenuItem value={"Personal order"}>None</MenuItem>
-                        <MenuItem value={"Addition"}>Addition</MenuItem>
-                        <MenuItem value={"Date"}>Date</MenuItem>
-                    </Select>
-                </FormControl>
-                <IconButton onClick={changeIcon} >
-                {returnIcon()}
-                </IconButton>
-                <FormControl variant="standard" sx={{ m: 1, minWidth: 80 }}>
-                
-
-                    <InputLabel id="filter-by-input-label">Filter by</InputLabel>
-                    <Select
-                        labelId="filter-by-select-label"
-                        id="filter-by-select"
-                        value={filterBy}
-                        onChange={handleChangeFilter}
-                        label="filter-by"
-                        autoWidth
-                    >
-                        <MenuItem value={"None"}>None</MenuItem>
-                        <MenuItem value={"Tag"}>Tag</MenuItem>
-                        <MenuItem value={"Date"}>Date</MenuItem>
-                    </Select>
-                </FormControl>
-                {filterPart}
+                        <InputLabel id="sort-by-input-label">Sort by</InputLabel>
+                        <Select
+                            labelId="sort-by-select-label"
+                            id="sort-by-select"
+                            value={sortBy}
+                            onChange={handleChangeSort}
+                            label="sort-by"
+                            autoWidth
+                        >
+                            <MenuItem value={"Personal order"}>None</MenuItem>
+                            <MenuItem value={"Addition"}>Addition</MenuItem>
+                            <MenuItem value={"Date"}>Date</MenuItem>
+                        </Select>
+                    </FormControl>
+                    <IconButton onClick={changeIcon} >
+                        {returnIcon()}
+                    </IconButton>
+                    <FormControl variant="standard" sx={{ m: 1, minWidth: 80 }}>
 
 
-            </Toolbar>
-        </AppBar>
-    </Box>
-);
+                        <InputLabel id="filter-by-input-label">Filter by</InputLabel>
+                        <Select
+                            labelId="filter-by-select-label"
+                            id="filter-by-select"
+                            value={filterBy}
+                            onChange={handleChangeFilter}
+                            label="filter-by"
+                            autoWidth
+                        >
+                            <MenuItem value={"None"}>None</MenuItem>
+                            <MenuItem value={"Tag"}>Tag</MenuItem>
+                            <MenuItem value={"Date"}>Date</MenuItem>
+                        </Select>
+                    </FormControl>
+                    {filterPart}
+
+
+                </Toolbar>
+            </AppBar>
+        </Box>
+    );
 }

@@ -1,26 +1,37 @@
 import { useState } from "react";
 import CurrentTaskBox from './CurrentTaskBox';
 import TaskList from './TaskList';
-import TagSelectPopUp from './TagSelectPopUp';
+import TagSelect from './TagSelect';
 import Box from '@mui/material/Box';
-
+import TaskAppBar from './TaskAppBar';
+import TaskSelect from './TaskSelect';
 export default function TaskSection(props){
-  const [openPopUp, setOpenPopUp] = useState(false); //Takes values depending on which menu wants to open
+  const [openTagSelect, setTagSelect] = useState(false); //
+  const [openTaskSelect, setTaskSelect] = useState(false); //
 
-  const handlePopUpOpen = (menu) => {
-    setOpenPopUp(menu);
+  const handleTagSelectOpen = () => {
+    setTagSelect(true);
   };
 
-  const handlePopUpClose = () => {
-    setOpenPopUp(false);
-    console.log(openPopUp)
+  const handleTagSelectClose = () => {
+    setTagSelect(false);
   };
+
+  const handleTaskSelectOpen = () => {
+    setTaskSelect(true);
+  };
+
+  const handleTaskSelectClose = () => {
+    setTaskSelect(false);
+  }
 
   return(
     <Box>
-    <CurrentTaskBox handlePopUp={handlePopUpOpen}></CurrentTaskBox>
+    <CurrentTaskBox openTagSelect={handleTagSelectOpen}></CurrentTaskBox>
+    <TaskAppBar openTaskSelect={handleTaskSelectOpen}></TaskAppBar>
     <TaskList></TaskList>
-    <TagSelectPopUp openPopUp={openPopUp} closePopUp={handlePopUpClose}></TagSelectPopUp>
+    <TagSelect openTagSelect={openTagSelect} closeTagSelect={handleTagSelectClose}></TagSelect>
+    <TaskSelect openTaskSelect={openTaskSelect} close={handleTaskSelectClose} openTagSelect={handleTagSelectOpen}></TaskSelect>
     </Box>
     )
 }
