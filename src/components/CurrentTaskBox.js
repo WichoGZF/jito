@@ -13,6 +13,12 @@ import Grid from '@mui/material/Grid';
 import LocalOfferIcon from '@mui/icons-material/LocalOffer';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import Input from '@mui/material/Input';
+import TextField from '@mui/material/TextField';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import {DatePicker} from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+
 const bull = (
     <Box
         component="span"
@@ -23,6 +29,13 @@ const bull = (
 );
 
 export default function CurrentTaskBox(props) {
+    const [datePick, setDatePick] = React.useState(false);
+    const [newDate, setNewDate] = React.useState(null);
+
+    const handleDatePicker = () => {
+        setDatePick(true)
+    }
+
     return (
         <Card sx={{ width: "80vw", minWidth: 275 }}>
             <CardContent>
@@ -52,7 +65,18 @@ export default function CurrentTaskBox(props) {
                         <IconButton onClick={()=> props.handlePopUp(1)}>
                             <LocalOfferIcon></LocalOfferIcon>
                         </IconButton>
-                        <Button startIcon={<CalendarMonthIcon />}>mon. apr 29</Button>
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                            <MobileDatePicker
+                            label="Date"
+                                value={newDate}
+                                onChange={(newValue) => {
+                                    setNewDate(newValue);
+                                }}
+                                renderInput={(params) => <TextField {...params} />}
+                            />
+                        </LocalizationProvider>
+
+                        
                     </Stack>
 
                 </Box>
