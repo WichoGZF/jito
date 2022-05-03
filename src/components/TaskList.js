@@ -1,38 +1,81 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import ListItem from '@mui/material/ListItem';
+import ListSubheader from '@mui/material/ListSubheader';
+import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { FixedSizeList } from 'react-window';
-import TaskAppBar from './TaskAppBar';
-import Input from '@mui/material/Input';
+import Collapse from '@mui/material/Collapse';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import DraftsIcon from '@mui/icons-material/Drafts';
+import SendIcon from '@mui/icons-material/Send';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import StarBorder from '@mui/icons-material/StarBorder';
+import { Input } from '@mui/material';
+export default function NestedList() {
+  const [open, setOpen] = React.useState(true);
 
+  /*const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'TASK',
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging()
+    })
+  }))
+  /*const [{ canDrop, isOver }, drop] = useDrop(() => ({
+    accept: 'TASK',
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop()
+    })
+  }))
+  */
 
-function renderRow(props) {
-  const { index, style } = props;
+  const handleClick = () => {
+    setOpen(!open);
+  };
 
   return (
-    <ListItem style={style} key={index} component="div" disablePadding>
-      <ListItemButton>
-        <Input value={`Task ${index + 1}`} disableUnderline multiline></Input>
-      </ListItemButton>
-    </ListItem>
-  );
-}
-export default function TaskList() {
-  return (
-    <Box
-      sx={{ width: '80vw', height: 400, bgcolor: 'background.paper' }}
+    <List
+      sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+      component="nav"
+      aria-labelledby="nested-list-subheader"
+      subheader={
+        <ListSubheader component="div" id="nested-list-subheader">
+          Tasks
+        </ListSubheader>
+      }
     >
-    
-      <FixedSizeList
-        height={400}
-        itemSize={46}
-        itemCount={20}
-        overscanCount={5}
-      >
-        {renderRow}
-      </FixedSizeList>
-    </Box>
+      <ListItemButton>
+        <ListItemIcon>
+          <SendIcon />
+        </ListItemIcon>
+        {//<ListItemText primary="Sent mail"
+        }
+        <Input value="Sent mail"></Input>
+      </ListItemButton>
+      <ListItemButton>
+        <ListItemIcon>
+          <DraftsIcon />
+        </ListItemIcon>
+        <ListItemText primary="Drafts" />
+      </ListItemButton>
+      <ListItemButton onClick={handleClick}>
+        <ListItemIcon>
+          <InboxIcon />
+        </ListItemIcon>
+        <ListItemText primary="Inbox" />
+        {open ? <ExpandLess /> : <ExpandMore />}
+      </ListItemButton>
+      <Collapse in={open} timeout="auto" unmountOnExit>
+        <List component="div" disablePadding>
+          <ListItemButton sx={{ pl: 4 }}>
+            <ListItemIcon>
+              <StarBorder />
+            </ListItemIcon>
+            <ListItemText primary="Starred" />
+          </ListItemButton>
+        </List>
+      </Collapse>
+    </List>
   );
 }

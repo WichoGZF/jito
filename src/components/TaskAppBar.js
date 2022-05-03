@@ -68,7 +68,7 @@ export default function TaskAppBar(props) {
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
                 <Toolbar sx={{ gap: "10px" }}>
-                    <IconButton onClick={()=> props.openTaskSelect(true)} size="small" >
+                    <IconButton onClick={()=> props.handleTaskSelectAddOpen(true)} size="small" >
                         <AddCircleOutlineIcon />
                     </IconButton>
 

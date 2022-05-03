@@ -1,13 +1,13 @@
 import { useState } from "react";
-import CurrentTaskBox from './CurrentTaskBox';
 import TaskList from './TaskList';
 import TagSelect from './TagSelect';
 import Box from '@mui/material/Box';
 import TaskAppBar from './TaskAppBar';
 import TaskSelect from './TaskSelect';
-export default function TaskSection(props){
+export default function TaskSection(props) {
   const [openTagSelect, setTagSelect] = useState(false); //
   const [openTaskSelect, setTaskSelect] = useState(false); //
+  const [taskSelectMode, setTaskSelectMode] = useState(""); 
 
   const handleTagSelectOpen = () => {
     setTagSelect(true);
@@ -17,21 +17,40 @@ export default function TaskSection(props){
     setTagSelect(false);
   };
 
-  const handleTaskSelectOpen = () => {
+  //For oppening an "add" menu
+  const handleTaskSelectAddOpen = () => {
     setTaskSelect(true);
+    setTaskSelectMode("add");
   };
 
   const handleTaskSelectClose = () => {
     setTaskSelect(false);
   }
+  //For opening an "edit" menu
+  const handleTaskSelectEditOpen = () => {
+    setTaskSelect(true);
+    setTaskSelectMode("edit");
+  };
 
-  return(
+
+  return (
     <Box>
-    <CurrentTaskBox openTagSelect={handleTagSelectOpen}></CurrentTaskBox>
-    <TaskAppBar openTaskSelect={handleTaskSelectOpen}></TaskAppBar>
-    <TaskList></TaskList>
-    <TagSelect openTagSelect={openTagSelect} closeTagSelect={handleTagSelectClose}></TagSelect>
-    <TaskSelect openTaskSelect={openTaskSelect} close={handleTaskSelectClose} openTagSelect={handleTagSelectOpen}></TaskSelect>
+      <TaskAppBar handleTaskSelectAddOpen={handleTaskSelectAddOpen}></TaskAppBar>
+      <TaskList taskSelectEditOpen={handleTaskSelectEditOpen}></TaskList>
+      <TagSelect 
+      openTagSelect={openTagSelect}
+      closeTagSelect={handleTagSelectClose}
+      tagHandler={props.tagHandler}
+      tags={props.tags}
+      ></TagSelect>
+      <TaskSelect
+        handleTagSelectClose={handleTaskSelectClose}
+        openTaskSelect={openTaskSelect}
+        openTagSelect={openTagSelect}
+        taskHandler={props.taskHandler}
+        tasks={props.tasks}
+      >
+      </TaskSelect>
     </Box>
-    )
+  )
 }
