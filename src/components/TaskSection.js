@@ -11,6 +11,7 @@ export default function TaskSection(props) {
 
   const handleTagSelectOpen = () => {
     setTagSelect(true);
+    console.log(openTaskSelect)
   };
 
   const handleTagSelectClose = () => {
@@ -44,9 +45,9 @@ export default function TaskSection(props) {
       tags={props.tags}
       ></TagSelect>
       <TaskSelect
-        handleTagSelectClose={handleTaskSelectClose}
+        handleTaskSelectClose={handleTaskSelectClose}
         openTaskSelect={openTaskSelect}
-        openTagSelect={openTagSelect}
+        handleTagSelectOpen={handleTagSelectOpen}
         taskHandler={props.taskHandler}
         tasks={props.tasks}
       >
