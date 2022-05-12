@@ -13,7 +13,7 @@ import Divider from "@mui/material/Divider";
 import InboxIcon from "@mui/icons-material/Inbox";
 import DraftsIcon from "@mui/icons-material/Drafts";
 import { useState } from "react";
-import { Box } from "@mui/system";
+import { Box, color } from "@mui/system";
 
 import { Grid, Icon, IconButton } from "@mui/material";
 import { Input } from "@mui/material";
@@ -52,6 +52,8 @@ import { Collapse } from "@mui/material";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
+import { createTheme } from '@mui/material/styles'
+
 function PrimaryPopper(props) {
     const iconArray = [
         <SchoolIcon></SchoolIcon>,
@@ -67,48 +69,52 @@ function PrimaryPopper(props) {
 
     const popperContent = iconArray.map((iconArray.map(
         (icon, index) => {
-            return (<Grid item key={index} xs={4}> {icon} </Grid>)
+            return (<Grid item key={index} xs={4}><IconButton>{icon}</IconButton></Grid>)
         }
     )
     ))
     return (
-        <>
+        <Grid container>
             {popperContent}
-        </>
+        </Grid>
+
+
     )
 }
-function SecondaryPopper(type) {
+
+function SecondaryPopper(props) {
     const colorArray = [
-        "Black",
-        "Blue",
-        "Brown",
-        "Yellow",
-        "Green",
-        "Gray",
-        "Purple",
-        "Pink",
-        "Orange"
+        "primary",
+        "secondary",
+        "error",
+        "warning",
+        "info",
+        "success"
     ]
     const popperContent = colorArray.map(
         (color, index) => {
             return (
-                <Grid item key={index} xs={4}> <CircleIcon color={color}></CircleIcon></Grid>
+                <Grid item key={index} xs={4}> <IconButton><CircleIcon color={color}></CircleIcon></IconButton></Grid>
             )
         }
     )
-    return ({ popperContent })
+    return (
+        <Grid container>
+            {popperContent}
+        </Grid>
+    )
 }
 
 const mockTags = [
     {
         name: "tag1",
         icon: <SchoolIcon></SchoolIcon>,
-        children: [{ name: "tag1-1", color: "Black" }, { name: "tag1-2", color: "Blue" }]
+        children: [{ name: "tag1-1", color: "primary" }, { name: "tag1-2", color: "secondary" }]
     },
     {
         name: "tag2",
         icon: <WorkIcon></WorkIcon>,
-        children: [{ name: "tag2-1", color: "Brown" }, { name: "tag2-2", color: "Yellow" }]
+        children: [{ name: "tag2-1", color: "error" }, { name: "tag2-2", color: "warning" }]
     }
 ]
 
@@ -118,21 +124,10 @@ function PopperContainer(props) {
         <Popper
             placement="bottom"
             open={props.openPopper}
-            modifiers={[
-                {
-                    name: 'arrow',
-                    enabled: props.openPopper,
-                    options: {
-                        element: props.arrowRef,
-                    }
-                }
-            ]}
+            anchorEl={props.anchorEl}
             transition
         >
-            <Grid container>
-                {props.content}
-            </Grid>
-
+            {props.content}
         </Popper>
     )
 }
@@ -155,7 +150,7 @@ function SecondaryChipTag(props) {
     return (
         <Chip
             onClick={props.onClick} //
-            sx={{ color: props.color }}
+            color={props.color}
             icon={props.icon}
             label={props.name}
         >
@@ -167,13 +162,17 @@ function SecondaryChipTag(props) {
 Returns the tags formatted into components depending on the parameter.
 */
 function ReturnSecondaryTags(props) {
-    const chipTags = props.tag[props.primaryTag].children.map((tag, index) => {
+    const chipTags = props.tags[props.primaryTag].children.map((tag, index) => {
         return (
             <SecondaryChipTag
                 key={tag.name}
                 name={tag.name}
                 icon={props.tags[props.primaryTag].icon}
-                onClick={props.onClick}
+                onClick={
+                    () => {
+                        props.onClick(index)
+                    }
+                }
                 color={tag.color}
                 variant={(index === props.secondaryTag) ? "filled" : "outlined"}
             ></SecondaryChipTag>
@@ -192,7 +191,11 @@ function ReturnPrimaryTags(props) {
             <PrimaryChipTag
                 key={tag.name}
                 icon={tag.icon}
-                onClick={props.onClick}
+                onClick={
+                    () => {
+                        props.onClick(index)
+                    }
+                }
                 name={tag.name}
                 variant={(index === props.primaryTag) ? "filled" : "outlined"}></PrimaryChipTag>
         )
@@ -207,7 +210,14 @@ function ReturnPrimaryTags(props) {
 //List tag for editing. Contains input, icon with hover selection, and saves to tags upon finishing to edit input.
 function ListTag(props) {
     const [input, setInput] = useState(props.name)
+    const [popper, setPopper] = useState(false)
+    const [anchorEl, setAnchorEl] = useState(null)
 
+    const handleAnchorEl = (event) => {
+        setAnchorEl(event.target); 
+        setPopper(!popper);
+        console.log("Anchor, popper values: ", anchorEl, popper)
+    }
     return (
         <ListItem
             secondaryAction={
@@ -217,16 +227,19 @@ function ListTag(props) {
             }
         >
             <ListItemIcon>
-                <IconButton>
+                <IconButton onClick={handleAnchorEl}>
                     {props.icon}
                 </IconButton>
+                <PopperContainer anchorEl={anchorEl} openPopper={popper}>
+                    <PrimaryPopper></PrimaryPopper>
+                </PopperContainer>
             </ListItemIcon>
             <ListItemText>
-                <Input 
-                value={input}
-                onChange={(e) =>
-                    setInput(e.target.value)
-                }
+                <Input
+                    value={input}
+                    onChange={(e) =>
+                        setInput(e.target.value)
+                    }
                     onBlur={
                         () => {
                             props.setTags(props.tags.map((tag, index) => {
@@ -257,13 +270,13 @@ function ListTag(props) {
 
 //Collapsible containig children (secondary tags)
 function CollapseListTag(props) {
-    
+
     return (
         <Collapse in={props.collapse} unmountOnExit>
             <List>
-            <SecondaryAddTagListItemLogic 
-            tags={props.tags} index={props.index} setTags={props.setTags}
-            ></SecondaryAddTagListItemLogic>
+                <SecondaryAddTagListItemLogic
+                    tags={props.tags} index={props.index} setTags={props.setTags}
+                ></SecondaryAddTagListItemLogic>
                 {props.children}
             </List>
         </Collapse>
@@ -291,25 +304,6 @@ function PrimaryListTag(props) {
     )
 }
 
-//Secondary list item tags
-function ChildListTag(props) {
-    <ListItem
-        secondaryAction={
-            <IconButton edge="end" aria-label="child-edit">
-                <EditIcon></EditIcon>
-            </IconButton>
-        }
-    >
-        <ListItemIcon>
-            <CircleIcon color={props.color}></CircleIcon>
-        </ListItemIcon>
-        <ListItemText>
-            {props.name}
-        </ListItemText>
-    </ListItem>
-}
-
-
 //Formats and retrns the array containing the editable list components 
 function ReturnEditableTags(props) {
     const tagArray = props.tags.map((tag, index) => {
@@ -319,17 +313,19 @@ function ReturnEditableTags(props) {
                 name={tag.name}
                 icon={tag.icon}
                 children={props.tags[index].children.map((child, index) => {
-                    console.log("Rendering secondary tag...", index)
+                    console.log("Rendering secondary tag...", index, child)
                     return (
                         <ChildListTag
+                            name={child.name}
                             color={child.color}
-                            key={child.name}
-                            name={child.name} />
+                        >
+                        </ChildListTag>
                     )
                 }
                 )}
                 tags={props.tags}
                 setTags={props.setTags}
+                index={index}
             >
 
             </PrimaryListTag>
@@ -343,6 +339,30 @@ function ReturnEditableTags(props) {
         </>
     )
 }
+
+
+//Secondary list item tags
+function ChildListTag(props) {
+    return (
+        <ListItem
+            secondaryAction={
+                <IconButton edge="end" aria-label="child-edit">
+                    <EditIcon></EditIcon>
+                </IconButton>
+            }
+            sx={{ pl: 4 }}
+        >
+            <ListItemIcon>
+                <CircleIcon color={props.color}></CircleIcon>
+            </ListItemIcon>
+            <ListItemText>
+                {props.name}
+            </ListItemText>
+        </ListItem>
+    )
+}
+
+
 
 //Handles tag adding
 
@@ -402,7 +422,7 @@ function SecondaryAddTagListItemLogic(props) {
         return (
             <>
                 <AddTagListItem key="add-button" onClick={handleAddTag} addLabel="secondary task"></AddTagListItem>
-                <ListItem key="add-input">
+                <ListItem key="add-input" sx={{ pl: 4 }}>
                     <Input
                         value={selectedTagName}
                         onChange={(e) => {
@@ -465,6 +485,14 @@ export default function TagSelect(props) {
         setEditMenu(!editMenu)
     }
 
+    const handleSetPrimaryTag = (tagIndex) => {
+        setPrimaryTag(tagIndex)
+    }
+
+    const handleSetSecondaryTag = (tagIndex) => {
+        setSecondaryTag(tagIndex)
+    }
+
     if (editMenu) {
         console.log("Rendering editing tag manu....")
         return (
@@ -476,7 +504,7 @@ export default function TagSelect(props) {
                         component="nav"
                         aria-labelledby="nested-list-subheader"
                     >
-                        <ReturnEditableTags tags={tags} setTags={handleTags} ></ReturnEditableTags>
+                        <ReturnEditableTags tags={tags} setTags={handleTags}></ReturnEditableTags>
                     </List>
                 </DialogContent>
             </Dialog>
@@ -485,17 +513,19 @@ export default function TagSelect(props) {
 
     else {
         console.log("Rendering select tag menu...")
-        if (primaryTag) {
+        if (primaryTag === 0 || primaryTag > 0) {
+            console.log(primaryTag)
+            console.log(primaryTag === 0, primaryTag > 0)
             return (
                 <Dialog open={props.openTagSelect} onClose={props.closeTagSelect}>
                     <DialogTitle>Select the tags
                         <IconButton onClick={() => setEditMenu(true)}><EditIcon></EditIcon></IconButton>
                     </DialogTitle>
                     <DialogContent dividers>
-                        <ReturnPrimaryTags tags={tags} ></ReturnPrimaryTags>
+                        <ReturnPrimaryTags tags={tags} primaryTag={primaryTag} onClick={handleSetPrimaryTag}></ReturnPrimaryTags>
                     </DialogContent>
                     <DialogContent dividers>
-                        <ReturnSecondaryTags></ReturnSecondaryTags>
+                        <ReturnSecondaryTags tags={tags} primaryTag={primaryTag} secondaryTag={secondaryTag} onClick={handleSetSecondaryTag}></ReturnSecondaryTags>
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={props.closeTagSelect}>Cancel</Button>
@@ -511,7 +541,7 @@ export default function TagSelect(props) {
                     <IconButton onClick={handleEditMenu}><EditIcon></EditIcon></IconButton>
                 </DialogTitle>
                 <DialogContent dividers>
-                    <ReturnPrimaryTags tags={tags}></ReturnPrimaryTags>
+                    <ReturnPrimaryTags tags={tags} primaryTag={primaryTag} onClick={handleSetPrimaryTag}></ReturnPrimaryTags>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={props.closeTagSelect}>Cancel</Button>
