@@ -15,7 +15,7 @@ import DraftsIcon from "@mui/icons-material/Drafts";
 import { useState } from "react";
 import { Box, color } from "@mui/system";
 
-import { Grid, Icon, IconButton } from "@mui/material";
+import { Grid, Icon, IconButton, Typography } from "@mui/material";
 import { Input } from "@mui/material";
 import { Popper } from "@mui/material";
 
@@ -54,6 +54,10 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 
 import { createTheme } from '@mui/material/styles'
 
+import { usePopper } from 'react-popper'
+import styled from "styled-components";
+
+
 function PrimaryPopper(props) {
     const iconArray = [
         <SchoolIcon></SchoolIcon>,
@@ -67,12 +71,12 @@ function PrimaryPopper(props) {
         <DirectionsRunIcon></DirectionsRunIcon>
     ]
 
-    const popperContent = iconArray.map((iconArray.map(
+    const popperContent = (iconArray.map(
         (icon, index) => {
             return (<Grid item key={index} xs={4}><IconButton>{icon}</IconButton></Grid>)
         }
     )
-    ))
+    )
     return (
         <Grid container>
             {popperContent}
@@ -105,6 +109,35 @@ function SecondaryPopper(props) {
     )
 }
 
+const PopperContainer = styled.div`
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+border-radius: 5px;
+background-color: white;
+padding: 20px;
+position: absolute;
+
+
+.arrow {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+
+    &:after {
+      content: " ";
+      position: absolute;
+      top: -25px; // we account for the PopperContainer padding
+      left: 0;
+      transform: rotate(45deg);
+      width: 10px;
+      height: 10px;
+      background-color: white;
+      box-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+`
+
 const mockTags = [
     {
         name: "tag1",
@@ -117,21 +150,6 @@ const mockTags = [
         children: [{ name: "tag2-1", color: "error" }, { name: "tag2-2", color: "warning" }]
     }
 ]
-
-//Popper container, takes three props, conditional, reference and content.
-function PopperContainer(props) {
-    return (
-        <Popper
-            placement="bottom"
-            open={props.openPopper}
-            anchorEl={props.anchorEl}
-            transition
-        >
-            {props.content}
-        </Popper>
-    )
-}
-
 
 //Primary tag for displaying (chip form)
 function PrimaryChipTag(props) {
@@ -210,14 +228,20 @@ function ReturnPrimaryTags(props) {
 //List tag for editing. Contains input, icon with hover selection, and saves to tags upon finishing to edit input.
 function ListTag(props) {
     const [input, setInput] = useState(props.name)
-    const [popper, setPopper] = useState(false)
-    const [anchorEl, setAnchorEl] = useState(null)
+    const [iconSelect, setIconSelect] = useState(false)
 
-    const handleAnchorEl = (event) => {
-        setAnchorEl(event.target); 
-        setPopper(!popper);
-        console.log("Anchor, popper values: ", anchorEl, popper)
+    const [referenceElement, setReferenceElement] = useState(null);
+    const [popperElement, setPopperElement] = useState(null);
+    const [arrowElement, setArrowElement] = useState(null);
+    const { styles, attributes } = usePopper(referenceElement, popperElement, {
+        modifiers: [{ name: 'arrow', options: { element: arrowElement } }],
+    });
+
+    const handleIconSelect = () => {
+        setIconSelect(!iconSelect)
     }
+
+
     return (
         <ListItem
             secondaryAction={
@@ -227,12 +251,9 @@ function ListTag(props) {
             }
         >
             <ListItemIcon>
-                <IconButton onClick={handleAnchorEl}>
+                <IconButton ref={setReferenceElement} onClick={handleIconSelect}>
                     {props.icon}
                 </IconButton>
-                <PopperContainer anchorEl={anchorEl} openPopper={popper}>
-                    <PrimaryPopper></PrimaryPopper>
-                </PopperContainer>
             </ListItemIcon>
             <ListItemText>
                 <Input
@@ -264,8 +285,14 @@ function ListTag(props) {
                     }
                 ></Input>
             </ListItemText>
+
+            {iconSelect ? (<PopperContainer ref={setPopperElement} style={styles.popper} {...attributes.popper}>
+                <PrimaryPopper></PrimaryPopper>
+                <div ref={setArrowElement} style={styles.arrow} />
+            </PopperContainer>) : (<></>)}
         </ListItem>
     )
+
 }
 
 //Collapsible containig children (secondary tags)
@@ -316,6 +343,7 @@ function ReturnEditableTags(props) {
                     console.log("Rendering secondary tag...", index, child)
                     return (
                         <ChildListTag
+                            key={child.name + color}
                             name={child.name}
                             color={child.color}
                         >
@@ -467,15 +495,10 @@ export default function TagSelect(props) {
     const [primaryTag, setPrimaryTag] = useState(null)
     const [secondaryTag, setSecondaryTag] = useState(null)
     const [tags, setTags] = useState(mockTags);
-    const [openPopper, setOpenPopper] = useState(false);
     const [editMenu, setEditMenu] = useState(false);
 
     console.log(tags)
 
-    //Popper handling
-    const handlePopper = () => {
-        setOpenPopper(!openPopper)
-    }
 
     const handleTags = (newTags) => {
         setTags(newTags);
