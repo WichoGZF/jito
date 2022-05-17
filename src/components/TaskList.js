@@ -24,36 +24,63 @@ import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import { set } from 'date-fns';
 import Circle from '@mui/icons-material/Circle';
 
+import { DndProvider, useDrag } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+
 const mockTags = [
   "escuela", "japanese", "programming"
 ]
 
 const mockTasks = [
   {
+    id: 0,
     name: "do homework",
     description: "do ones homework",
     date: "94/22/2020",
     tag: "escuela",
+    subtask: false,
     children: [
-      "ge it ready", "finish it", "set it up"
+      1, 2
     ]
   },
   {
-    name: "do homework",
-    description: "do ones homework",
-    date: "94/22/2020",
+    id: 1,
+    name: "secondary",
+    dascription: "secondary desc",
+    date: "09/22/2021",
     tag: "escuela",
+    subtask: true,
     children: [
-      "ge it ready", "finish it", "set it up"
     ]
   },
   {
+    id: 2,
+    name: "secondary",
+    dascription: "secondary desc",
+    date: "09/22/2021",
+    tag: "escuela",
+    subtask: true,
+    children: [
+    ]
+  },
+  {
+    id: 3,
     name: "do homework",
     description: "do ones homework",
     date: "94/22/2020",
     tag: "escuela",
+    subtask: false,
     children: [
-      "ge it ready", "finish it", "set it up"
+    ]
+  },
+  {
+    id: 4,
+    name: "do homework",
+    description: "do ones homework",
+    date: "94/22/2020",
+    tag: "escuela",
+    subtask: false,
+    children: [
     ]
   }
 ]
@@ -62,8 +89,18 @@ function ListEntry(props) {
   const [onHover, setOnHover] = useState({ display: 'none' })
   const [completeHover, setCompleteHover] = useState(false)
 
+  const [{ isDragging }, drag] = useDrag({
+    item: { name: "whatever" },
+    type: "task",
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    })
+  });
+
+  const opacity = isDragging ? 0.4 : 1;
+
   return (
-    <ListItem sx={{ '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' } }}
+    <ListItem ref={drag} sx={{ '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }, pl: props.subtask ? 4 : 0 }}
       onMouseEnter={(e) => setOnHover({ display: 'block' })}
       onMouseLeave={(e) => setOnHover({ display: 'none' })}
       secondaryAction={
@@ -86,45 +123,35 @@ function ListEntry(props) {
     </ListItem>
   )
 }
-//Rendering secondary task
-function ChildrenListEntry(props) {
-  const [onHover, setOnHover] = useState({ display: 'none' })
-  const [completeHover, setCompleteHover] = useState(false)
 
-  return (
-    <ListItem sx={{ pl: 4, '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' } }}
-      onMouseEnter={(e) => setOnHover({ display: 'block' })}
-      onMouseLeave={(e) => setOnHover({ display: 'none' })}
-    >
-      <IconButton
-        onMouseEnter={(e) => setCompleteHover(true)}
-        onMouseLeave={(e) => setCompleteHover(false)}
-
-      >         {completeHover ? <CheckOutlinedIcon></CheckOutlinedIcon> : <CircleOutlined></CircleOutlined>}
-      </IconButton>
-      <ListItemText primary={props.text}>
-      </ListItemText>
-      <IconButton edge="end" sx={onHover}>
-        <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
-      </IconButton>
-    </ListItem>
-  )
-}
 
 function ListContents(props) {
   const formattedTasks = props.tasks.map((task, index) => {
-    const thisEntry = [<ListEntry
-      key={task.name + index}
-      text={task.name}
-      description={task.description}
-    ></ListEntry>]
+    let parent = false;
+    if (task.children.length) {
+      parent = true;
+    }
     return (
-      thisEntry.concat(task.children.map((childTask, index) => { return (<ChildrenListEntry key={childTask + index} text={childTask}></ChildrenListEntry>) }
-      ))
+      <ListEntry
+        key={task.name + index}
+        text={task.name}
+        description={task.description}
+        subtask={task.subtask}
+      ></ListEntry>
     )
   })
+   
   return (
-    <List>
+    <List
+      sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+      component="nav"
+      aria-labelledby="nested-list-subheader"
+      subheader={
+        <ListSubheader component="div" id="nested-list-subheader">
+          Tasks
+        </ListSubheader>
+      }
+    >
       {formattedTasks}
     </List>
   )
@@ -149,18 +176,7 @@ export default function NestedList(props) {
   */
   const [onHover, setOnHover] = useState(null);
   return (
-    <List
-      sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
-      component="nav"
-      aria-labelledby="nested-list-subheader"
-      subheader={
-        <ListSubheader component="div" id="nested-list-subheader">
-          Tasks
-        </ListSubheader>
-      }
-    >
-      <ListContents tasks={mockTasks}>
-      </ListContents>
-    </List>
+    <ListContents tasks={mockTasks}>
+    </ListContents>
   );
 }
