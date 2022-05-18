@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { useState } from 'react';
+import { useRef } from 'react';
+ 
 import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -24,8 +26,13 @@ import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import { set } from 'date-fns';
 import Circle from '@mui/icons-material/Circle';
 
-import { DndProvider, useDrag } from 'react-dnd';
+import { DndProvider, useDrag, useDrop } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+
+import { ItemTypes } from './ItemTypes.js'
+
+import Chip from '@mui/material/Chip';
+import AddTaskIcon from '@mui/icons-material/AddTask';
 
 const mockTags = [
   "escuela", "japanese", "programming"
@@ -84,23 +91,88 @@ const mockTasks = [
     ]
   }
 ]
+
+function NewTask(props) {
+  return (
+    <ListItem
+      secondaryAction={
+        <IconButton
+
+          edge="end"
+          aria-label="options"
+          sx={()=>{}}>
+          <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
+        </IconButton>
+      }>
+    <Chip icon={<AddTaskIcon></AddTaskIcon>} label="Add new task" variant="outlined" clickable></Chip>
+
+    </ListItem>
+  )
+}
 //Rendering first task
 function ListEntry(props) {
   const [onHover, setOnHover] = useState({ display: 'none' })
   const [completeHover, setCompleteHover] = useState(false)
 
+  const ref = useRef(null)
+  console.log("Printing ref", ref, "Printing ref current", ref.current)
+
+  const [{ handlerId }, drop] = useDrop({
+    accept: ItemTypes.TASK,
+    collect(monitor) {
+      return {
+        handlerId: monitor.getHandlerId()
+      }
+    },
+    hover(item, monitor) {
+      if (!ref.current) {
+        return;
+      }
+      const dragIndex = item.index //What is being dragged 
+      const hoverIndex = props.index //Current index
+
+      //If dropped on same place do nothing
+      if (dragIndex === hoverIndex) {
+        return
+      }
+
+      const hoverBoundingRect = ref.current?.getBoundingClientRect()
+      // Get vertical middle
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
+      // Determine mouse position
+      const clientOffset = monitor.getClientOffset()
+      // Get pixels to the top
+      const hoverClientY = clientOffset.y - hoverBoundingRect.top
+      // Only perform the move when the mouse has crossed half of the items height
+      // When dragging downwards, only move when the cursor is below 50%
+      // When dragging upwards, only move when the cursor is above 50%
+      // Dragging downwards
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return
+      }
+      // Dragging upwards
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return
+      }
+
+
+    }
+  })
+
   const [{ isDragging }, drag] = useDrag({
-    item: { name: "whatever" },
-    type: "task",
+    type: ItemTypes.TASK,
+    item: () => {
+      return { id:props.id , index:props.index }
+    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     })
   });
 
-  const opacity = isDragging ? 0.4 : 1;
 
   return (
-    <ListItem ref={drag} sx={{ '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }, pl: props.subtask ? 4 : 0 }}
+    <ListItem ref={drag} sx={{ '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }, pl: props.subtask ? 4 : 0, borderBottom: 2, borderColor: "red" }}
       onMouseEnter={(e) => setOnHover({ display: 'block' })}
       onMouseLeave={(e) => setOnHover({ display: 'none' })}
       secondaryAction={
@@ -137,10 +209,11 @@ function ListContents(props) {
         text={task.name}
         description={task.description}
         subtask={task.subtask}
+        index={index}
       ></ListEntry>
     )
   })
-   
+
   return (
     <List
       sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
@@ -152,13 +225,14 @@ function ListContents(props) {
         </ListSubheader>
       }
     >
+      <NewTask></NewTask>
       {formattedTasks}
     </List>
   )
 }
 
 
-export default function NestedList(props) {
+export default function TaskList(props) {
 
   /*const [{ isDragging }, drag] = useDrag(() => ({
     type: 'TASK',
@@ -174,6 +248,8 @@ export default function NestedList(props) {
     })
   }))
   */
+
+
   const [onHover, setOnHover] = useState(null);
   return (
     <ListContents tasks={mockTasks}>
