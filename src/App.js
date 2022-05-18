@@ -43,13 +43,6 @@ function App() {
     }, [tags]
   )
 
- const taskHandler = (task, index) =>{
-    tasks[index] = task 
- }
- 
- const tagHandler = (tag, index) => {
-   tag[index] = tag
- }
 
   return (
     <Box sx={{
