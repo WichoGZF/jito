@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
 import ResponsiveAppBar from "./components/ResponsiveAppBar";
 import TimerControlCard from './components/TimerControlCard';
-import './App.css';
+import TaskList from './components/TaskList';
+
 import Box from "@mui/material/Box";
-import TaskSection from './components/TaskSection';
-import { useEffect } from 'react';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -61,7 +61,7 @@ function App() {
     }}>
       <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
       <TimerControlCard></TimerControlCard>
-      <TaskSection tagHandler={tagHandler} taskHandler={taskHandler} tasks={tasks} tags={tags}></TaskSection>
+      <TaskList></TaskList>
     </Box>
   );
 }
