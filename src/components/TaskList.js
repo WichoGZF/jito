@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { useState } from 'react';
-import { useRef } from 'react';
- 
+import { useState, useRef, useCallback } from 'react';
+
 import ListSubheader from '@mui/material/ListSubheader';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -14,7 +13,7 @@ import SendIcon from '@mui/icons-material/Send';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import StarBorder from '@mui/icons-material/StarBorder';
-import { IconButton, Input } from '@mui/material';
+import { IconButton, Input, Typography } from '@mui/material';
 import { ListItem } from '@mui/material';
 import { Grid } from '@mui/material';
 import Check from '@mui/icons-material/Check'
@@ -26,13 +25,18 @@ import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import { set } from 'date-fns';
 import Circle from '@mui/icons-material/Circle';
 
-import { DndProvider, useDrag, useDrop } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useDrag, useDrop } from 'react-dnd';
+
+import update from 'immutability-helper'
 
 import { ItemTypes } from './ItemTypes.js'
 
+
 import Chip from '@mui/material/Chip';
+import Button from '@mui/material/Button';
 import AddTaskIcon from '@mui/icons-material/AddTask';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { Box } from '@mui/system';
 
 const mockTags = [
   "escuela", "japanese", "programming"
@@ -100,11 +104,11 @@ function NewTask(props) {
 
           edge="end"
           aria-label="options"
-          sx={()=>{}}>
+          sx={() => { }}>
           <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
         </IconButton>
       }>
-    <Chip icon={<AddTaskIcon></AddTaskIcon>} label="Add new task" variant="outlined" clickable></Chip>
+      <Chip icon={<AddTaskIcon></AddTaskIcon>} label="Add new task" variant="outlined" clickable></Chip>
 
     </ListItem>
   )
@@ -115,7 +119,6 @@ function ListEntry(props) {
   const [completeHover, setCompleteHover] = useState(false)
 
   const ref = useRef(null)
-  console.log("Printing ref", ref, "Printing ref current", ref.current)
 
   const [{ handlerId }, drop] = useDrop({
     accept: ItemTypes.TASK,
@@ -130,8 +133,8 @@ function ListEntry(props) {
       }
       const dragIndex = item.index //What is being dragged 
       const hoverIndex = props.index //Current index
-
-      //If dropped on same place do nothing
+      console.log("Dragindex(dragged):", dragIndex, "\nHoverIndex(what is over)", hoverIndex)
+      //If hovered on same place do nothing
       if (dragIndex === hoverIndex) {
         return
       }
@@ -155,24 +158,26 @@ function ListEntry(props) {
       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
         return
       }
-
-
+      props.moveTask(dragIndex, hoverIndex)
+      item.index = hoverIndex
     }
   })
 
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.TASK,
     item: () => {
-      return { id:props.id , index:props.index }
+      return { id: props.id, index: props.index }
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     })
   });
 
+  const opacity = isDragging ? 0 : 1;
+  drag(drop(ref))
 
   return (
-    <ListItem ref={drag} sx={{ '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }, pl: props.subtask ? 4 : 0, borderBottom: 2, borderColor: "red" }}
+    <ListItem ref={ref} sx={{ opacity: opacity, '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }, pl: props.subtask ? 4 : 0, borderBottom: 2, borderColor: "red" }}
       onMouseEnter={(e) => setOnHover({ display: 'block' })}
       onMouseLeave={(e) => setOnHover({ display: 'none' })}
       secondaryAction={
@@ -197,14 +202,30 @@ function ListEntry(props) {
 }
 
 
-function ListContents(props) {
-  const formattedTasks = props.tasks.map((task, index) => {
-    let parent = false;
-    if (task.children.length) {
-      parent = true;
+
+export default function TaskList(props) {
+  const [tasks, setTasks] = useState(mockTasks)
+
+  const moveTask = useCallback((dragIndex, hoverIndex) => {
+    if(tasks[dragIndex].subtask && tasks[dragIndex].subtask){
+      
+      
     }
+    setTasks((prevTasks) =>
+      update(prevTasks, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, prevTasks[dragIndex]],
+        ],
+      }),
+    )
+  }, [])
+  console.log(tasks)
+
+  const formattedTasks = tasks.map((task, index) => {
     return (
       <ListEntry
+        moveTask={moveTask}
         key={task.name + index}
         text={task.name}
         description={task.description}
@@ -220,9 +241,10 @@ function ListContents(props) {
       component="nav"
       aria-labelledby="nested-list-subheader"
       subheader={
-        <ListSubheader component="div" id="nested-list-subheader">
-          Tasks
-        </ListSubheader>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", justifyContent: "start" }}>
+          <Typography variant="overline" sx={{ pl: 1 }}>Tasks</Typography>
+          <Button edge="start" endIcon={<ArrowDropDownIcon></ArrowDropDownIcon>}>Current tag</Button>
+        </Box>
       }
     >
       <NewTask></NewTask>
@@ -231,28 +253,3 @@ function ListContents(props) {
   )
 }
 
-
-export default function TaskList(props) {
-
-  /*const [{ isDragging }, drag] = useDrag(() => ({
-    type: 'TASK',
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging()
-    })
-  }))
-  /*const [{ canDrop, isOver }, drop] = useDrop(() => ({
-    accept: 'TASK',
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop()
-    })
-  }))
-  */
-
-
-  const [onHover, setOnHover] = useState(null);
-  return (
-    <ListContents tasks={mockTasks}>
-    </ListContents>
-  );
-}
