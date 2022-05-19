@@ -37,6 +37,7 @@ import Button from '@mui/material/Button';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { Box, recomposeColor } from '@mui/system';
+import { Visibility } from '@mui/icons-material';
 
 const mockTags = [
   "escuela", "japanese", "programming"
@@ -47,7 +48,7 @@ const mockTasks = [
     id: 0,
     name: "task 1",
     description: "do ones homework",
-    date: "94/22/2020",
+    date: "",
     tag: "escuela",
     subtask: false,
     children: [
@@ -58,7 +59,7 @@ const mockTasks = [
     id: 1,
     name: "secondary 1",
     dascription: "secondary desc",
-    date: "09/22/2021",
+    date: "",
     tag: "escuela",
     subtask: true,
     children: [
@@ -68,7 +69,7 @@ const mockTasks = [
     id: 2,
     name: "secondary 2",
     dascription: "secondary desc",
-    date: "09/22/2021",
+    date: "",
     tag: "escuela",
     subtask: true,
     children: [
@@ -78,7 +79,7 @@ const mockTasks = [
     id: 3,
     name: "task 2",
     description: "do ones homework",
-    date: "94/22/2020",
+    date: "",
     tag: "escuela",
     subtask: false,
     children: [
@@ -158,6 +159,9 @@ function ListEntry(props) {
         setDragHover("below");
       else
         setDragHover("above");
+    },
+    drop(item, monitor){
+
     }
   })
 
@@ -175,6 +179,22 @@ function ListEntry(props) {
 
   //Opacity?
   const opacity = isDragging ? 0 : 1;
+  const visibility = isDragging? "hidden": "visible";
+
+  let borderBottom;
+  let borderTop;
+  if(isOver){
+    if(dragHover==="below"){
+      borderBottom=2;
+    }
+    else if (dragHover==="above"){
+      borderTop=2;
+    }
+  }
+  else{
+    borderBottom=0;
+    borderTop=0;
+  }
 
   drag(drop(ref))
 
@@ -184,8 +204,9 @@ function ListEntry(props) {
         opacity: opacity,
         '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
         pl: props.subtask ? 4 : 0,
-        borderBottom: dragHover === "below" ? 2 : 0, borderColor: "theme.primary.main",
-        borderTop: dragHover === "above" ? 2 : 0, borderColor: "theme.primary.main"
+        borderBottom: borderBottom, borderColor: "theme.primary.main",
+        borderTop: borderTop, borderColor: "theme.primary.main",
+        visibility: visibility
       }}
       onMouseEnter={(e) => setOnHover({ display: 'block' })}
       onMouseLeave={(e) => setOnHover({ display: 'none' })}
@@ -206,6 +227,7 @@ function ListEntry(props) {
       </ListItemIcon>
       <ListItemText primary={props.text} secondary={props.description}>
       </ListItemText>
+      <Chip variant="outlined" label={props.date} sx={{visibility: props.date? "visible": "hidden"}} clickable></Chip>
     </ListItem>
   )
 }
@@ -240,6 +262,7 @@ export default function TaskList(props) {
         description={task.description}
         subtask={task.subtask}
         index={index}
+        date={task.date}
       ></ListEntry>
     )
   })
