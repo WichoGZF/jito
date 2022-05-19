@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -11,9 +12,75 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AvTimerIcon from "@mui/icons-material/AvTimer";
 import Button from '@mui/material/Button';
+import { DialogContent, DialogTitle, DialogActions, Dialog } from "@mui/material";
+
+const DialogSettings = (props) => {
+    return (
+        <Dialog
+            open={props.open}
+            onClose={props.handleClose}
+        >
+            <DialogTitle>
+                Settings
+            </DialogTitle>
+            <DialogContent dividers>
+
+            </DialogContent>
+            <DialogActions >
+                <Button onClick={props.handleClose}>Cancel</Button>
+                <Button onClick={props.handleClose}> Save </Button>
+            </DialogActions>
+
+        </Dialog>
+    )
+}
+
+const DialogLogIn = (props) => {
+    return (
+        <Dialog
+            open={props.open}
+            onClose={props.handleClose}
+        >
+            <DialogTitle>
+                Log In
+            </DialogTitle>
+            <DialogContent>
+
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={props.handleClose}>Cancel</Button>
+                <Button onClick={props.handleClose}> Log in </Button>
+            </DialogActions>
+
+        </Dialog>
+    )
+}
+
+const DialogStatistics = (props) => {
+    return (
+        <Dialog
+            open={props.open}
+            onClose={props.handleClose}
+        >
+            <DialogTitle>
+                Statistics
+            </DialogTitle>
+            <DialogContent dividers>
+
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={props.handleClose}>Close</Button>
+            </DialogActions>
+
+        </Dialog>
+    )
+}
 
 const ResponsiveAppBar = (props) => {
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [anchorElUser, setAnchorElUser] = useState(null);
+    const [dialogOpen, setDialogOpen] = useState(null)
+
+    console.log(dialogOpen);
 
     let loggedInLabel
     if (props.loggedIn) {
@@ -27,11 +94,22 @@ const ResponsiveAppBar = (props) => {
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
+        console.log(anchorElUser)
     };
+
+    const handleSelectUserMenu = (selection) => {
+        setDialogOpen(selection);
+        setAnchorElUser(null);
+        console.log(dialogOpen)
+    };
+
+    const handleCloseDialog = () => {
+        setDialogOpen(null)
+    }
 
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
-    };
+    }
 
 
 
@@ -79,8 +157,8 @@ const ResponsiveAppBar = (props) => {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            {settings.map((setting) => (
-                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                            {settings.map((setting, index) => (
+                                <MenuItem key={setting} onClick={() => handleSelectUserMenu(index + 1)}>
                                     <Typography textAlign="center">{setting}</Typography>
                                 </MenuItem>
                             ))}
@@ -88,6 +166,9 @@ const ResponsiveAppBar = (props) => {
                     </Box>
                 </Toolbar>
             </Container>
+            <DialogLogIn open={dialogOpen === 3} handleClose={handleCloseDialog}></DialogLogIn>
+            <DialogSettings open={dialogOpen === 1} handleClose={handleCloseDialog}></DialogSettings>
+            <DialogStatistics open={dialogOpen === 2} handleClose={handleCloseDialog}></DialogStatistics>
         </AppBar>
     );
 };

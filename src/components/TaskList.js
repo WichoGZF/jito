@@ -36,7 +36,7 @@ import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
 import AddTaskIcon from '@mui/icons-material/AddTask';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Box } from '@mui/system';
+import { Box, recomposeColor } from '@mui/system';
 
 const mockTags = [
   "escuela", "japanese", "programming"
@@ -45,7 +45,7 @@ const mockTags = [
 const mockTasks = [
   {
     id: 0,
-    name: "do homework",
+    name: "task 1",
     description: "do ones homework",
     date: "94/22/2020",
     tag: "escuela",
@@ -56,7 +56,7 @@ const mockTasks = [
   },
   {
     id: 1,
-    name: "secondary",
+    name: "secondary 1",
     dascription: "secondary desc",
     date: "09/22/2021",
     tag: "escuela",
@@ -66,7 +66,7 @@ const mockTasks = [
   },
   {
     id: 2,
-    name: "secondary",
+    name: "secondary 2",
     dascription: "secondary desc",
     date: "09/22/2021",
     tag: "escuela",
@@ -76,7 +76,7 @@ const mockTasks = [
   },
   {
     id: 3,
-    name: "do homework",
+    name: "task 2",
     description: "do ones homework",
     date: "94/22/2020",
     tag: "escuela",
@@ -86,7 +86,7 @@ const mockTasks = [
   },
   {
     id: 4,
-    name: "do homework",
+    name: "task 3",
     description: "do ones homework",
     date: "94/22/2020",
     tag: "escuela",
@@ -115,19 +115,24 @@ function NewTask(props) {
 }
 //Rendering first task
 function ListEntry(props) {
+  console.log("List entry rerender");
   const [onHover, setOnHover] = useState({ display: 'none' })
   const [completeHover, setCompleteHover] = useState(false)
+  const [dragHover, setDragHover] = useState(null)
+
+  const handleDragHover = () => setDragHover(null);
 
   const ref = useRef(null)
 
-  const [{ handlerId }, drop] = useDrop({
+  const [{ handlerId, isOver }, drop] = useDrop({
     accept: ItemTypes.TASK,
-    collect(monitor) {
-      return {
-        handlerId: monitor.getHandlerId()
-      }
-    },
+    collect: (monitor) => ({
+      handlerId: monitor.getHandlerId(),
+      isOver: monitor.isOver()
+    }
+    ),
     hover(item, monitor) {
+      console.log("you're hovering")
       if (!ref.current) {
         return;
       }
@@ -138,30 +143,24 @@ function ListEntry(props) {
       if (dragIndex === hoverIndex) {
         return
       }
+      const clientOffset = monitor.getClientOffset();
 
       const hoverBoundingRect = ref.current?.getBoundingClientRect()
       // Get vertical middle
       const hoverMiddleY =
         (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
       // Determine mouse position
-      const clientOffset = monitor.getClientOffset()
+
       // Get pixels to the top
-      const hoverClientY = clientOffset.y - hoverBoundingRect.top
-      // Only perform the move when the mouse has crossed half of the items height
-      // When dragging downwards, only move when the cursor is below 50%
-      // When dragging upwards, only move when the cursor is above 50%
-      // Dragging downwards
-      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-        return
-      }
-      // Dragging upwards
-      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-        return
-      }
-      props.moveTask(dragIndex, hoverIndex)
-      item.index = hoverIndex
+      const hoverClientY = clientOffset.y - (hoverBoundingRect.top + hoverMiddleY)
+
+      if (hoverClientY > 0)
+        setDragHover("below");
+      else
+        setDragHover("above");
     }
   })
+
 
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.TASK,
@@ -172,12 +171,22 @@ function ListEntry(props) {
       isDragging: monitor.isDragging(),
     })
   });
+  //For line highlighting 
 
+  //Opacity?
   const opacity = isDragging ? 0 : 1;
+
   drag(drop(ref))
 
   return (
-    <ListItem ref={ref} sx={{ opacity: opacity, '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }, pl: props.subtask ? 4 : 0, borderBottom: 2, borderColor: "red" }}
+    <ListItem ref={ref}
+      sx={{
+        opacity: opacity,
+        '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
+        pl: props.subtask ? 4 : 0,
+        borderBottom: dragHover === "below" ? 2 : 0, borderColor: "theme.primary.main",
+        borderTop: dragHover === "above" ? 2 : 0, borderColor: "theme.primary.main"
+      }}
       onMouseEnter={(e) => setOnHover({ display: 'block' })}
       onMouseLeave={(e) => setOnHover({ display: 'none' })}
       secondaryAction={
@@ -207,9 +216,9 @@ export default function TaskList(props) {
   const [tasks, setTasks] = useState(mockTasks)
 
   const moveTask = useCallback((dragIndex, hoverIndex) => {
-    if(tasks[dragIndex].subtask && tasks[dragIndex].subtask){
-      
-      
+    if (tasks[dragIndex].subtask && tasks[dragIndex].subtask) {
+
+
     }
     setTasks((prevTasks) =>
       update(prevTasks, {
