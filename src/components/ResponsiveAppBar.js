@@ -12,6 +12,9 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AvTimerIcon from "@mui/icons-material/AvTimer";
 import Button from '@mui/material/Button';
+import { Switch } from "@mui/material";
+import { Grid } from "@mui/material";
+import { TextField } from "@mui/material";
 import { DialogContent, DialogTitle, DialogActions, Dialog } from "@mui/material";
 
 const DialogSettings = (props) => {
@@ -24,6 +27,43 @@ const DialogSettings = (props) => {
                 Settings
             </DialogTitle>
             <DialogContent dividers>
+                <Box>
+                    <Typography>Timer configuration</Typography>
+                    <Grid container spacing = {2}>
+                        <Grid item xs={3}>
+                            <TextField label="Pomodoro duration" defaultValue="25" helperText="Minutes"></TextField>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <TextField label="Short break duration" defaultValue="25" helperText="Minutes"></TextField>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <TextField label="Long break duration" defaultValue="25" helperText="Minutes"></TextField>
+                        </Grid>
+                        <Grid item xs={3}>
+                            <TextField label="Long break every" defaultValue = "4" helperText="pomodoros"></TextField>
+                        </Grid>
+                    </Grid>
+                </Box>
+                <Box>
+                    <Grid container justifyContent="space-between">
+                        <Grid item xs="auto">
+                            <Typography>Automatic pomodoro start:</Typography>
+                        </Grid>
+                        <Grid item xs="auto">
+                            <Switch></Switch>
+                        </Grid>
+                    </Grid>
+                </Box>
+                <Box>
+                    <Grid container justifyContent="space-between">
+                        <Grid item xs="auto">
+                            <Typography>Automatic break start:</Typography>
+                        </Grid>
+                        <Grid item xs="auto">
+                            <Switch></Switch>
+                        </Grid>
+                    </Grid>
+                </Box>
 
             </DialogContent>
             <DialogActions >
@@ -45,7 +85,7 @@ const DialogLogIn = (props) => {
                 Log In
             </DialogTitle>
             <DialogContent>
-
+                
             </DialogContent>
             <DialogActions>
                 <Button onClick={props.handleClose}>Cancel</Button>
