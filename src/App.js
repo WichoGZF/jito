@@ -54,7 +54,7 @@ function App() {
       alignItems: "center"
     }}>
       <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
-      <TimerControlCard></TimerControlCard>
+      <TimerControl></TimerControl>
       <TaskList></TaskList>
     </Box>
   );
