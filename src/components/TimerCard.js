@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
 
-export default function TimerControlCard(props) {
+export default function TimerCard(props) {
   return (
     <Card variant="outlined" sx={{ display: "flex", justifyContent: "center", width: "50vw" }}>
       <Box
@@ -18,8 +18,8 @@ export default function TimerControlCard(props) {
       >
         <CardContent sx={{ flex: "1 0 auto" }}>
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", pl: 1, pb: 1 }}>
-            <Typography component="div" variant="h5">
-              Live From Space
+            <Typography component="div" variant="h2">
+              {props.minutes}:{props.seconds}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", pl: 1, pb: 1 }}>

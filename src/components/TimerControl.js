@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
+import TimerCard from './TimerCard';
 
-function Timer(props) {
+export default function TimerControl(props) {
     const [timerSeconds, setTimerSeconds] = useState(0); 
     const [timerMinuts, setTimerMinuts] = useState(25);
     const [timerState, setTimerState] = useState(false);
@@ -78,24 +79,6 @@ function Timer(props) {
     }, [timerState, timerSeconds]);
   
     return (
-      <div>
-        <Grid container spacing={3} alignItems="center">
-          <Grid item>
-            <Start
-              clockRunning={timerState}
-              stopTimer={changeTimerState}
-              resetTimer={resetTimer}
-              clockStarted={clockStarted}
-              clockType={clockType}>
-            </Start>
-          </Grid>
-          <Grid item>
-            <Options changeTimerType={establishTimerType} timerType={clockType}></Options>
-          </Grid>
-          <Grid item>
-            <Typography variant="h4">{String(timerMinuts).padStart(2, "0")}:{String(timerSeconds).padStart(2, "0")}</Typography>
-          </Grid>
-        </Grid>
-      </div>
+      <TimerCard></TimerCard>
     )
   }

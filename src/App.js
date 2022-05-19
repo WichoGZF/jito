@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
+
 import ResponsiveAppBar from "./components/ResponsiveAppBar";
-import TimerControlCard from './components/TimerControlCard';
+import TimerControl from './components/TimerControl';
 import TaskList from './components/TaskList';
 
 import Box from "@mui/material/Box";
