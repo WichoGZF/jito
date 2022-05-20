@@ -38,6 +38,7 @@ import AddTaskIcon from '@mui/icons-material/AddTask';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { Box, recomposeColor } from '@mui/system';
 import { Visibility } from '@mui/icons-material';
+import { Paper } from '@mui/material';
 
 const mockTags = [
   "escuela", "japanese", "programming"
@@ -206,7 +207,6 @@ function ListEntry(props) {
         pl: props.subtask ? 4 : 0,
         borderBottom: borderBottom, borderColor: "theme.primary.main",
         borderTop: borderTop, borderColor: "theme.primary.main",
-        visibility: visibility
       }}
       onMouseEnter={(e) => setOnHover({ display: 'block' })}
       onMouseLeave={(e) => setOnHover({ display: 'none' })}
@@ -227,7 +227,7 @@ function ListEntry(props) {
       </ListItemIcon>
       <ListItemText primary={props.text} secondary={props.description}>
       </ListItemText>
-      <Chip variant="outlined" label={props.date} sx={{visibility: props.date? "visible": "hidden"}} clickable></Chip>
+      <Chip variant="outlined" label={props.date} sx={{visibility: props.date? "visible": "hidden"}}></Chip>
     </ListItem>
   )
 }

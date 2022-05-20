@@ -12,22 +12,83 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AvTimerIcon from "@mui/icons-material/AvTimer";
 import Button from '@mui/material/Button';
-import { Switch } from "@mui/material";
+import { Select, Switch } from "@mui/material";
 import { Grid } from "@mui/material";
 import { TextField } from "@mui/material";
 import { Input } from "@mui/material";
 import { Link } from '@mui/material';
 import { Chip } from "@mui/material";
 import { DialogContent, DialogTitle, DialogActions, Dialog } from "@mui/material";
+import { Tabs, Tab } from '@mui/material';
 
 import CloseIcon from '@mui/icons-material/Close';
 import { Divider } from "@mui/material";
 
 import { SvgIcon } from "@mui/material";
-import {ReactComponent as GoogleIcon} from '../assets/Google__G__Logo.svg'
-import {ReactComponent as FacebookIcon} from '../assets/Facebook_Logo.svg'
+import { ReactComponent as GoogleIcon } from '../assets/Google__G__Logo.svg'
+import { ReactComponent as FacebookIcon } from '../assets/Facebook_Logo.svg'
+
+import PropTypes from 'prop-types';
+
+import Slider from '@mui/material/Slider';
+import VolumeDown from '@mui/icons-material/VolumeDown';
+import VolumeUp from '@mui/icons-material/VolumeUp';
+
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { height } from "@mui/system";
+
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 3 }}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
+}
+
+TabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
+};
+
+function a11yProps(index) {
+    return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+    };
+}
+
 
 const DialogSettings = (props) => {
+    const [value, setValue] = useState(0);
+
+    const [volumeValue, setVolumeValue] = useState(30);
+
+    const [theme, setTheme] = useState('light')
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue)
+    };
+
+    const handleVolumeChange = (event, newValue) => {
+        setVolumeValue(newValue)
+    }
+
+    const handleTheme = (event, newTheme) => {
+        setTheme(newTheme)
+    }
     return (
         <Dialog
             open={props.open}
@@ -36,9 +97,16 @@ const DialogSettings = (props) => {
             <DialogTitle>
                 <Grid container direction="row" justifyContent="space-between" alignItems="center">
                     <Grid item xs="auto">
-                        <Typography>
-                            Settings
-                        </Typography>
+                        <Tabs
+                            onChange={handleChange}
+                            value={value}>
+                            <Tab label="Timer" {...a11yProps(0)}>
+                            </Tab>
+                            <Tab label="Notification" {...a11yProps(1)}>
+                            </Tab>
+                            <Tab label="App" {...a11yProps(2)}>
+                            </Tab>
+                        </Tabs>
                     </Grid>
                     <Grid item xs="auto">
                         <IconButton onClick={props.handleClose}>
@@ -48,43 +116,201 @@ const DialogSettings = (props) => {
                 </Grid>
             </DialogTitle>
             <DialogContent dividers>
-                <Box>
-                    <Typography>Timer configuration</Typography>
-                    <Grid container spacing={2}>
-                        <Grid item xs={3}>
-                            <TextField label="Pomodoro duration" defaultValue="25" helperText="Minutes"></TextField>
+                <TabPanel value={value} index={0}>
+                    <Grid container spacing={2} direction='column'>
+                        <Grid item>
+                            <Grid container direction='row' spacing={4}>
+                                <Grid item>
+                                    <TextField label="Pomodoro duration" defaultValue="25" helperText="Minutes"></TextField>
+                                </Grid>
+                                <Grid item>
+                                    <TextField label="Short break duration" defaultValue="25" helperText="Minutes"></TextField>
+                                </Grid>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={3}>
-                            <TextField label="Short break duration" defaultValue="25" helperText="Minutes"></TextField>
+                        <Grid item>
+                            <Grid container direction='row' spacing={4}>
+                                <Grid item>
+                                    <TextField label="Long break duration" defaultValue="25" helperText="Minutes"></TextField>
+                                </Grid>
+                                <Grid item>
+                                    <TextField label="Long break every" defaultValue="4" helperText="pomodoros"></TextField>
+                                </Grid>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={3}>
-                            <TextField label="Long break duration" defaultValue="25" helperText="Minutes"></TextField>
+                        <Grid item>
+                            <Grid container justifyContent="space-between" alignItems='center' direction='row'>
+                                <Grid item xs="auto">
+                                    <Typography>Automatic pomodoro start:</Typography>
+                                </Grid>
+                                <Grid item xs="auto">
+                                    <Switch></Switch>
+                                </Grid>
+                            </Grid>
                         </Grid>
-                        <Grid item xs={3}>
-                            <TextField label="Long break every" defaultValue="4" helperText="pomodoros"></TextField>
+                        <Grid item>
+                            <Grid container justifyContent="space-between" alignItems='center' direction='row'>
+                                <Grid item xs="auto">
+                                    <Typography>Automatic break start:</Typography>
+                                </Grid>
+                                <Grid item xs="auto">
+                                    <Switch></Switch>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+
+                    </Grid>
+                </TabPanel>
+                <TabPanel value={value} index={1}>
+                    <Grid container spacing={3} direction="column" sx={{ width: '40vw', height: '60vw' }}>
+                        <Grid item>
+                            <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
+                                <Grid item xs="auto"><Typography>Alarm volume</Typography></Grid>
+                                <Grid item xs>
+                                    <Grid container spacing={2} direction="row" alignItems="center">
+                                        <Grid item xs='auto'>
+                                            <VolumeDown />
+                                        </Grid>
+                                        <Grid item xs>
+                                            <Slider aria-label="Volume" value={value} onChange={handleChange} />
+                                        </Grid>
+                                        <Grid item xs='auto'>
+                                            <VolumeUp />
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                            <Grid container spacing={4} direction="row" justifyContent="space-between" alignItems="center">
+                                <Grid item xs='auto'>
+                                    <Typography>Alarm sound</Typography>
+                                </Grid>
+                                <Grid item xs>
+                                    <Select sx={{ width: '100%' }}></Select>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                            <Grid container justifyContent="space-between" alignItems="center" spacing={4}>
+                                <Grid item xs='auto'>
+                                    <Typography>Ticking volume</Typography>
+                                </Grid>
+                                <Grid item xs>
+                                    <Grid container spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
+                                        <Grid item xs='auto'>
+                                            <VolumeDown />
+                                        </Grid>
+                                        <Grid item xs>
+                                            <Slider aria-label="Volume" value={value} onChange={handleChange} />
+                                        </Grid>
+                                        <Grid item xs='auto'>
+                                            <VolumeUp />
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                            <Grid container spacing={4} direction="row" justifyContent="space-between" alignItems="center" fullWidth='true'>
+                                <Grid item xs='auto'>
+                                    <Typography>Alarm sound</Typography>
+                                </Grid>
+                                <Grid item xs>
+                                    <Select sx={{ width: '100%' }}></Select>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                            <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
+                                <Grid item>
+                                    <Typography>Disable alarm</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <Switch></Switch>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                            <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
+                                <Grid item xs='auto'>
+                                    <Typography>Ticking sound</Typography>
+                                </Grid>
+                                <Grid item xs='auto'>
+                                    <Switch></Switch>
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
-                </Box>
-                <Box>
-                    <Grid container justifyContent="space-between">
-                        <Grid item xs="auto">
-                            <Typography>Automatic pomodoro start:</Typography>
+                </TabPanel>
+                <TabPanel value={value} index={2}>
+                    <Grid container spacing={2} direction="column" sx={{ width: '40vw', height: '60vw' }}>
+                        <Grid item>
+                            <Grid container direction='row' justifyContent='space-between' alignItems='center'>
+                                <Grid item xs='auto'>
+                                    <Typography>
+                                        Color theme
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs='auto'>
+                                    <ToggleButtonGroup
+                                        value={theme}
+                                        exclusive
+                                        onChange={handleTheme}
+                                        aria-label="theme select"
+                                    >
+                                        <ToggleButton value="light" aria-label="dark theme">
+                                            <Button>Light</Button>
+                                        </ToggleButton>
+                                        <ToggleButton value="dark" aria-label="dark theme">
+                                            <Button>Dark</Button>
+                                        </ToggleButton>
+                                    </ToggleButtonGroup>
+                                </Grid>
+                            </Grid>
                         </Grid>
-                        <Grid item xs="auto">
-                            <Switch></Switch>
+                        <Grid item>
+                            <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
+                                <Grid item xs='auto'>
+                                    <Typography>Time zone</Typography>
+                                </Grid>
+                                <Grid item xs>
+                                    <Select sx={{ width: '100%' }}></Select>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                            <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
+                                <Grid item xs='auto'>
+                                    <Typography>Time format</Typography>
+                                </Grid>
+                                <Grid item xs>
+                                    <Select sx={{ width: '100%' }}></Select>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                            <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
+                                <Grid item xs='auto'>
+                                    <Typography>Date format</Typography>
+                                </Grid>
+                                <Grid item xs>
+                                    <Select sx={{ width: '100%' }}></Select>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                            <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
+                                <Grid item xs='auto'>
+                                    <Typography>Add new tasks to...</Typography>
+                                </Grid>
+                                <Grid item xs>
+                                    <Select sx={{ width: '100%' }}></Select>
+                                </Grid>
+                            </Grid>
                         </Grid>
                     </Grid>
-                </Box>
-                <Box>
-                    <Grid container justifyContent="space-between">
-                        <Grid item xs="auto">
-                            <Typography>Automatic break start:</Typography>
-                        </Grid>
-                        <Grid item xs="auto">
-                            <Switch></Switch>
-                        </Grid>
-                    </Grid>
-                </Box>
+                </TabPanel>
 
             </DialogContent>
             <DialogActions >
@@ -133,17 +359,17 @@ const DialogLogIn = (props) => {
                             </Grid>
                         </Grid>
                     </Grid>
-                    <Divider orientation = "vertical" flexItem sx={{pl:"40px"}}></Divider>
+                    <Divider orientation="vertical" flexItem sx={{ pl: "40px" }}></Divider>
                     <Grid item xs>
                         <Grid container spacing={2} direction="column">
                             <Grid item>
-                                <Button variant="outlined" fullWidth="true" startIcon={<SvgIcon viewBox = '0 0 24 24' component={GoogleIcon}></SvgIcon>}>Log in with Google</Button>
+                                <Button variant="outlined" fullWidth="true" startIcon={<SvgIcon viewBox='0 0 24 24' component={GoogleIcon}></SvgIcon>}>Log in with Google</Button>
                             </Grid>
                             <Grid item>
-                                <Button variant="outlined" fullWidth="true" startIcon={<SvgIcon viewBox= '0 0 24 24' component={FacebookIcon}></SvgIcon>}>Log in with Facebook</Button>
+                                <Button variant="outlined" fullWidth="true" startIcon={<SvgIcon viewBox='0 0 24 24' component={FacebookIcon}></SvgIcon>}>Log in with Facebook</Button>
                             </Grid>
                             <Grid item>
-                                <Button fullWidth = "true">Register with email</Button>
+                                <Button fullWidth="true">Register with email</Button>
                             </Grid>
                         </Grid>
                     </Grid>
