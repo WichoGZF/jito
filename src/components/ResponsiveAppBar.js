@@ -162,7 +162,7 @@ const DialogSettings = (props) => {
                     </Grid>
                 </TabPanel>
                 <TabPanel value={value} index={1}>
-                    <Grid container spacing={3} direction="column" sx={{ width: '40vw', height: '60vw' }}>
+                    <Grid container spacing={3} direction="column" >
                         <Grid item>
                             <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
                                 <Grid item xs="auto"><Typography>Alarm volume</Typography></Grid>
@@ -183,10 +183,10 @@ const DialogSettings = (props) => {
                         </Grid>
                         <Grid item>
                             <Grid container spacing={4} direction="row" justifyContent="space-between" alignItems="center">
-                                <Grid item xs='auto'>
+                                <Grid item xs>
                                     <Typography>Alarm sound</Typography>
                                 </Grid>
-                                <Grid item xs>
+                                <Grid item xs={5}>
                                     <Select sx={{ width: '100%' }}></Select>
                                 </Grid>
                             </Grid>
@@ -213,10 +213,10 @@ const DialogSettings = (props) => {
                         </Grid>
                         <Grid item>
                             <Grid container spacing={4} direction="row" justifyContent="space-between" alignItems="center" fullWidth='true'>
-                                <Grid item xs='auto'>
+                                <Grid item xs>
                                     <Typography>Alarm sound</Typography>
                                 </Grid>
-                                <Grid item xs>
+                                <Grid item xs={5}>
                                     <Select sx={{ width: '100%' }}></Select>
                                 </Grid>
                             </Grid>
@@ -244,7 +244,7 @@ const DialogSettings = (props) => {
                     </Grid>
                 </TabPanel>
                 <TabPanel value={value} index={2}>
-                    <Grid container spacing={2} direction="column" sx={{ width: '40vw', height: '60vw' }}>
+                    <Grid container spacing={2} direction="column" >
                         <Grid item>
                             <Grid container direction='row' justifyContent='space-between' alignItems='center'>
                                 <Grid item xs='auto'>
@@ -271,40 +271,40 @@ const DialogSettings = (props) => {
                         </Grid>
                         <Grid item>
                             <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
-                                <Grid item xs='auto'>
+                                <Grid item xs>
                                     <Typography>Time zone</Typography>
                                 </Grid>
-                                <Grid item xs>
+                                <Grid item xs={5}>
                                     <Select sx={{ width: '100%' }}></Select>
                                 </Grid>
                             </Grid>
                         </Grid>
                         <Grid item>
                             <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
-                                <Grid item xs='auto'>
+                                <Grid item xs>
                                     <Typography>Time format</Typography>
                                 </Grid>
-                                <Grid item xs>
+                                <Grid item xs={5}>
                                     <Select sx={{ width: '100%' }}></Select>
                                 </Grid>
                             </Grid>
                         </Grid>
                         <Grid item>
                             <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
-                                <Grid item xs='auto'>
+                                <Grid item xs>
                                     <Typography>Date format</Typography>
                                 </Grid>
-                                <Grid item xs>
+                                <Grid item xs={5}>
                                     <Select sx={{ width: '100%' }}></Select>
                                 </Grid>
                             </Grid>
                         </Grid>
                         <Grid item>
                             <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
-                                <Grid item xs='auto'>
+                                <Grid item xs>
                                     <Typography>Add new tasks to...</Typography>
                                 </Grid>
-                                <Grid item xs>
+                                <Grid item xs={5}>
                                     <Select sx={{ width: '100%' }}></Select>
                                 </Grid>
                             </Grid>
@@ -379,6 +379,7 @@ const DialogLogIn = (props) => {
         </Dialog>
     )
 }
+
 
 const DialogStatistics = (props) => {
     return (
