@@ -6,6 +6,7 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
+import PauseIcon from '@mui/icons-material/Pause';
 
 export default function TimerCard(props) {
   return (
@@ -19,14 +20,14 @@ export default function TimerCard(props) {
         <CardContent sx={{ flex: "1 0 auto" }}>
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", pl: 1, pb: 1 }}>
             <Typography component="div" variant="h2">
-              {props.minutes}:{props.seconds}
+              {String(props.minutes).padStart(2, '0')}:{String(props.seconds).padStart(2, '0')}
             </Typography>
           </Box>
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", pl: 1, pb: 1 }}>
-          <IconButton aria-label="play/pause">
+          <IconButton onClick={props.onClickStartStop} aria-label="play/pause">
               <PlayArrowIcon sx={{ height: 38, width: 38 }} />
             </IconButton>
-            <IconButton aria-label="next">
+            <IconButton onClick={props.onClickSkip} aria-label="next" sx={{visibility: props.clockStarted? 'visible': 'hidden'}}>
               <SkipNextIcon />
             </IconButton>
             </Box>

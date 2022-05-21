@@ -5,11 +5,14 @@ export default function TimerControl(props) {
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [timerMinuts, setTimerMinuts] = useState(25);
   const [timerState, setTimerState] = useState(false);
-  const [clockType, setClockType] = useState("pomodoro");
   const [clockStarted, setClockStarted] = useState(false);
-
-  function changeTimerState() {
+  const [rest, setRest] = useState(false);
+  const changeTimerState = () => {
     setTimerState(!timerState);
+  }
+
+  const turnOnClockState = () => {
+    setClockStarted(true);
   }
 
   function setTime(minutes, seconds) {
@@ -20,66 +23,41 @@ export default function TimerControl(props) {
   /*Function for resetting the timer back to it's starting value. Acessed when skip is pressed or when a task is finished
   and the clock is non zero.*/
   function resetTimer() {
-    if (clockType === "regular") {
-      setTime(25, 0)
-    }
+    setTime(25, 0)
+    setClockStarted(false)
+    setTimerState(false)
   }
-
-  function establishTimerType(type) {
-    setClockType(type);
-    console.log("Clock type changed to... ", type)
-    if (type === "pomodoro") {
-      setTime(25, 0)
-    }
-    else if (type === "long pomodoro") {
-      setTime(50, 0)
-    }
-  }
-
 
   useEffect(() => {
     console.log(timerMinuts, timerSeconds)
     if (timerState) {
       const interval = setInterval(() => {
-        if (clockType === "pomodoro" || clockType === "rest") {
-          if (timerSeconds === 0) {
-            if (timerMinuts === 0) {
-              if (clockType === "pomodoro") {
-                console.log("Ended!")
-                changeTimerState();
-                setTime(5, 0)
-                setClockType("rest")
-                setClockStarted(false)
-                props.updateTimeHandler(25, 0)
-              }
-              else {
-                resetTimer() //Sets to pomodoro
-              }
+        if (timerSeconds === 0) {
+          if (timerMinuts === 0) {
+            if (rest) {
+              setRest(false)
             }
             else {
-              setTime(timerMinuts - 1, 59)
+              console.log("Ended doro!")
+              changeTimerState();
+              setTime(5, 0)
+              setRest(true)
+              setClockStarted(false)
             }
           }
           else {
-            setTimerSeconds(timerSeconds - 1);
+            setTime(timerMinuts - 1, 59)
           }
         }
         else {
-          if (timerSeconds === 60) {
-            setTime(timerMinuts + 1)
-          }
-          else {
-            setTimerSeconds(timerSeconds + 1);
-          }
-
+          setTimerSeconds(timerSeconds - 1);
         }
-
       }, 1000);
       return () => clearInterval(interval);
     }
   }, [timerState, timerSeconds]);
 
   return (
-    <TimerCard></TimerCard>
+    <TimerCard clockStarted={clockStarted} onClickStartStop={changeTimerState} onClickSkip={resetTimer} minutes={timerMinuts} seconds={timerSeconds}></TimerCard>
   )
 }
