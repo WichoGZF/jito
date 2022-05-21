@@ -37,6 +37,24 @@ import VolumeUp from '@mui/icons-material/VolumeUp';
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { height } from "@mui/system";
 
+import { completedTasks } from "../mock.js";
+
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip as ChartTooltip,
+    Legend,
+    ArcElement,
+} from 'chart.js';
+import { Line, Bar, Doughnut } from 'react-chartjs-2';
+
+import faker from '@faker-js/faker'
+
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -382,12 +400,102 @@ const DialogLogIn = (props) => {
 
 
 const DialogStatistics = (props) => {
+    ChartJS.register(
+        CategoryScale,
+        LinearScale,
+        PointElement,
+        LineElement,
+        Title,
+        ChartTooltip,
+        Legend,
+        BarElement,
+        ArcElement
+    );
+
+    const optionsLineChart = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: false,
+                text: 'Chart.js Line Chart',
+            },
+        },
+    };
+
+    const labelsLineChart = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+
+    const dataLineChart = {
+        labels: labelsLineChart,
+        datasets: [
+            {
+                label: 'Dataset 1',
+                data: labelsLineChart.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            }
+        ],
+    };
+
+    const labelsBarChart = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sundayb ']
+
+    const optionsBarChart = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+        },
+    };
+
+    const dataBarChart = {
+        labels: labelsBarChart,
+        datasets: [
+            {
+                label: 'Productive time',
+                data: labelsBarChart.map(() => faker.datatype.number({ min: 0, max: 100 })),
+                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+            },
+        ],
+    };
+
+    const dataDoughnut = {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [
+            {
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)',
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+
     return (
         <Dialog
             open={props.open}
             onClose={props.handleClose}
         >
             <DialogTitle>
+
                 <Grid container direction="row" justifyContent="space-between" alignItems="center">
                     <Grid item xs="auto">
                         <Typography>
@@ -402,9 +510,24 @@ const DialogStatistics = (props) => {
                 </Grid>
             </DialogTitle>
             <DialogContent dividers>
-
+                <Grid container direction='column' spacing={2}>
+                    <Grid container item justifyContent='space-between' alignItems='center'>
+                        <Grid item><Typography>Total stats</Typography></Grid>
+                        <Grid item><Select></Select></Grid>
+                    </Grid>
+                    <Grid container item justifyContent='space-between' alignItems='center'>
+                        <Grid item><Typography>History</Typography></Grid>
+                        <Grid item><Select></Select></Grid>
+                    </Grid>
+                    
+                    <Line options={optionsLineChart} data={dataLineChart}></Line>
+                    <Typography>Productive time</Typography>
+                    <Bar options={optionsBarChart} data={dataBarChart}></Bar>
+                    <Doughnut data={dataDoughnut}></Doughnut>
+                </Grid>
             </DialogContent>
-        </Dialog>
+
+        </Dialog >
     )
 }
 
