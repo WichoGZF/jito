@@ -63,6 +63,6 @@ export default function TimerControl(props) {
   }, [timerState, timerSeconds]);
 
   return (
-    <TimerCard clockStarted={clockStarted} onClickStartStop={changeTimerState} onClickSkip={resetTimer} minutes={timerMinuts} seconds={timerSeconds}></TimerCard>
+    <TimerCard clockStarted={clockStarted} timerState={timerState} onClickStartStop={changeTimerState} onClickSkip={resetTimer} minutes={timerMinuts} seconds={timerSeconds}></TimerCard>
   )
 }

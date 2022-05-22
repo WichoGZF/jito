@@ -59,6 +59,14 @@ function NewTask(props) {
     </ListItem>
   )
 }
+
+//Container 
+function GroupContainer(props){
+  const [dragHover, setDragHover] = useState(null)
+
+
+}
+
 //Rendering first task
 function ListEntry(props) {
   console.log("List entry rerender");
@@ -91,19 +99,24 @@ function ListEntry(props) {
       }
       const clientOffset = monitor.getClientOffset();
 
+      //Gets current item total height.
       const hoverBoundingRect = ref.current?.getBoundingClientRect()
-      // Get vertical middle
+
+      //Divides by number of tasks the total size of the component, then divides by 2 to get the middle of current one.
       const hoverMiddleY =
-        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
-      // Determine mouse position
+        (hoverBoundingRect.bottom - hoverBoundingRect.top)  / 2
 
-      // Get pixels to the top
+
+      // Get pixels to the middle of the 'main' task
       const hoverClientY = clientOffset.y - (hoverBoundingRect.top + hoverMiddleY)
+ 
 
-      if (hoverClientY > 0)
+      if (hoverClientY > 0 ) {
         setDragHover("below");
-      else
+      }
+      else if (hoverClientY < 0) {
         setDragHover("above");
+      }
     },
     drop(item, monitor) {
 
@@ -144,11 +157,12 @@ function ListEntry(props) {
   drag(drop(ref))
 
   return (
-    <Box >
-      <ListItem ref={ref}
+    <Box>
+      <ListItem ref={ref} 
+        key={'primary'+String(props.id)}
         sx={{
-          opacity: opacity,
           '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
+          opacity: opacity,
           pl: props.subtask ? 4 : 0,
           borderBottom: borderBottom, borderColor: "theme.primary.main",
           borderTop: borderTop, borderColor: "theme.primary.main",
@@ -175,9 +189,7 @@ function ListEntry(props) {
         </ListItemText>
         <Chip variant="outlined" label={props.date} sx={{ visibility: props.date ? "visible" : "hidden" }}></Chip>
       </ListItem>
-      <List>
-        {props.children}
-      </List>
+      {props.children}
     </Box>
   )
 }
@@ -218,13 +230,13 @@ export default function TaskList(props) {
             return (
               <ListEntry
                 moveTask={moveTask}
-                key={childTask.id}
+                key={'secondary'+String(childTask.id)}
                 text={childTask.name}
                 description={childTask.description}
                 subtask={true}
                 index={index}
                 date={childTask.date}
-                children={[]}/>
+                children={[]} />
             )
           })
         }
@@ -234,7 +246,7 @@ export default function TaskList(props) {
 
   return (
     <List
-      sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}
+      sx={{ bgcolor: 'background.paper' }}
       component="nav"
       aria-labelledby="nested-list-subheader"
       subheader={

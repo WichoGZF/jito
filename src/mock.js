@@ -263,20 +263,20 @@ export const mockTasks = [{
   "children": [{
     "id": 1,
     "name": "Menthol",
-    "description": "Curabitur at ipsum ac tellus semper interdum. Mauris ullamcorper purus sit amet nulla. Quisque arcu libero, rutrum ac, lobortis vel, dapibus at, diam.",
+    "description": "Curabitur at ipsum ac tellus semper interdum.",
     "date": "24/04/2022",
     "tag": "Work"
   }, {
     "id": 2,
     "name": "Acetaminophen",
-    "description": "Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.\n\nIn sagittis dui vel nisl. Duis ac nibh. Fusce lacus purus, aliquet at, feugiat non, pretium quis, lectus.",
+    "description": "Duis bibendum. Morbi non quam nec dui luctus rutrum.",
     "date": "02/12/2021",
     "tag": "Sex"
   }]
 }, {
   "id": 2,
   "name": "Lidocaine Hydrochloride, Bupivacaine Hydrochloride, Povidine Iodine",
-  "description": "Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa. Donec dapibus. Duis at velit eu est congue elementum.\n\nIn hac habitasse platea dictumst. Morbi vestibulum, velit id pretium iaculis, diam erat fermentum justo, nec condimentum neque sapien placerat ante. Nulla justo.\n\nAliquam quis turpis eget elit sodales scelerisque. Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.",
+  "description": "Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa.",
   "date": "02/05/2022",
   "tag": "Sex",
   "children": [
@@ -284,7 +284,7 @@ export const mockTasks = [{
 }, {
   "id": 3,
   "name": "methotrexate",
-  "description": "Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.\n\nNam ultrices, libero non mattis pulvinar, nulla pede ullamcorper augue, a suscipit nulla elit ac nulla. Sed vel enim sit amet nunc viverra dapibus. Nulla suscipit ligula in lacus.",
+  "description": "Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.",
   "date": "07/12/2021",
   "tag": "Hobbies",
   "children": [
@@ -293,20 +293,20 @@ export const mockTasks = [{
 }, {
   "id": 4,
   "name": "methylcellulose",
-  "description": "Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vivamus vestibulum sagittis sapien. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.\n\nEtiam vel augue. Vestibulum rutrum rutrum neque. Aenean auctor gravida sem.\n\nPraesent id massa id nisl venenatis lacinia. Aenean sit amet justo. Morbi ut odio.",
+  "description": "Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
   "date": "12/06/2022",
   "tag": "Work",
   "children": [
     [{
       "id": 1,
       "name": "Pravastatin Sodium",
-      "description": "Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.\n\nPhasellus in felis. Donec semper sapien a libero. Nam dui.",
+      "description": "Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. ",
       "date": "22/08/2021",
       "tag": "Work"
     }, {
       "id": 2,
       "name": "Melaleuca",
-      "description": "In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.\n\nNulla ut erat id mauris vulputate elementum. Nullam varius. Nulla facilisi.\n\nCras non velit nec nisi vulputate nonummy. Maecenas tincidunt lacus at velit. Vivamus vel nulla eget eros elementum pellentesque.",
+      "description": "In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.",
       "date": "29/11/2021",
       "tag": "Home"
     }]
@@ -314,7 +314,7 @@ export const mockTasks = [{
 }, {
   "id": 5,
   "name": "emtricitabine and tenofovir disoproxil fumarate",
-  "description": "Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.\n\nMauris enim leo, rhoncus sed, vestibulum sit amet, cursus id, turpis. Integer aliquet, massa id lobortis convallis, tortor risus dapibus augue, vel accumsan tellus nisi eu orci. Mauris lacinia sapien quis libero.",
+  "description": "Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.",
   "date": "26/11/2021",
   "tag": "Home",
   "children": [

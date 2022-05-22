@@ -1,3 +1,4 @@
 export const ItemTypes = {
-    TASK: 'task'
+    TASK: 'task',
+    CONTAINER: 'container'
 }

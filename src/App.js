@@ -6,6 +6,11 @@ import TimerControl from './components/TimerControl';
 import TaskList from './components/TaskList';
 
 import Box from "@mui/material/Box";
+import Grid from '@mui/material/Grid'
+
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { CalendarPicker } from '@mui/x-date-pickers/CalendarPicker';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -31,7 +36,7 @@ function App() {
     }, []
   )
 
-  useEffect( 
+  useEffect(
     () => {
       //What to do when the user is logged in? Synch to server? 
       localStorage.setItem('tasks', JSON.stringify(tasks))
@@ -54,8 +59,24 @@ function App() {
       alignItems: "center"
     }}>
       <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
-      <TimerControl></TimerControl>
-      <TaskList></TaskList>
+      <Grid container spacing={4}>
+        <Grid container item xs={4} spacing={3} direction='column'>
+          <Grid item>
+            <TimerControl></TimerControl>
+          </Grid>
+          <Grid item>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <CalendarPicker  /> {/*date={date}  onChange={(newDate) => setDate(newDate)}*/}
+            </LocalizationProvider>
+          </Grid>
+          <Grid item>
+
+          </Grid>
+        </Grid>
+        <Grid item xs={8} position='sticky'>
+          <TaskList></TaskList>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

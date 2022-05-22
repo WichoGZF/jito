@@ -381,10 +381,10 @@ const DialogLogIn = (props) => {
                     <Grid item xs>
                         <Grid container spacing={2} direction="column">
                             <Grid item>
-                                <Button variant="outlined" fullWidth="true" startIcon={<SvgIcon viewBox='0 0 24 24' component={GoogleIcon}></SvgIcon>}>Log in with Google</Button>
+                                <Button variant="outlined" fullWidth="true" startIcon={<SvgIcon component={GoogleIcon}></SvgIcon>}>Sign in with Google</Button>
                             </Grid>
                             <Grid item>
-                                <Button variant="outlined" fullWidth="true" startIcon={<SvgIcon viewBox='0 0 24 24' component={FacebookIcon}></SvgIcon>}>Log in with Facebook</Button>
+                                <Button variant="outlined" fullWidth="true" startIcon={<SvgIcon component={FacebookIcon} viewBox="0 0 48 48"></SvgIcon>}>Continue with Facebook</Button>
                             </Grid>
                             <Grid item>
                                 <Button fullWidth="true">Register with email</Button>

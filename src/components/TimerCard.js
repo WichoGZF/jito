@@ -6,11 +6,12 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
+import LinearProgress from '@mui/material/LinearProgress'
 import PauseIcon from '@mui/icons-material/Pause';
 
 export default function TimerCard(props) {
   return (
-    <Card variant="outlined" sx={{ display: "flex", justifyContent: "center", width: "50vw" }}>
+    <Card variant="outlined" sx={{ display: "flex", justifyContent: "center" }}>
       <Box
         sx={{
           display: "flex",
@@ -23,14 +24,15 @@ export default function TimerCard(props) {
               {String(props.minutes).padStart(2, '0')}:{String(props.seconds).padStart(2, '0')}
             </Typography>
           </Box>
+          <LinearProgress variant='determinate' value={100 - (props.minutes * 4)}></LinearProgress>
           <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", pl: 1, pb: 1 }}>
-          <IconButton onClick={props.onClickStartStop} aria-label="play/pause">
-              <PlayArrowIcon sx={{ height: 38, width: 38 }} />
+            <IconButton onClick={props.onClickStartStop} aria-label="play/pause">
+              {props.clockStarted && !props.timerState ? <PlayArrowIcon sx={{ height: 38, width: 38 }} /> : <PauseIcon sx={{ height: 38, width: 38 }} />}
             </IconButton>
-            <IconButton onClick={props.onClickSkip} aria-label="next" sx={{visibility: props.clockStarted? 'visible': 'hidden'}}>
+            <IconButton onClick={props.onClickSkip} aria-label="next" sx={{ visibility: props.clockStarted ? 'visible' : 'hidden' }}>
               <SkipNextIcon />
             </IconButton>
-            </Box>
+          </Box>
         </CardContent>
       </Box>
     </Card>
