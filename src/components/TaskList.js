@@ -40,63 +40,7 @@ import { Box, recomposeColor } from '@mui/system';
 import { Visibility } from '@mui/icons-material';
 import { Paper } from '@mui/material';
 
-const mockTags = [
-  "escuela", "japanese", "programming"
-]
-
-const mockTasks = [
-  {
-    id: 0,
-    name: "task 1",
-    description: "do ones homework",
-    date: "",
-    tag: "escuela",
-    subtask: false,
-    children: [
-      1, 2
-    ]
-  },
-  {
-    id: 1,
-    name: "secondary 1",
-    dascription: "secondary desc",
-    date: "",
-    tag: "escuela",
-    subtask: true,
-    children: [
-    ]
-  },
-  {
-    id: 2,
-    name: "secondary 2",
-    dascription: "secondary desc",
-    date: "",
-    tag: "escuela",
-    subtask: true,
-    children: [
-    ]
-  },
-  {
-    id: 3,
-    name: "task 2",
-    description: "do ones homework",
-    date: "",
-    tag: "escuela",
-    subtask: false,
-    children: [
-    ]
-  },
-  {
-    id: 4,
-    name: "task 3",
-    description: "do ones homework",
-    date: "94/22/2020",
-    tag: "escuela",
-    subtask: false,
-    children: [
-    ]
-  }
-]
+import { mockTasks, mockTags } from '../mock.js'
 
 function NewTask(props) {
   return (
@@ -161,7 +105,7 @@ function ListEntry(props) {
       else
         setDragHover("above");
     },
-    drop(item, monitor){
+    drop(item, monitor) {
 
     }
   })
@@ -180,55 +124,61 @@ function ListEntry(props) {
 
   //Opacity?
   const opacity = isDragging ? 0 : 1;
-  const visibility = isDragging? "hidden": "visible";
+  const visibility = isDragging ? "hidden" : "visible";
 
   let borderBottom;
   let borderTop;
-  if(isOver){
-    if(dragHover==="below"){
-      borderBottom=2;
+  if (isOver) {
+    if (dragHover === "below") {
+      borderBottom = 2;
     }
-    else if (dragHover==="above"){
-      borderTop=2;
+    else if (dragHover === "above") {
+      borderTop = 2;
     }
   }
-  else{
-    borderBottom=0;
-    borderTop=0;
+  else {
+    borderBottom = 0;
+    borderTop = 0;
   }
 
   drag(drop(ref))
 
   return (
-    <ListItem ref={ref}
-      sx={{
-        opacity: opacity,
-        '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
-        pl: props.subtask ? 4 : 0,
-        borderBottom: borderBottom, borderColor: "theme.primary.main",
-        borderTop: borderTop, borderColor: "theme.primary.main",
-      }}
-      onMouseEnter={(e) => setOnHover({ display: 'block' })}
-      onMouseLeave={(e) => setOnHover({ display: 'none' })}
-      secondaryAction={
-        <IconButton
+    <Box >
+      <ListItem ref={ref}
+        sx={{
+          opacity: opacity,
+          '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
+          pl: props.subtask ? 4 : 0,
+          borderBottom: borderBottom, borderColor: "theme.primary.main",
+          borderTop: borderTop, borderColor: "theme.primary.main",
+        }}
+        onMouseEnter={(e) => setOnHover({ display: 'block' })}
+        onMouseLeave={(e) => setOnHover({ display: 'none' })}
+        secondaryAction={
+          <IconButton
 
-          edge="end"
-          aria-label="options"
-          sx={onHover}>
-          <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
-        </IconButton>
-      }>
-      <ListItemIcon
-        onMouseEnter={(e) => setCompleteHover(true)}
-        onMouseLeave={(e) => setCompleteHover(false)}
-      >
-        <IconButton>{completeHover ? <CheckOutlinedIcon></CheckOutlinedIcon> : <CircleOutlined></CircleOutlined>}</IconButton>
-      </ListItemIcon>
-      <ListItemText primary={props.text} secondary={props.description}>
-      </ListItemText>
-      <Chip variant="outlined" label={props.date} sx={{visibility: props.date? "visible": "hidden"}}></Chip>
-    </ListItem>
+            edge="end"
+            aria-label="options"
+            sx={onHover}>
+            <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
+
+          </IconButton>
+        }>
+        <ListItemIcon
+          onMouseEnter={(e) => setCompleteHover(true)}
+          onMouseLeave={(e) => setCompleteHover(false)}
+        >
+          <IconButton>{completeHover ? <CheckOutlinedIcon></CheckOutlinedIcon> : <CircleOutlined></CircleOutlined>}</IconButton>
+        </ListItemIcon>
+        <ListItemText primary={props.text} secondary={props.description}>
+        </ListItemText>
+        <Chip variant="outlined" label={props.date} sx={{ visibility: props.date ? "visible" : "hidden" }}></Chip>
+      </ListItem>
+      <List>
+        {props.children}
+      </List>
+    </Box>
   )
 }
 
@@ -257,12 +207,27 @@ export default function TaskList(props) {
     return (
       <ListEntry
         moveTask={moveTask}
-        key={task.name + index}
+        key={task.id}
         text={task.name}
         description={task.description}
-        subtask={task.subtask}
+        subtask={false}
         index={index}
         date={task.date}
+        children={
+          task.children.map((childTask, index) => {
+            return (
+              <ListEntry
+                moveTask={moveTask}
+                key={childTask.id}
+                text={childTask.name}
+                description={childTask.description}
+                subtask={true}
+                index={index}
+                date={childTask.date}
+                children={[]}/>
+            )
+          })
+        }
       ></ListEntry>
     )
   })
