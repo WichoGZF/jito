@@ -265,13 +265,15 @@ export const mockTasks = [{
     "name": "Menthol",
     "description": "Curabitur at ipsum ac tellus semper interdum.",
     "date": "24/04/2022",
-    "tag": "Work"
+    "tag": "Work",
+    "children": []
   }, {
     "id": 2,
     "name": "Acetaminophen",
     "description": "Duis bibendum. Morbi non quam nec dui luctus rutrum.",
     "date": "02/12/2021",
-    "tag": "Sex"
+    "tag": "Sex",
+    "children": []
   }]
 }, {
   "id": 2,
@@ -302,13 +304,15 @@ export const mockTasks = [{
       "name": "Pravastatin Sodium",
       "description": "Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. ",
       "date": "22/08/2021",
-      "tag": "Work"
+      "tag": "Work",
+      "children": []
     }, {
       "id": 2,
       "name": "Melaleuca",
       "description": "In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.",
       "date": "29/11/2021",
-      "tag": "Home"
+      "tag": "Home",
+      "children": []
     }
   ]
 }, {

@@ -89,7 +89,6 @@ function ListEntry(props) {
       }
       const dragIndex = item.index //What is being dragged 
       const hoverIndex = props.index //Current index
-      console.log("Dragindex(dragged):", dragIndex, "\nHoverIndex(what is over)", hoverIndex)
       //If hovered on same place do nothing
       if (dragIndex === hoverIndex) {
         return
@@ -138,7 +137,7 @@ function ListEntry(props) {
       }
       else { //Only
         setParentDragHover(null)
-        if (primaryHoverClientY> primaryHoverMiddleY){
+        if (primaryHoverClientY > primaryHoverMiddleY) {
           setDragHover(null);
         }
         if (primaryHoverClientY > 0 && primaryHoverClientY < primaryHoverMiddleY) {
@@ -151,6 +150,84 @@ function ListEntry(props) {
 
     },
     drop(item, monitor) {
+      if (!ref.current) {
+        return;
+      }
+
+      if (item.hasChildren && props.subtask) {
+        return
+      }
+      const dragIndex = item.index //What is being dragged 
+      const hoverIndex = props.index //Current index
+      if (dragIndex === hoverIndex) {
+        return
+      }
+
+      const clientOffset = monitor.getClientOffset();
+
+      //Gets current item total height.
+      const hoverBoundingRect = ref.current?.getBoundingClientRect()
+      //Gets height of first task only.
+      const primaryHoverBoundingRect = refPrimary.current?.getBoundingClientRect()
+
+      //Divides by number of tasks the total size of the component, then divides by 2 to get the middle of current one.
+
+      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
+      // Get pixels to the middle of the 'main' task
+      const hoverClientY = clientOffset.y - (hoverBoundingRect.top + hoverMiddleY)
+
+      //Calculates to first task only 
+      const primaryHoverMiddleY = (primaryHoverBoundingRect.bottom - primaryHoverBoundingRect.top) / 2
+      // Get pixels to the middle of the 'main' task
+      const primaryHoverClientY = clientOffset.y - (primaryHoverBoundingRect.top + primaryHoverMiddleY)
+
+      if (item.subtask) {
+        if (props.subtask) {
+          if (hoverClientY > 0 && hoverClientY < hoverMiddleY) {
+            props.moveTaskSecToSec(props.fatherIndex, dragIndex, hoverIndex + 1)
+          }
+          else if (hoverClientY < 0 && hoverClientY > (-1 * hoverMiddleY)) {
+            props.moveTaskSecToSec(props.fatherIndex, dragIndex, hoverIndex)
+          }
+        }
+        else {
+          if (hoverClientY > 0 && hoverClientY < hoverMiddleY) {
+            props.moveTaskSecToPrim(item.fatherIndex, dragIndex, hoverIndex + 1)
+          }
+          else if (hoverClientY < 0 && hoverClientY > (-1 * hoverMiddleY)) {
+            props.moveTaskSecToPrim(item.fatherIndex, dragIndex, hoverIndex)
+          }
+        }
+      }
+      else {
+        if (props.subtask) {
+          if (hoverClientY > 0 && hoverClientY < hoverMiddleY) {
+            props.moveTaskPrimToSect(dragIndex, props.fatherIndex, hoverIndex + 1)
+          }
+          else if (hoverClientY < 0 && hoverClientY > (-1 * hoverMiddleY)) {
+            props.moveTaskPrimToSec(dragIndex, props.fatherIndex, hoverIndex + 1)
+          }
+        }
+        else {
+          if (hoverClientY > 0 && hoverClientY < hoverMiddleY) {
+            props.moveTask(dragIndex, hoverIndex+1)
+          }
+          else if (hoverClientY < 0 && hoverClientY > (-1 * hoverMiddleY)) {
+            props.moveTask(dragIndex, hoverIndex + 1)
+          }
+        }
+        //Only
+        setParentDragHover(null)
+        if (primaryHoverClientY > primaryHoverMiddleY) {
+          setDragHover(null);
+        }
+        if (primaryHoverClientY > 0 && primaryHoverClientY < primaryHoverMiddleY) {
+          setDragHover("below");
+        }
+        else if (primaryHoverClientY < 0 && primaryHoverClientY > (-1 * primaryHoverMiddleY)) {
+          setDragHover("above");
+        }
+      }
 
     }
   })
@@ -159,7 +236,7 @@ function ListEntry(props) {
   const [{ isDragging }, drag] = useDrag({
     type: ItemTypes.TASK,
     item: () => {
-      return { id: props.id, index: props.index, hasChildren: Boolean(props.children.length), subtask: props.subtask }
+      return { id: props.id, index: props.index, hasChildren: Boolean(props.children.length), subtask: props.subtask, fatherIndex: props.fatherIndex }
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
@@ -255,34 +332,78 @@ function ListEntry(props) {
 export default function TaskList(props) {
   const [tasks, setTasks] = useState(mockTasks)
 
+  console.log(tasks)
+
   const moveTask = useCallback((dragIndex, hoverIndex) => {
-    if (tasks[dragIndex].subtask && tasks[dragIndex].subtask) {
-
-
-    }
-    setTasks((prevTasks) =>
+    setTasks((prevTasks) => {
       update(prevTasks, {
         $splice: [
-          [dragIndex, 1],
           [hoverIndex, 0, prevTasks[dragIndex]],
+          [dragIndex>hoverIndex? dragIndex+1: dragIndex, 1],
         ],
-      }),
+      })
+    })
+  }, [])
+
+  const moveTaskSecToPrim = useCallback((dragIndex, dragSecondaryIndex, hoverIndex) => {
+    setTasks((prevTasks) => {
+      update(prevTasks, {
+        $splice: [
+          [hoverIndex, 0, prevTasks[dragIndex].children[dragSecondaryIndex]],
+        ],
+      })
+      update(prevTasks, {
+        [dragIndex]: { children: { $splice: [dragSecondaryIndex, 1] } }
+      })
+    }
     )
   }, [])
-  console.log(tasks)
+
+  const moveTaskPrimToSec = useCallback((dragIndex, hoverIndex, hoverSecondaryIndex) => {
+    setTasks((prevTasks) => {
+      update(prevTasks, {
+        [hoverIndex]: { children: { $splice: [hoverSecondaryIndex, 0, prevTasks[dragIndex]] } }
+      })
+      update(prevTasks, {
+        $splice: [[dragIndex, 1]]
+      })
+    })
+  }, []
+  )
+
+  const moveTaskSecToSec = useCallback((taskIndex, dragIndex, hoverIndex) => {
+    setTasks((prevTasks) => {
+      update(prevTasks, {
+        [taskIndex]: {
+          children: {
+            $splice: [
+              [hoverIndex, 0, prevTasks.children[dragIndex]],
+              [dragIndex>hoverIndex? dragIndex+1: dragIndex, 1]
+            ]
+          }
+        }
+      }
+      )
+    }
+    )
+  }, [])
 
   const formattedTasks = tasks.map((task, index) => {
     return (
       <ListEntry
         moveTask={moveTask}
+        moveTaskPrimToSec={moveTaskPrimToSec}
+        moveTaskSecToPrim={moveTaskSecToPrim}
+        moveTaskSecToSec={moveTaskSecToSec}
         key={task.id}
         text={task.name}
         description={task.description}
         subtask={false}
         index={index}
+        fatherIndex={0}
         date={task.date}
         children={
-          task.children.map((childTask, index) => {
+          task.children.map((childTask, childIndex) => {
             return (
               <ListEntry
                 moveTask={moveTask}
@@ -290,7 +411,8 @@ export default function TaskList(props) {
                 text={childTask.name}
                 description={childTask.description}
                 subtask={true}
-                index={index}
+                index={childIndex}
+                fatherIndex={index}
                 date={childTask.date}
                 children={[]} />
             )
