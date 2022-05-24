@@ -297,7 +297,7 @@ export const mockTasks = [{
   "date": "12/06/2022",
   "tag": "Work",
   "children": [
-    [{
+    {
       "id": 1,
       "name": "Pravastatin Sodium",
       "description": "Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. ",
@@ -309,7 +309,7 @@ export const mockTasks = [{
       "description": "In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.",
       "date": "29/11/2021",
       "tag": "Home"
-    }]
+    }
   ]
 }, {
   "id": 5,
