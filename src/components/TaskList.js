@@ -192,10 +192,10 @@ function ListEntry(props) {
         }
         else {
           if (hoverClientY > 0 && hoverClientY < hoverMiddleY) {
-            props.moveTaskSecToPrim(item.fatherIndex, dragIndex, hoverIndex + 1)
+            props.moveTaskSecToPrim(item.fatherIndex, dragIndex, props.fatherIndex, hoverIndex + 1)
           }
           else if (hoverClientY < 0 && hoverClientY > (-1 * hoverMiddleY)) {
-            props.moveTaskSecToPrim(item.fatherIndex, dragIndex, hoverIndex)
+            props.moveTaskSecToPrim(item.fatherIndex, dragIndex, props.fatherIndex, hoverIndex)
           }
         }
       }
@@ -205,28 +205,18 @@ function ListEntry(props) {
             props.moveTaskPrimToSect(dragIndex, props.fatherIndex, hoverIndex + 1)
           }
           else if (hoverClientY < 0 && hoverClientY > (-1 * hoverMiddleY)) {
-            props.moveTaskPrimToSec(dragIndex, props.fatherIndex, hoverIndex + 1)
+            props.moveTaskPrimToSec(dragIndex, props.fatherIndex, hoverIndex)
           }
         }
         else {
           if (hoverClientY > 0 && hoverClientY < hoverMiddleY) {
-            props.moveTask(dragIndex, hoverIndex+1)
+            props.moveTask(dragIndex, hoverIndex)
           }
           else if (hoverClientY < 0 && hoverClientY > (-1 * hoverMiddleY)) {
-            props.moveTask(dragIndex, hoverIndex + 1)
+            props.moveTask(dragIndex, hoverIndex)
           }
         }
-        //Only
-        setParentDragHover(null)
-        if (primaryHoverClientY > primaryHoverMiddleY) {
-          setDragHover(null);
-        }
-        if (primaryHoverClientY > 0 && primaryHoverClientY < primaryHoverMiddleY) {
-          setDragHover("below");
-        }
-        else if (primaryHoverClientY < 0 && primaryHoverClientY > (-1 * primaryHoverMiddleY)) {
-          setDragHover("above");
-        }
+        
       }
 
     }
@@ -283,7 +273,7 @@ function ListEntry(props) {
         opacity: opacity,
         padding: 0,
         borderBottom: parentBorderBottom, borderColor: "theme.primary.main",
-        borderTop: parentBorderTop, borderColor: "theme.primary.main",
+        borderTop: parentBorderTop
       }}>
       <ListItem
         ref={refPrimary}
@@ -335,17 +325,20 @@ export default function TaskList(props) {
   console.log(tasks)
 
   const moveTask = useCallback((dragIndex, hoverIndex) => {
+    console.log('entering movetask dragIndex:', dragIndex, 'hoverIndex:', hoverIndex)
     setTasks((prevTasks) => {
-      update(prevTasks, {
+      return update(prevTasks, {
         $splice: [
           [hoverIndex, 0, prevTasks[dragIndex]],
-          [dragIndex>hoverIndex? dragIndex+1: dragIndex, 1],
+          [ dragIndex>hoverIndex? dragIndex+1: dragIndex, 1],
         ],
       })
+
     })
   }, [])
 
   const moveTaskSecToPrim = useCallback((dragIndex, dragSecondaryIndex, hoverIndex) => {
+    console.log('entering moveTaskSecToPrim properties:', dragIndex, dragSecondaryIndex, hoverIndex)
     setTasks((prevTasks) => {
       update(prevTasks, {
         $splice: [
@@ -355,11 +348,13 @@ export default function TaskList(props) {
       update(prevTasks, {
         [dragIndex]: { children: { $splice: [dragSecondaryIndex, 1] } }
       })
+      return prevTasks
     }
     )
   }, [])
 
   const moveTaskPrimToSec = useCallback((dragIndex, hoverIndex, hoverSecondaryIndex) => {
+    console.log('entering move task prim to sec, properties:', dragIndex, hoverIndex, hoverSecondaryIndex)
     setTasks((prevTasks) => {
       update(prevTasks, {
         [hoverIndex]: { children: { $splice: [hoverSecondaryIndex, 0, prevTasks[dragIndex]] } }
@@ -367,25 +362,42 @@ export default function TaskList(props) {
       update(prevTasks, {
         $splice: [[dragIndex, 1]]
       })
+      return prevTasks
     })
   }, []
   )
 
-  const moveTaskSecToSec = useCallback((taskIndex, dragIndex, hoverIndex) => {
-    setTasks((prevTasks) => {
-      update(prevTasks, {
-        [taskIndex]: {
-          children: {
-            $splice: [
-              [hoverIndex, 0, prevTasks.children[dragIndex]],
-              [dragIndex>hoverIndex? dragIndex+1: dragIndex, 1]
-            ]
+  const moveTaskSecToSec = useCallback((dragIndex, dragSecondaryIndex, hoverIndex, hoverSecondaryIndex) => {
+    setTasks((prevTasks)=>{
+        if (dragIndex===hoverIndex){
+          const indexElimValue = dragSecondaryIndex>hoverSecondaryIndex? dragSecondaryIndex+1 : dragSecondaryIndex;
+          update(prevTasks, {
+            [hoverIndex]: {
+              children: {
+                $splice: [
+                  [hoverSecondaryIndex, 0, prevTasks[dragIndex].children[dragSecondaryIndex]],
+                  [indexElimValue, 1]
+                ]
+              }
+            }
           }
+          )
         }
-      }
-      )
-    }
-    )
+        else{
+          update(prevTasks, {
+            [hoverIndex]: {
+              children: {
+                $splice: [
+                  [hoverSecondaryIndex, 0, prevTasks[dragIndex].children[dragSecondaryIndex]]
+                ]
+              }
+            }
+          }
+          )
+        }
+        return prevTasks
+
+    })
   }, [])
 
   const formattedTasks = tasks.map((task, index) => {
