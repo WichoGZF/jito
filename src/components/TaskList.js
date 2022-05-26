@@ -63,7 +63,6 @@ function NewTask(props) {
 
 //Rendering first task
 function ListEntry(props) {
-  console.log("List entry rerender");
   const [onHover, setOnHover] = useState({ display: 'none' })
   const [completeHover, setCompleteHover] = useState(false)
 
@@ -76,14 +75,13 @@ function ListEntry(props) {
   const refPrimary = useRef(null)
 
   const [{ handlerId, isOver }, drop] = useDrop({
-    accept: ItemTypes.TASK,
+    accept: [ItemTypes.TASK, ItemTypes.SUBTASK, props.subtask? '': ItemTypes.CONTAINER],
     collect: (monitor) => ({
       handlerId: monitor.getHandlerId(),
       isOver: monitor.isOver()
     }
     ),
     hover(item, monitor) {
-      console.log("you're hovering")
       if (!ref.current) {
         return;
       }
@@ -153,17 +151,21 @@ function ListEntry(props) {
       if (!ref.current) {
         return;
       }
-
-      if (item.hasChildren && props.subtask) {
-        return
-      }
+      
       const dragIndex = item.index //What is being dragged 
       const hoverIndex = props.index //Current index
       if (dragIndex === hoverIndex) {
         return
       }
 
+      console.log('Has children and is subtask?', item.hasChildren, props.subtask)
+      if (item.hasChildren && props.subtask) {
+        console.log('Drag has children and dropped on is subtask')
+        return
+      }
+
       const clientOffset = monitor.getClientOffset();
+      console.log('Client offset is: ', clientOffset)
 
       //Gets current item total height.
       const hoverBoundingRect = ref.current?.getBoundingClientRect()
@@ -224,7 +226,7 @@ function ListEntry(props) {
 
 
   const [{ isDragging }, drag] = useDrag({
-    type: ItemTypes.TASK,
+    type: (props.subtask? ItemTypes.SUBTASK : (Boolean(props.children.length)? ItemTypes.CONTAINER: ItemTypes.TASK) ),
     item: () => {
       return { id: props.id, index: props.index, hasChildren: Boolean(props.children.length), subtask: props.subtask, fatherIndex: props.fatherIndex }
     },
@@ -321,18 +323,17 @@ function ListEntry(props) {
 
 export default function TaskList(props) {
   const [tasks, setTasks] = useState(mockTasks)
-
-  console.log(tasks)
-
   const moveTask = useCallback((dragIndex, hoverIndex) => {
     console.log('entering movetask dragIndex:', dragIndex, 'hoverIndex:', hoverIndex)
     setTasks((prevTasks) => {
-      return update(prevTasks, {
+      const returnTasks = update(prevTasks, {
         $splice: [
           [hoverIndex, 0, prevTasks[dragIndex]],
           [ dragIndex>hoverIndex? dragIndex+1: dragIndex, 1],
         ],
       })
+      console.log(returnTasks)
+      return returnTasks
 
     })
   }, [])
