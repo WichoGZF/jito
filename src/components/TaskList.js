@@ -204,7 +204,7 @@ function ListEntry(props) {
       else {
         if (props.subtask) {
           if (hoverClientY > 0 && hoverClientY < hoverMiddleY) {
-            props.moveTaskPrimToSect(dragIndex, props.fatherIndex, hoverIndex + 1)
+            props.moveTaskPrimToSec(dragIndex, props.fatherIndex, hoverIndex + 1)
           }
           else if (hoverClientY < 0 && hoverClientY > (-1 * hoverMiddleY)) {
             props.moveTaskPrimToSec(dragIndex, props.fatherIndex, hoverIndex)
@@ -405,9 +405,7 @@ export default function TaskList(props) {
     return (
       <ListEntry
         moveTask={moveTask}
-        moveTaskPrimToSec={moveTaskPrimToSec}
         moveTaskSecToPrim={moveTaskSecToPrim}
-        moveTaskSecToSec={moveTaskSecToSec}
         key={task.id}
         text={task.name}
         description={task.description}
@@ -420,6 +418,8 @@ export default function TaskList(props) {
             return (
               <ListEntry
                 moveTask={moveTask}
+                moveTaskPrimToSec={moveTaskPrimToSec}
+                moveTaskSecToSec={moveTaskSecToSec}
                 key={'secondary' + String(childTask.id)}
                 text={childTask.name}
                 description={childTask.description}
