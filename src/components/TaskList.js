@@ -20,7 +20,6 @@ import Check from '@mui/icons-material/Check'
 import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CircleOutlined from '@mui/icons-material/CircleOutlined';
-import { tabsListUnstyledClasses } from '@mui/base';
 import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import { set } from 'date-fns';
 import Circle from '@mui/icons-material/Circle';
@@ -40,23 +39,65 @@ import { Box, recomposeColor } from '@mui/system';
 import { Visibility } from '@mui/icons-material';
 import { Paper } from '@mui/material';
 
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
+
 import { mockTasks, mockTags } from '../mock.js'
 
+import TaskInput from './TaskInput.js'
+
+import { Divider } from '@mui/material';
+
 function NewTask(props) {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [addNewTask, setAddNewTask] = useState(false);
+
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleClickNewTask = () => {
+    console.log('Clicked add new task func: ', addNewTask);
+    setAddNewTask(!addNewTask)
+  }
+
   return (
-    <ListItem
-      secondaryAction={
-        <IconButton
-
-          edge="end"
-          aria-label="options"
-          sx={() => { }}>
-          <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
-        </IconButton>
-      }>
-      <Chip icon={<AddTaskIcon></AddTaskIcon>} label="Add new task" variant="outlined" clickable></Chip>
-
-    </ListItem>
+    <>
+      <ListItem
+        secondaryAction={
+          <>
+            <IconButton
+              edge="end"
+              aria-label="options-button"
+              onClick={handleClick}>
+              <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
+            </IconButton>
+            <Menu
+              id="task-list-options"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                'aria-labelledby': 'options-button',
+              }}
+            >
+              <Typography sx={{ pl: 2, pr: 2, color: '#5f6368' }} >Order by</Typography>
+              <MenuItem onClick={handleClose}>My order</MenuItem>
+              <MenuItem onClick={handleClose} divider>Date</MenuItem>
+              <MenuItem onClick={handleClose}>Change list name</MenuItem>
+              <MenuItem onClick={handleClose}>Delete list</MenuItem>
+              <MenuItem onClick={handleClose}>Delete all completed tasks</MenuItem>
+            </Menu>
+          </>
+        }>
+        <Chip icon={<AddTaskIcon></AddTaskIcon>} label="Add new task" variant="outlined" clickable onClick={handleClickNewTask}></Chip>
+      </ListItem>
+      {addNewTask ? <TaskInput edit={false} handleTaskSelectClose={handleClickNewTask}></TaskInput> : <></>}
+    </>
   )
 }
 
@@ -344,6 +385,11 @@ function ListEntry(props) {
 
 export default function TaskList(props) {
   const [tasks, setTasks] = useState(mockTasks)
+
+  const [tagAnchorEl, setTagAnchorEl] = useState(null)
+
+
+
   const moveTask = useCallback((dragIndex, hoverIndex) => {
     console.log('entering movetask dragIndex:', dragIndex, 'hoverIndex:', hoverIndex)
     setTasks((prevTasks) => {
@@ -456,6 +502,7 @@ export default function TaskList(props) {
         moveTask={moveTask}
         moveTaskSecToPrim={moveTaskSecToPrim}
         moveTaskPrimToSec={moveTaskPrimToSec}
+        moveTaskSecToSec={moveTaskSecToSec}
         key={task.name}
         text={task.name}
         description={task.description}
@@ -485,18 +532,44 @@ export default function TaskList(props) {
     )
   })
 
+  const open = Boolean(tagAnchorEl);
+  
+  const onClickTagSelection = (event) => {
+    setTagAnchorEl(event.currentTarget);
+  }
+
+  const handleClose = () => {
+    setTagAnchorEl(null)
+  }
+
+
   return (
     <List
-      sx={{ bgcolor: 'background.paper' }}
-      component="nav"
-      aria-labelledby="nested-list-subheader"
+      sx={{ bgcolor: 'background.paper'}}
       subheader={
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", justifyContent: "start" }}>
           <Typography variant="overline" sx={{ pl: 1 }}>Tasks</Typography>
-          <Button edge="start" endIcon={<ArrowDropDownIcon></ArrowDropDownIcon>}>Current tag</Button>
+          <Button edge="start" endIcon={<ArrowDropDownIcon></ArrowDropDownIcon>} onClick={onClickTagSelection}>Current tag</Button>
+          <Menu
+              id="tag selection"
+              anchorEl={tagAnchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                'aria-labelledby': 'options-button',
+              }}
+            >
+              <MenuItem onClick={handleClose}>All tasks</MenuItem>
+              <MenuItem onClick={handleClose}>School</MenuItem>
+              <MenuItem onClick={handleClose} divider>Nion</MenuItem>
+              <MenuItem onClick={handleClose}>Add tag</MenuItem>
+
+
+            </Menu>
         </Box>
       }
     >
+      <Divider></Divider>
       <NewTask></NewTask>
       {formattedTasks}
     </List>
