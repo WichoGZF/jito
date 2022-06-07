@@ -47,6 +47,7 @@ import { mockTasks, mockTags } from '../mock.js'
 import TaskInput from './TaskInput.js'
 
 import { Divider } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
 
 function NewTask(props) {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -110,12 +111,21 @@ function ListEntry(props) {
   const [dragHover, setDragHover] = useState(null)
   const [parentDragHover, setParentDragHover] = useState(null)
 
+  const [dropDownRef, setDropDownRef] = useState(null)
+
   const handleDragHover = () => setDragHover(null);
+
+  const handleDropDown = (event) => setDropDownRef(event.currentTarget);
+
+  const openDropDown = Boolean(dropDownRef)
+
+  const handleCloseDropDown = () => setDropDownRef(false)
 
   const ref = useRef(null)
   const refPrimary = useRef(null)
 
   let acceptedTypes;
+
 
   const [{ handlerId, isOver }, drop] = useDrop({
     accept: [ItemTypes.TASK, ItemTypes.SUBTASK, props.subtask ? '' : ItemTypes.CONTAINER],
@@ -351,14 +361,35 @@ function ListEntry(props) {
         onMouseEnter={(e) => setOnHover({ display: 'block' })}
         onMouseLeave={(e) => setOnHover({ display: 'none' })}
         secondaryAction={
-          <IconButton
+          <>
+            <IconButton
 
-            edge="end"
-            aria-label="options"
-            sx={onHover}>
-            <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
+              edge="end"
+              aria-label="options"
+              onClick={handleDropDown}
+              sx={onHover}>
+              <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
 
-          </IconButton>
+            </IconButton>
+            <Menu
+              id="task-entry-options"
+              anchorEl={dropDownRef}
+              open={openDropDown}
+              onClose={handleCloseDropDown}
+              MenuListProps={{
+                'aria-labelledby': 'options-button',
+              }}
+            >
+              <MenuItem onClick={handleCloseDropDown}>Edit task</MenuItem>
+              <MenuItem onClick={handleCloseDropDown} divider>Delete task</MenuItem>
+              <MenuItem onClick={handleCloseDropDown}><CheckIcon></CheckIcon>All tasks</MenuItem>
+              <MenuItem onClick={handleCloseDropDown}>Tag 1</MenuItem>
+              <MenuItem onClick={handleCloseDropDown}>Tag 2</MenuItem>
+
+            </Menu>
+          </>
+
+
         }>
         <ListItemIcon
           onMouseEnter={(e) => setCompleteHover(true)}
@@ -387,8 +418,6 @@ export default function TaskList(props) {
   const [tasks, setTasks] = useState(mockTasks)
 
   const [tagAnchorEl, setTagAnchorEl] = useState(null)
-
-
 
   const moveTask = useCallback((dragIndex, hoverIndex) => {
     console.log('entering movetask dragIndex:', dragIndex, 'hoverIndex:', hoverIndex)
@@ -533,7 +562,7 @@ export default function TaskList(props) {
   })
 
   const open = Boolean(tagAnchorEl);
-  
+
   const onClickTagSelection = (event) => {
     setTagAnchorEl(event.currentTarget);
   }
@@ -545,27 +574,27 @@ export default function TaskList(props) {
 
   return (
     <List
-      sx={{ bgcolor: 'background.paper'}}
+      sx={{ bgcolor: 'background.paper' }}
       subheader={
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "start", justifyContent: "start" }}>
           <Typography variant="overline" sx={{ pl: 1 }}>Tasks</Typography>
           <Button edge="start" endIcon={<ArrowDropDownIcon></ArrowDropDownIcon>} onClick={onClickTagSelection}>Current tag</Button>
           <Menu
-              id="tag selection"
-              anchorEl={tagAnchorEl}
-              open={open}
-              onClose={handleClose}
-              MenuListProps={{
-                'aria-labelledby': 'options-button',
-              }}
-            >
-              <MenuItem onClick={handleClose}>All tasks</MenuItem>
-              <MenuItem onClick={handleClose}>School</MenuItem>
-              <MenuItem onClick={handleClose} divider>Nion</MenuItem>
-              <MenuItem onClick={handleClose}>Add tag</MenuItem>
+            id="tag selection"
+            anchorEl={tagAnchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              'aria-labelledby': 'options-button',
+            }}
+          >
+            <MenuItem onClick={handleClose}>All tasks</MenuItem>
+            <MenuItem onClick={handleClose}>School</MenuItem>
+            <MenuItem onClick={handleClose} divider>Nion</MenuItem>
+            <MenuItem onClick={handleClose}>Add tag</MenuItem>
 
 
-            </Menu>
+          </Menu>
         </Box>
       }
     >
