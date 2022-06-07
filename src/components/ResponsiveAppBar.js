@@ -12,7 +12,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import AvTimerIcon from "@mui/icons-material/AvTimer";
 import Button from '@mui/material/Button';
-import { Select, Switch } from "@mui/material";
+import { Select, Stack, Switch } from "@mui/material";
 import { Grid } from "@mui/material";
 import { TextField } from "@mui/material";
 import { Input } from "@mui/material";
@@ -113,7 +113,7 @@ const DialogSettings = (props) => {
             onClose={props.handleClose}
         >
             <DialogTitle>
-                <Grid container direction="row" justifyContent="space-between" alignItems="center">
+                <Grid container direction="row" justifyContent="space-between" alignItems="center" >
                     <Grid item xs="auto">
                         <Tabs
                             onChange={handleChange}
@@ -137,25 +137,18 @@ const DialogSettings = (props) => {
                 <TabPanel value={value} index={0}>
                     <Grid container spacing={2} direction='column'>
                         <Grid item>
-                            <Grid container direction='row' spacing={4}>
-                                <Grid item>
-                                    <TextField label="Pomodoro duration" defaultValue="25" helperText="Minutes"></TextField>
-                                </Grid>
-                                <Grid item>
-                                    <TextField label="Short break duration" defaultValue="25" helperText="Minutes"></TextField>
-                                </Grid>
-                            </Grid>
+                            <TextField label="Pomodoro duration" defaultValue="25" helperText="Minutes"></TextField>
                         </Grid>
                         <Grid item>
-                            <Grid container direction='row' spacing={4}>
-                                <Grid item>
-                                    <TextField label="Long break duration" defaultValue="25" helperText="Minutes"></TextField>
-                                </Grid>
-                                <Grid item>
-                                    <TextField label="Long break every" defaultValue="4" helperText="pomodoros"></TextField>
-                                </Grid>
-                            </Grid>
+                            <TextField label="Short break duration" defaultValue="25" helperText="Minutes"></TextField>
                         </Grid>
+                        <Grid item>
+                            <TextField label="Long break duration" defaultValue="25" helperText="Minutes"></TextField>
+                        </Grid>
+                        <Grid item>
+                            <TextField label="Long break every" defaultValue="5" helperText="Pomodoros"></TextField>
+                        </Grid>
+
                         <Grid item>
                             <Grid container justifyContent="space-between" alignItems='center' direction='row'>
                                 <Grid item xs="auto">
@@ -232,7 +225,7 @@ const DialogSettings = (props) => {
                         <Grid item>
                             <Grid container spacing={4} direction="row" justifyContent="space-between" alignItems="center" fullWidth='true'>
                                 <Grid item xs>
-                                    <Typography>Alarm sound</Typography>
+                                    <Typography>Ticking sound</Typography>
                                 </Grid>
                                 <Grid item xs={5}>
                                     <Select sx={{ width: '100%' }}></Select>
@@ -241,10 +234,10 @@ const DialogSettings = (props) => {
                         </Grid>
                         <Grid item>
                             <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
-                                <Grid item>
-                                    <Typography>Disable alarm</Typography>
+                                <Grid item xs='auto'>
+                                    <Typography>Alarm on pomodoro end</Typography>
                                 </Grid>
-                                <Grid item>
+                                <Grid item xs='auto'>
                                     <Switch></Switch>
                                 </Grid>
                             </Grid>
@@ -252,7 +245,27 @@ const DialogSettings = (props) => {
                         <Grid item>
                             <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
                                 <Grid item xs='auto'>
-                                    <Typography>Ticking sound</Typography>
+                                    <Typography>Alarm on break end</Typography>
+                                </Grid>
+                                <Grid item xs='auto'>
+                                    <Switch></Switch>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                            <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
+                                <Grid item xs='auto'>
+                                    <Typography>Ticking sound on break</Typography>
+                                </Grid>
+                                <Grid item xs='auto'>
+                                    <Switch></Switch>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                            <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
+                                <Grid item xs='auto'>
+                                    <Typography>Ticking sound on pomodoro</Typography>
                                 </Grid>
                                 <Grid item xs='auto'>
                                     <Switch></Switch>
@@ -373,7 +386,7 @@ const DialogLogIn = (props) => {
                                 <Button variant="contained" fullWidth="true">Log in</Button>
                             </Grid>
                             <Grid item xs>
-                                <Link underline="none" href="#">Forgot your password?</Link>
+                                <Button>Forgot your password?</Button>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -433,8 +446,8 @@ const DialogStatistics = (props) => {
             {
                 label: 'Dataset 1',
                 data: labelsLineChart.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-                borderColor: 'rgb(255, 99, 132)',
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                borderColor: 'rgb(217, 85, 80)',
+                backgroundColor: 'rgb(217, 85, 80)',
             }
         ],
     };
@@ -456,7 +469,7 @@ const DialogStatistics = (props) => {
             {
                 label: 'Productive time',
                 data: labelsBarChart.map(() => faker.datatype.number({ min: 0, max: 100 })),
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                backgroundColor: 'rgb(217, 85, 80)',
             },
         ],
     };
@@ -493,11 +506,13 @@ const DialogStatistics = (props) => {
         <Dialog
             open={props.open}
             onClose={props.handleClose}
+            maxWidth={"sm"}
+            fullWidth={"true"}
         >
             <DialogTitle>
 
                 <Grid container direction="row" justifyContent="space-between" alignItems="center">
-                    <Grid item xs="auto">
+                    <Grid item>
                         <Typography>
                             Statistics
                         </Typography>
@@ -511,23 +526,97 @@ const DialogStatistics = (props) => {
             </DialogTitle>
             <DialogContent dividers>
                 <Grid container direction='column' spacing={2}>
-                    <Grid container item justifyContent='space-between' alignItems='center'>
-                        <Grid item><Typography>Total stats</Typography></Grid>
-                        <Grid item><Select></Select></Grid>
+                    <Stack spacing={4} sx={{ paddingLeft: '16px', paddingTop: '16px' }}>
+                        <Grid container item justifyContent='space-between' alignItems='center'>
+                            <Grid item>
+                                <Typography>Total stats</Typography>
+                            </Grid>
+                            <Grid item>
+                                <Select value={'time'}>
+                                    <MenuItem value={'time'}>Time</MenuItem>
+                                    <MenuItem value={'sessions'}>Pomodoros</MenuItem>
+                                </Select>
+                            </Grid>
+                        </Grid>
+                        <Grid container item>
+                            <Grid item xs>
+                                <Stack alignItems={'center'}>
+                                    <Typography>0m</Typography>
+                                    <Typography>Today</Typography>
+                                </Stack>
+                            </Grid>
+                            <Grid item xs>
+                                <Stack alignItems={'center'}>
+                                    <Typography>3h 45m</Typography>
+                                    <Typography>Week 24</Typography>
+                                </Stack>
+                            </Grid>
+                            <Grid item xs>
+                                <Stack alignItems={'center'}>
+                                    <Typography>4h 48m</Typography>
+                                    <Typography>June</Typography>
+                                </Stack>
+                            </Grid>
+                            <Grid item xs>
+                                <Stack alignItems={'center'}>
+                                    <Typography>6h 1m</Typography>
+                                    <Typography>Total</Typography>
+                                </Stack>
+                            </Grid>
+                        </Grid>
+                    </Stack>
+                    <Grid container item direction={'column'}>
+                        <Grid container item justifyContent='space-between' alignItems='center'>
+                            <Grid item><Typography>History</Typography></Grid>
+                            <Grid item>
+                                <Select value={'days'}>
+                                    <MenuItem value={'days'}>Days</MenuItem>
+                                    <MenuItem value={'weeks'}>Weeks</MenuItem>
+                                    <MenuItem value={'months'}>Months</MenuItem>
+                                </Select>
+                            </Grid>
+                        </Grid>
+                        <Grid item>
+                            <Line options={optionsLineChart} data={dataLineChart}></Line>
+                        </Grid>
                     </Grid>
-                    <Grid container item justifyContent='space-between' alignItems='center'>
-                        <Grid item><Typography>History</Typography></Grid>
-                        <Grid item><Select></Select></Grid>
+                    <Grid container item>
+                        <Grid container item justifyContent='space-between' alignItems='center'>
+                            <Grid item>
+                                <Typography>Productive time</Typography>
+                            </Grid>
+                            <Grid item>
+                                <Select value={'days'}>
+                                    <MenuItem value={'days'}>Minutes</MenuItem>
+                                    <MenuItem value={'weeks'}>Pomdoros</MenuItem>
+                                </Select>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs>
+                            <Bar options={optionsBarChart} data={dataBarChart}></Bar>
+                        </Grid>
                     </Grid>
-                    
-                    <Line options={optionsLineChart} data={dataLineChart}></Line>
-                    <Typography>Productive time</Typography>
-                    <Bar options={optionsBarChart} data={dataBarChart}></Bar>
-                    <Doughnut data={dataDoughnut}></Doughnut>
+                    <Grid container item>
+                        <Grid container item justifyContent='space-between' alignItems='center'>
+                            <Grid item>
+                                <Typography>Time distribution</Typography>
+                            </Grid>
+                            <Grid item>
+                                <Select value={'days'}>
+                                    <MenuItem value={'days'}>Today</MenuItem>
+                                    <MenuItem value={'weeks'}>This week</MenuItem>
+                                    <MenuItem value={'months'}>This month</MenuItem>
+                                    <MenuItem value={'months'}>Total</MenuItem>
+                                </Select>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs>
+                            <Doughnut data={dataDoughnut}></Doughnut>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </DialogContent>
-
-        </Dialog >
+        </Dialog>
     )
 }
 
@@ -569,7 +658,7 @@ const ResponsiveAppBar = (props) => {
 
 
     return (
-        <AppBar position="static">
+        <AppBar position="sticky">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <IconButton

@@ -11,68 +11,41 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { CalendarPicker } from '@mui/x-date-pickers/CalendarPicker';
 
+import { Divider } from '@mui/material';
+
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [tags, setTags] = useState([]);
 
-  useEffect(
-    () => {
-      if (loggedIn) {
-        //Fetch data from server
-      }
-      else {
-        try {
-          setTasks(JSON.parse(localStorage.getItem('tasks')))
-          setTags(JSON.parse(localStorage.getItem('tags')))
-        }
-        catch (error) {
-          console.error(error)
-          localStorage.setItem('tasks', JSON.stringify(tasks))
-          localStorage.setItem('tags', JSON.stringify(tags))
-        }
-      }
-    }, []
-  )
-
-  useEffect(
-    () => {
-      //What to do when the user is logged in? Synch to server? 
-      localStorage.setItem('tasks', JSON.stringify(tasks))
-    }, [tasks]
-  )
-
-  useEffect(
-    () => {
-      localStorage.setItem('tags', JSON.stringify(tags))
-    }, [tags]
-  )
-
 
   return (
-    <Box sx={{
-      display: "flex",
-      flexDirection: "column",
-      gap: 5,
-      justifyContent: "center",
-      alignItems: "center"
-    }}>
+    <Box sx={{minWidth:'700px'}}>
       <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
-      <Grid container spacing={4}>
-        <Grid container item xs={4} spacing={3} direction='column'>
-          <Grid item>
+      <Grid container spacing={4} sx={{ marginTop: '5px'}}>
+        <Grid container item
+          xs="auto"
+          spacing={3}
+          direction='column'
+          justifyContent="flex-start"
+          alignItems="stretch"
+          sx={{ pl: 0, pt: 0, position:'sticky'}}>
+          
+          <Grid item sx={{width:'100%'}}>
             <TimerControl></TimerControl>
           </Grid>
           <Grid item>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <CalendarPicker  /> {/*date={date}  onChange={(newDate) => setDate(newDate)}*/}
-            </LocalizationProvider>
+            <Divider></Divider>
           </Grid>
-          <Grid item>
+          <Grid item sx={{width:'100%'}}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <CalendarPicker/> {/*date={date}  onChange={(newDate) => setDate(newDate)}*/}
+            </LocalizationProvider>
 
           </Grid>
+          <Divider orientation="vertical"></Divider>
         </Grid>
-        <Grid item xs={8} position='sticky'>
+        <Grid item xs>
           <TaskList></TaskList>
         </Grid>
       </Grid>
