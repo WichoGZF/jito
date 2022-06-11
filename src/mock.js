@@ -1,6 +1,4 @@
-export const mockTags = [
-  "School", "Work", "Hobbies", "Home", "Sex"
-]
+
 
 export const mockCompletedTasks = [{
   "name": "Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.",
@@ -254,73 +252,79 @@ export const mockCompletedTasks = [{
   "tag": "School"
 }]
 
-export const mockTasks = [{
-  "id": 1,
-  "name": "Gabapentin",
-  "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
-  "date": "24/07/2021",
-  "tag": "Work",
-  "children": [{
-    "id": 1,
-    "name": "Menthol",
-    "description": "Curabitur at ipsum ac tellus semper interdum.",
-    "date": "24/04/2022",
-    "tag": "Work",
-    "children": []
-  }, {
-    "id": 2,
-    "name": "Acetaminophen",
-    "description": "Duis bibendum. Morbi non quam nec dui luctus rutrum.",
-    "date": "02/12/2021",
-    "tag": "Sex",
-    "children": []
-  }]
-}, {
-  "id": 2,
-  "name": "Lidocaine Hydrochloride, Bupivacaine Hydrochloride, Povidine Iodine",
-  "description": "Duis bibendum, felis sed interdum venenatis, turpis enim blandit mi, in porttitor pede justo eu massa.",
-  "date": "02/05/2022",
-  "tag": "Sex",
-  "children": [
-  ]
-}, {
-  "id": 3,
-  "name": "methotrexate",
-  "description": "Integer ac leo. Pellentesque ultrices mattis odio. Donec vitae nisi.",
-  "date": "07/12/2021",
-  "tag": "Hobbies",
-  "children": [
-
-  ]
-}, {
-  "id": 4,
-  "name": "methylcellulose",
-  "description": "Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.",
-  "date": "12/06/2022",
-  "tag": "Work",
-  "children": [
-    {
-      "id": 1,
-      "name": "Pravastatin Sodium",
-      "description": "Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. ",
-      "date": "22/08/2021",
-      "tag": "Work",
-      "children": []
-    }, {
-      "id": 2,
-      "name": "Melaleuca",
-      "description": "In hac habitasse platea dictumst. Etiam faucibus cursus urna. Ut tellus.",
-      "date": "29/11/2021",
-      "tag": "Home",
-      "children": []
-    }
-  ]
-}, {
-  "id": 5,
-  "name": "emtricitabine and tenofovir disoproxil fumarate",
-  "description": "Duis consequat dui nec nisi volutpat eleifend. Donec ut dolor. Morbi vel lectus in quam fringilla rhoncus.",
-  "date": "26/11/2021",
-  "tag": "Home",
-  "children": [
-  ]
-}]
+export const mockTasks =
+{
+  escuela:
+    [
+      {
+        "name": "Gabapentin",
+        "id": 1,
+        "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
+        "date": "24/07/2022",
+        "type": "regular",
+        "repeat": true,
+      },
+      {
+        "name": "Gabapentin",
+        "id": 2,
+        "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
+        "date": "24/07/2022",
+        "type": "block",
+        "repeat": false,
+      },
+      {
+        "name": "Gabapentin",
+        "id": 3,
+        "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
+        "date": "24/07/2022",
+        "type": "block",
+        "repeat": false,
+      },
+      {
+        "name": "Gabapentin",
+        "id": 4,
+        "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
+        "date": "24/07/2022",
+        "type": "regular",
+        "repeat": false,
+      },
+    ],
+  programming:
+    [
+      {
+        "name": "Gabapentin",
+        "id": 1,
+        "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
+        "date": "24/07/2022",
+        "type": "regular",
+        "repeat": true,
+      },
+      {
+        "name": "Gabapentin",
+        "id": 2,
+        "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
+        "date": "24/07/2022",
+        "type": "regular",
+        "repeat": false,
+      },
+      {
+        "name": "Gabapentin",
+        "id": 3,
+        "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
+        "date": "24/07/2022",
+        "type": "regular",
+        "repeat": false,
+      },
+    ],
+  casa:
+    [
+      {
+        "name": "Gabapentin",
+        "id": 1,
+        "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
+        "date": "24/07/2022",
+        "type": "regular",
+        "repeat": true,
+      },
+    ]
+}
