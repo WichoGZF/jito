@@ -46,7 +46,7 @@ export default function TaskInput(props) {
     };
 
     return (
-        <Box sx={{ width: '90%'}}>
+        <Box sx={{ width: '95%'}}>
             <Grid container direction='column' gap={2} sx={{ padding: "15px", border: '1px', borderStyle: 'solid', borderColor: "#e2e2e2", borderRadius: '25px'}}>
 
                 <Input id="task-name"
@@ -64,19 +64,6 @@ export default function TaskInput(props) {
                     placeholder="Task description"
                     multiline
                 />
-                <Stack direction="row" spacing={1} sx={{ gridColumn: '2', gridRow: "3", alignItems: "center" }}>
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                            <DatePicker
-                                label="Date"
-                                value={date}
-                                onChange={(newValue) => {
-                                    setDate(newValue);
-                                }}
-                                renderInput={(params) => <TextField {...params} />}
-                            />
-                        </LocalizationProvider>
-                        <IconButton><RepeatIcon></RepeatIcon></IconButton>
-
                     <FormControl>
                         <FormLabel id="task-type-radio-buttons-group">Task type</FormLabel>
                         <RadioGroup
@@ -90,7 +77,10 @@ export default function TaskInput(props) {
                             <FormControlLabel value="square" control={<Radio />} label="Square" />
                         </RadioGroup>
                     </FormControl>
-                </Stack>
+                    <Stack direction="row" justifyContent={"space-between"}>
+                        <Typography sx={{color:"rgba(0, 0, 0, 0.6)"}}>Repeat</Typography>
+                        <IconButton><RepeatIcon></RepeatIcon></IconButton>
+                    </Stack>
 
             </Grid>
             <Grid container direction="row" justifyContent='flex-end' alignItems={'center'} sx={{marginTop: 2}}>
