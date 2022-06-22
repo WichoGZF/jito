@@ -7,6 +7,7 @@ import TaskList from './components/TaskList';
 import Box from "@mui/material/Box";
 import Grid from '@mui/material/Grid'
 
+import {format, compareAsc} from 'date-fns'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { CalendarPicker } from '@mui/x-date-pickers/CalendarPicker';
@@ -15,9 +16,7 @@ import { Divider } from '@mui/material';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [tasks, setTasks] = useState([]);
-  const [tags, setTags] = useState([]);
-
+  const [date, setDate] = useState(new Date());
 
   return (
     <Box sx={{minWidth:'700px'}}>
@@ -39,14 +38,14 @@ function App() {
           </Grid>
           <Grid item sx={{width:'100%'}}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <CalendarPicker/> {/*date={date}  onChange={(newDate) => setDate(newDate)}*/}
+              <CalendarPicker disablePast date={date} onChange={(newDate)=>setDate(newDate)}/> 
             </LocalizationProvider>
 
           </Grid>
           <Divider orientation="vertical"></Divider>
         </Grid>
         <Grid item xs>
-          <TaskList></TaskList>
+          <TaskList date={date}></TaskList>
         </Grid>
       </Grid>
     </Box>

@@ -241,7 +241,7 @@ function ListEntry(props) {
           >
             <MenuItem onClick={handleEditTask}>Edit task</MenuItem>
             <MenuItem onClick={handleCloseDropDown} divider>Delete task</MenuItem>
-            <MenuItem onClick={handleCloseDropDown}><CheckIcon></CheckIcon>All tasks</MenuItem>
+            <MenuItem onClick={handleCloseDropDown}><CheckIcon></CheckIcon>My tasks</MenuItem>
             <MenuItem onClick={handleCloseDropDown}>Tag 1</MenuItem>
             <MenuItem onClick={handleCloseDropDown}>Tag 2</MenuItem>
 
@@ -250,18 +250,18 @@ function ListEntry(props) {
 
       }>
       <ListItemIcon
-                 onMouseEnter={(e) => setCompleteHover(true)}
-          onMouseLeave={(e) => setCompleteHover(false)}
-        >
-{
-  props.type==="block"? <Typography sx={{margin: 1, pl: 1, pr:1, border:"1px", borderStyle:"solid"}}>{props.blocks}</Typography>
-:<IconButton>{completeHover ? <CheckOutlinedIcon></CheckOutlinedIcon> : <CircleOutlined></CircleOutlined>}</IconButton>
-}
+        onMouseEnter={(e) => setCompleteHover(true)}
+        onMouseLeave={(e) => setCompleteHover(false)}
+      >
+        {
+          props.type === "block" ? <Typography sx={{ margin: 1, pl: 1, pr: 1, border: "1px", borderStyle: "solid" }}>{props.blocks}</Typography>
+            : <IconButton>{completeHover ? <CheckOutlinedIcon></CheckOutlinedIcon> : <CircleOutlined></CircleOutlined>}</IconButton>
+        }
 
       </ListItemIcon>
       <ListItemText primary={props.text} secondary={props.description}>
       </ListItemText>
-      {props.repeat? <RepeatIcon sx={{marginRight: 1, color: "rgba(0, 0, 0, 0.6)"}}></RepeatIcon>: null}
+      {props.repeat ? <RepeatIcon sx={{ marginRight: 1, color: "rgba(0, 0, 0, 0.6)" }}></RepeatIcon> : null}
 
       <Chip variant="outlined" label={props.date} sx={{ visibility: props.date ? "visible" : "hidden" }}></Chip>
     </ListItem>
@@ -269,7 +269,7 @@ function ListEntry(props) {
 }
 
 export default function TaskList(props) {
-  const [tagSelected, setTagSelected] = useState('All Tasks')
+  const [tagSelected, setTagSelected] = useState('My tasks')
   const [tagAnchorEl, setTagAnchorEl] = useState(null)
   const [optionsAnchorEl, setOptionsAnchorEl] = useState(null)
   const [changeListName, setChangeListName] = useState(false)
@@ -308,44 +308,57 @@ export default function TaskList(props) {
     return maxId + 1
   }
 
+  function taskToListEntry(task, index) {
+    return (
+      <ListEntry
+        key={task.id}
+        text={task.name}
+        description={task.description}
+        index={index}
+        date={task.date}
+        type={task.type}
+        blocks={task.blocks}
+        repeat={task.repeat}
+      ></ListEntry>
+    )
+  }
+
+  console.log(props.date)
+  const dd = String(props.date.getDate()).padStart(2, '0');
+  const mm = String(props.date.getMonth() + 1).padStart(2, '0'); //January is 0!
+  const yyyy = props.date.getFullYear();
+
+  const date = mm + '/' + dd + '/' + yyyy;
+
+  const day = props.date.getDay();
+
   let allTagTasks = []
-  if (tagSelected === 'All Tasks') {
-    tasks.tasks.forEach((task, index) => {
-      allTagTasks.push(
-        <ListEntry
-          key={task.id}
-          text={task.name}
-          description={task.description}
-          index={index}
-          date={task.date}
-          type={task.type}
-          blocks={task.blocks}
-          repeat={task.repeat}
 
-        ></ListEntry>
-      )
-    })
-  }
-  else {
-    tasks.tasks.forEach((task, index) => {
-      if (task.tag === tagSelected) {
-        allTagTasks.push(
-          <ListEntry
-            key={task.id}
-            text={task.name}
-            description={task.description}
-            index={index}
-            date={task.date}
-            type={task.type}
-            blocks={task.blocks}
-            repeat={task.repeat}
-          ></ListEntry>
-        )
+  /*Task filtering */
+  tasks.tasks.forEach((task, index) => {
+    if (task.tag === tagSelected) {
+      if (task.repeat) {
+        if (Array.isArray(task.repeatOn)) {
+          for (const dayOfTheWeek of task.repeatOn) {
+            if (dayOfTheWeek === day) {
+              allTagTasks.push(taskToListEntry(task, index))
+              break;
+            }
+          }
+        }
+        if (task.repeatOn === "day") {
+          allTagTasks.push(taskToListEntry(task, index))
+        }
       }
-    })
-  }
+      else {
+        if (date === task.date) {
+          allTagTasks.push(taskToListEntry(task, index))
+        }
+      }
+    }
+  })
 
-  let tagsMenuItems = [<MenuItem key="0" selected={"All Tasks" === tagSelected} divider onClick={() => handleChangeTagSelected("All Tasks")}>All Tasks</MenuItem>]
+  let tagsMenuItems = []
   for (const [index, tag] of tasks.tags.entries()) {
     console.log(index)
     tagsMenuItems.push(
@@ -390,8 +403,9 @@ export default function TaskList(props) {
               'aria-labelledby': 'options-button',
             }}
           >
-            <MenuItem onClick={handleCloseTags}>Change list name</MenuItem>
-            <MenuItem onClick={handleCloseTags}>Delete list</MenuItem>
+            <MenuItem onClick={handleCloseTags}>Change tag name</MenuItem>
+            {tagSelected === "My tasks" ? <MenuItem disabled><Stack><Typography>Delete tag</Typography><Typography variant="subtitle2">Cannot delete the default tag</Typography></Stack></MenuItem> : <MenuItem onClick={handleCloseTags}>Delete tag</MenuItem>}
+
           </Menu>
         </Grid>
       </Grid>
