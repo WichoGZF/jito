@@ -52,6 +52,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import { useSelector } from 'react-redux';
 
 import RepeatIcon from '@mui/icons-material/Repeat';
+import AddIcon from '@mui/icons-material/Add';
 
 function NewTask(props) {
   const [addNewTask, setAddNewTask] = useState(false);
@@ -400,6 +401,14 @@ export default function TaskList(props) {
               'aria-labelledby': 'options-button',
             }}
           >
+          <MenuItem divider
+            key={"0"}
+            onClick={()=>{}}>
+            <Stack direction = "row" spacing={1}>
+            <AddIcon></AddIcon>
+             <Typography>Add new tag</Typography>
+             </Stack>
+            </MenuItem>
             {tagsMenuItems}
           </Menu>
         </Grid>
