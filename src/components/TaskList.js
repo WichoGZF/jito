@@ -206,6 +206,22 @@ function ListEntry(props) {
 
   drag(drop(ref))
 
+  const selectedTag = props.tag
+  const tags = props.tags.map((tag) => {
+    if (tag === selectedTag) {
+      return (
+        <MenuItem onClick={handleCloseDropDown} selected>
+          {tag}
+        </MenuItem>
+      )
+    }
+    else {
+      return (
+        <MenuItem onClick={handleCloseDropDown}>{tag}</MenuItem>
+      )
+    }
+  })
+
   return (
     <ListItem
       ref={ref}
@@ -241,9 +257,8 @@ function ListEntry(props) {
           >
             <MenuItem onClick={handleEditTask}>Edit task</MenuItem>
             <MenuItem onClick={handleCloseDropDown} divider>Delete task</MenuItem>
-            <MenuItem onClick={handleCloseDropDown}><CheckIcon></CheckIcon>My tasks</MenuItem>
-            <MenuItem onClick={handleCloseDropDown}>Tag 1</MenuItem>
-            <MenuItem onClick={handleCloseDropDown}>Tag 2</MenuItem>
+            <MenuItem disabled>Change task tag</MenuItem>
+            {tags}
 
           </Menu>
         </>
@@ -262,8 +277,6 @@ function ListEntry(props) {
       <ListItemText primary={props.text} secondary={props.description}>
       </ListItemText>
       {props.repeat ? <RepeatIcon sx={{ marginRight: 1, color: "rgba(0, 0, 0, 0.6)" }}></RepeatIcon> : null}
-
-      <Chip variant="outlined" label={props.date} sx={{ visibility: props.date ? "visible" : "hidden" }}></Chip>
     </ListItem>
   )
 }
@@ -319,6 +332,8 @@ export default function TaskList(props) {
         type={task.type}
         blocks={task.blocks}
         repeat={task.repeat}
+        tag={tagSelected}
+        tags={tasks.tags}
       ></ListEntry>
     )
   }
