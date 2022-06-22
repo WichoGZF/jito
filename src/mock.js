@@ -1,6 +1,6 @@
 export const mockTasks =
 {
-  tags: ['escuela', 'programming', 'casa'],
+  tags: ['My tasks', 'escuela', 'programming', 'casa'],
   tasks: [
     {
       "name": "Uno",
@@ -10,7 +10,8 @@ export const mockTasks =
       "date": "06/22/2022",
       "type": "regular",
       "blocks": null,
-      "repeat": true,
+      "repeat": false,
+      "repeatOn": null,
     },
     {
       "name": "Dos",
@@ -21,6 +22,7 @@ export const mockTasks =
       "type": "block",
       "blocks": 2, 
       "repeat": false,
+      "repeatOn": null,
     },
     {
       "name": "Tres",
@@ -31,36 +33,40 @@ export const mockTasks =
       "type": "block",
       "blocks": 3,
       "repeat": false,
+      "repeatOn": null,
     },
     {
       "name": "Cuatro",
       "tag": "escuela",
       "id": 4,
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
-      "date": null,
+      "date": "06/21/2022",
       "type": "regular",
       "blocks": null,
       "repeat": false,
+      "repeatOn": null,
     },
     {
       "name": "Cinco",
       "tag": "escuela",
       "id": 5,
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
-      "date": "06/20/2022",
+      "date": "06/24/2022",
       "type": "regular",
       "blocks": null,
-      "repeat": true,
+      "repeat": false,
+      "repeatOn": null,
     },
     {
       "name": "Seis",
       "tag": "escuela",
       "id": 6,
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
-      "date": "06/19/2022",
+      "date": "06/25/2022",
       "type": "regular",
       "blocks": null,
       "repeat": false,
+      "repeatOn": null,
     },
     {
       "name": "Siete",
@@ -71,6 +77,7 @@ export const mockTasks =
       "type": "regular",
       "blocks": null,
       "repeat": false,
+      "repeatOn": "day",
     },
     {
       "name": "Ocho",
@@ -81,53 +88,53 @@ export const mockTasks =
       "type": "regular",
       "blocks": null,
       "repeat": true,
+      "repeatOn": [0],
     },
     {
       "name": "Nueve",
       "tag": "programming",
       "id": 9,
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
-      "date": "23/07/2022",
+      "date": null,
       "type": "regular",
       "blocks": null,
       "repeat": true,
+      "repeatOn": [0, 3, 6],
     },
     {
       "name": "Diez",
       "tag": "programming",
       "id": 10,
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
-      "date": "25/07/2022",
+      "date": null,
       "type": "regular",
       "blocks": null,
       "repeat": true,
+      "repeatOn": "day",
     },
 
   ],
   history: [{
-    "name": "Nullam porttitor lacus at turpis. Donec posuere metus vitae ipsum. Aliquam non mauris.",
-    "complete_date": "12/08/2021",
-    "time": 1203,
-    "tag": "Home"
+    "complete_date": "06/06/2022",
+    "pomodoros": 1,
+    "tag": "My tasks"
   }, {
-    "name": "Quisque porta volutpat erat. Quisque erat eros, viverra eget, congue eget, semper rutrum, nulla. Nunc purus.",
-    "complete_date": "18/11/2021",
-    "time": 38,
-    "tag": "School"
+    "complete_date": "06/16/2022",
+    "pomodoros": 5,
+    "tag": "Programming"
   }, {
-    "name": "Cras mi pede, malesuada in, imperdiet et, commodo vulputate, justo. In blandit ultrices enim. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
-    "complete_date": "19/07/2021",
-    "time": 94,
-    "tag": "Hobbies"
+    "complete_date": "06/06/2022",
+    "pomodoros": 4,
+    "tag": "casa"
   }, {
-    "name": "Duis bibendum. Morbi non quam nec dui luctus rutrum. Nulla tellus.",
-    "complete_date": "04/05/2021",
-    "time": 1300,
-    "tag": "Sex"
+    "complete_date": "06/05/2022",
+    "pomodoros": 1,
+    "tag": "escuela"
   }, {
-    "name": "Curabitur in libero ut massa volutpat convallis. Morbi odio odio, elementum eu, interdum eu, tincidunt in, leo. Maecenas pulvinar lobortis est.",
-    "complete_date": "11/10/2021",
-    "time": 1093,
-    "tag": "Home"
-  }]
+    "complete_date": "04/10/2022",
+    "pomodoros": 12,
+    "tag": "programming"
+  }],
 }
+
+
