@@ -115,23 +115,23 @@ export const mockTasks =
 
   ],
   history: [{
-    "complete_date": "06/06/2022",
+    "completeDate": "06/06/2022",
     "time": 1500,
     "tag": "My tasks"
   }, {
-    "complete_date": "06/16/2022",
+    "completeDate": "06/16/2022",
     "time": 7500,
     "tag": "Programming"
   }, {
-    "complete_date": "06/06/2022",
+    "completeDate": "06/06/2022",
     "time": 750,
     "tag": "casa"
   }, {
-    "complete_date": "06/05/2022",
+    "completeDate": "06/05/2022",
     "time": 3000,
     "tag": "escuela"
   }, {
-    "complete_date": "04/10/2022",
+    "completeDate": "04/10/2022",
     "time": 4500,
     "tag": "programming"
   }],
