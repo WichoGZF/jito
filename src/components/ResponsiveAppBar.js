@@ -55,6 +55,9 @@ import { Line, Bar, Doughnut } from 'react-chartjs-2';
 
 import faker from '@faker-js/faker'
 
+import { useSelector } from 'react-redux'
+import { GridHeaderPlaceholder } from "@mui/x-data-grid";
+
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -90,34 +93,47 @@ function a11yProps(index) {
 
 
 const DialogSettings = (props) => {
-    const [value, setValue] = useState(0);
+    const settings = useSelector(state => state.settings)
+    //State holding the setting's values
+    const [tabSelected, setTabSelected] = useState(0) //0 for timer, 1 for notification, 2 for app section.
+    //Timer settings
+    const [pomodoroDuration, setPomodoroDuration] = useState(settings.pomodoroDuration);
+    const [shortBreakDuration, setShortBreakDuration] = useState(settings.shortBreakDuration);
+    const [longBreakDuration, setLongBreakDuration] = useState(settings.longBreakDuration)
+    const [longBreakEvery, setLongBreakEvery] = useState(settings.longBreakEvery)
+    const [automaticPomodoroStart, setAutomaticPomodoroStart] = useState(settings.automaticPomodoroStart)
+    const [automaticBreakStart, setAutomaticBreakStart] = useState(settings.automaticBreakStart)
+    //Notification settings
+    const [alarmVolume, setAlarmVolume] = useState(settings.alarmVolume)
+    const [alarmSound, setAlarmSound] = useState(settings.alarmSound)
+    const [tickingVolume, setTickingVolume] = useState(settings.tickingVolume)
+    const [tickingSound, setTickingSound] = useState(settings.tickingSound)
+    const [alarmOnPomodoroEnd, setAlarmOnPomodoroEnd] = useState(settings.alarmOnPomodoroEnd)
+    const [alarmOnBreakEnd, setAlarmOnBreakEnd] = useState(settings.alarmOnBreakEnd)
+    const [tickingSoundOnBreak, setTickingSoundOnBreak] = useState(settings.tickingSoundOnBreak)
+    const [tickingSoundOnPomodoro, setTickingSoundOnPomodoro] = useState(settings.tickingSoundOnPomodoro)
+    //App 
+    const [colorTheme, setColorTheme] = useState(settings.colorTheme)
+    const [hoursPastMidnight, setHoursPastMidnight] = useState(settings.hoursPastMidnight)
+    const [timeFormat, setTimeFormat] = useState(settings.timeFormat)
+    const [dateFormat, setDateFormat] = useState(settings.dateFormat)
 
-    const [volumeValue, setVolumeValue] = useState(30);
-
-    const [theme, setTheme] = useState('light')
-
-    const handleChange = (event, newValue) => {
-        setValue(newValue)
+    const handleChangeTabSelected = (event, newValue) => {
+        setTabSelected(newValue)
     };
 
-    const handleVolumeChange = (event, newValue) => {
-        setVolumeValue(newValue)
-    }
-
-    const handleTheme = (event, newTheme) => {
-        setTheme(newTheme)
-    }
     return (
         <Dialog
             open={props.open}
             onClose={props.handleClose}
+            maxWidth={"xs"}
         >
             <DialogTitle>
                 <Grid container direction="row" justifyContent="space-between" alignItems="center" >
                     <Grid item xs="auto">
                         <Tabs
-                            onChange={handleChange}
-                            value={value}>
+                            onChange={handleChangeTabSelected}
+                            value={tabSelected}>
                             <Tab label="Timer" {...a11yProps(0)}>
                             </Tab>
                             <Tab label="Notification" {...a11yProps(1)}>
@@ -134,28 +150,47 @@ const DialogSettings = (props) => {
                 </Grid>
             </DialogTitle>
             <DialogContent dividers>
-                <TabPanel value={value} index={0}>
+                <TabPanel value={tabSelected} index={0}>
                     <Grid container spacing={2} direction='column'>
                         <Grid item>
-                            <TextField label="Pomodoro duration" defaultValue="25" helperText="Minutes"></TextField>
-                        </Grid>
-                        <Grid item>
-                            <TextField label="Short break duration" defaultValue="25" helperText="Minutes"></TextField>
-                        </Grid>
-                        <Grid item>
-                            <TextField label="Long break duration" defaultValue="25" helperText="Minutes"></TextField>
-                        </Grid>
-                        <Grid item>
-                            <TextField label="Long break every" defaultValue="5" helperText="Pomodoros"></TextField>
-                        </Grid>
+                            <TextField label="Pomodoro duration" helperText="Minutes"
+                                value={pomodoroDuration}
+                                onChange={(event) => setPomodoroDuration(event.target.value)}
+                                sx={{ width: "100%" }}
 
+                            ></TextField>
+                        </Grid>
+                        <Grid item>
+                            <TextField label="Short break duration" helperText="Minutes"
+                                value={shortBreakDuration}
+                                onChange={(event) => setShortBreakDuration(event.target.value)}
+                                sx={{ width: "100%" }}
+                            ></TextField>
+
+                        </Grid>
+                        <Grid item>
+                            <TextField label="Long break duration" helperText="Minutes"
+                                value={longBreakDuration}
+                                onChange={(event) => setLongBreakDuration(event.target.value)}
+                                sx={{ width: "100%" }}
+                            ></TextField>
+
+                        </Grid>
+                        <Grid item>
+                            <TextField label="Long break every" helperText="Pomodoros"
+                                value={longBreakEvery}
+                                onChange={(event) => setLongBreakEvery(event.target.value)}
+                                sx={{ width: "100%" }}
+                            ></TextField>
+                        </Grid>
                         <Grid item>
                             <Grid container justifyContent="space-between" alignItems='center' direction='row'>
                                 <Grid item xs="auto">
                                     <Typography>Automatic pomodoro start:</Typography>
                                 </Grid>
                                 <Grid item xs="auto">
-                                    <Switch></Switch>
+                                    <Switch value={automaticPomodoroStart}
+                                        onChange={() => setAutomaticPomodoroStart(!automaticPomodoroStart)}></Switch>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -165,14 +200,16 @@ const DialogSettings = (props) => {
                                     <Typography>Automatic break start:</Typography>
                                 </Grid>
                                 <Grid item xs="auto">
-                                    <Switch></Switch>
+                                    <Switch
+                                        value={automaticBreakStart}
+                                        onChange={() => setAutomaticBreakStart(!automaticBreakStart)}></Switch>
                                 </Grid>
                             </Grid>
                         </Grid>
 
                     </Grid>
                 </TabPanel>
-                <TabPanel value={value} index={1}>
+                <TabPanel value={tabSelected} index={1}>
                     <Grid container spacing={3} direction="column" >
                         <Grid item>
                             <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
@@ -183,7 +220,9 @@ const DialogSettings = (props) => {
                                             <VolumeDown />
                                         </Grid>
                                         <Grid item xs>
-                                            <Slider aria-label="Volume" value={value} onChange={handleChange} />
+                                            <Slider aria-label="Volume"
+                                                value={alarmVolume}
+                                                onChange={(event, newValue) => { setAlarmVolume(newValue) }} />
                                         </Grid>
                                         <Grid item xs='auto'>
                                             <VolumeUp />
@@ -198,7 +237,19 @@ const DialogSettings = (props) => {
                                     <Typography>Alarm sound</Typography>
                                 </Grid>
                                 <Grid item xs={5}>
-                                    <Select sx={{ width: '100%' }}></Select>
+                                    <Select
+                                        sx={{ width: "100%" }}
+                                        value={alarmSound}
+                                        onChange={(event) => { setAlarmSound(event.target.value) }}>
+                                        <MenuItem value="answer-tone">Answer tone</MenuItem>
+                                        <MenuItem value="bell">Bell</MenuItem>
+                                        <MenuItem value="clear-announce">Clear announce</MenuItem>
+                                        <MenuItem value="confirmation-tone">Confirmation tone</MenuItem>
+                                        <MenuItem value="doorbell-light">Doorbell light</MenuItem>
+                                        <MenuItem value="doorbell-plain">Doorbell plain</MenuItem>
+                                        <MenuItem value="flute">Flute</MenuItem>
+                                        <MenuItem value="positive">Positive</MenuItem>
+                                    </Select>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -213,7 +264,9 @@ const DialogSettings = (props) => {
                                             <VolumeDown />
                                         </Grid>
                                         <Grid item xs>
-                                            <Slider aria-label="Volume" value={value} onChange={handleChange} />
+                                            <Slider aria-label="Volume"
+                                                value={tickingVolume}
+                                                onChange={(event, newValue) => { setTickingVolume(newValue) }} />
                                         </Grid>
                                         <Grid item xs='auto'>
                                             <VolumeUp />
@@ -228,7 +281,13 @@ const DialogSettings = (props) => {
                                     <Typography>Ticking sound</Typography>
                                 </Grid>
                                 <Grid item xs={5}>
-                                    <Select sx={{ width: '100%' }}></Select>
+                                    <Select sx={{ width: '100%' }}
+                                        value={tickingSound}
+                                        onChange={(event) => setTickingSound(event.target.value)}>
+                                        <MenuItem value="clocktick">Clock tick</MenuItem>
+                                        <MenuItem value="pendulum">Pendulum</MenuItem>
+                                        <MenuItem value="wall-clock-tick">Wall clock tick</MenuItem>
+                                    </Select>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -238,7 +297,8 @@ const DialogSettings = (props) => {
                                     <Typography>Alarm on pomodoro end</Typography>
                                 </Grid>
                                 <Grid item xs='auto'>
-                                    <Switch></Switch>
+                                    <Switch value={alarmOnPomodoroEnd}
+                                        onChange={() => { setAlarmOnPomodoroEnd(!alarmOnPomodoroEnd) }}></Switch>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -248,7 +308,8 @@ const DialogSettings = (props) => {
                                     <Typography>Alarm on break end</Typography>
                                 </Grid>
                                 <Grid item xs='auto'>
-                                    <Switch></Switch>
+                                    <Switch value={alarmOnBreakEnd}
+                                        onChange={() => { setAlarmOnBreakEnd(!alarmOnBreakEnd) }}></Switch>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -258,7 +319,8 @@ const DialogSettings = (props) => {
                                     <Typography>Ticking sound on break</Typography>
                                 </Grid>
                                 <Grid item xs='auto'>
-                                    <Switch></Switch>
+                                    <Switch value={tickingSoundOnBreak}
+                                        onChange={() => { setTickingSoundOnBreak(!tickingSoundOnBreak) }}></Switch>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -268,14 +330,22 @@ const DialogSettings = (props) => {
                                     <Typography>Ticking sound on pomodoro</Typography>
                                 </Grid>
                                 <Grid item xs='auto'>
-                                    <Switch></Switch>
+                                    <Switch value={tickingSoundOnPomodoro}
+                                        onChange={() => { setTickingSoundOnPomodoro(!tickingSoundOnPomodoro) }}></Switch>
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
                 </TabPanel>
-                <TabPanel value={value} index={2}>
+                <TabPanel value={tabSelected} index={2}>
                     <Grid container spacing={2} direction="column" >
+                        <Grid item>
+                            <TextField label="Start new day at" helperText="Hours past midnight"
+                                value={hoursPastMidnight}
+                                onChange={(event) => setHoursPastMidnight(event.target.value)}
+                                sx={{ width: "100%" }}
+                            ></TextField>
+                        </Grid>
                         <Grid item>
                             <Grid container direction='row' justifyContent='space-between' alignItems='center'>
                                 <Grid item xs='auto'>
@@ -285,9 +355,9 @@ const DialogSettings = (props) => {
                                 </Grid>
                                 <Grid item xs='auto'>
                                     <ToggleButtonGroup
-                                        value={theme}
+                                        value={colorTheme}
                                         exclusive
-                                        onChange={handleTheme}
+                                        onChange={(event, newTheme) => { setColorTheme(newTheme) }}
                                         aria-label="theme select"
                                     >
                                         <ToggleButton value="light" aria-label="dark theme">
@@ -300,23 +370,19 @@ const DialogSettings = (props) => {
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid item>
-                            <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
-                                <Grid item xs>
-                                    <Typography>Time zone</Typography>
-                                </Grid>
-                                <Grid item xs={5}>
-                                    <Select sx={{ width: '100%' }}></Select>
-                                </Grid>
-                            </Grid>
-                        </Grid>
+
                         <Grid item>
                             <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
                                 <Grid item xs>
                                     <Typography>Time format</Typography>
                                 </Grid>
                                 <Grid item xs={5}>
-                                    <Select sx={{ width: '100%' }}></Select>
+                                    <Select sx={{ width: '100%' }}
+                                        value={timeFormat}
+                                        onChange={(event) => { setTimeFormat(event.target.value) }}>
+                                        <MenuItem value={"24"}>24H</MenuItem>
+                                        <MenuItem value={"12"}>12H</MenuItem>
+                                    </Select>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -326,17 +392,13 @@ const DialogSettings = (props) => {
                                     <Typography>Date format</Typography>
                                 </Grid>
                                 <Grid item xs={5}>
-                                    <Select sx={{ width: '100%' }}></Select>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        <Grid item>
-                            <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
-                                <Grid item xs>
-                                    <Typography>Add new tasks to...</Typography>
-                                </Grid>
-                                <Grid item xs={5}>
-                                    <Select sx={{ width: '100%' }}></Select>
+                                    <Select sx={{ width: '100%' }}
+                                        value={dateFormat}
+                                        onChange={(event) => { setDateFormat(event.target.value) }}>
+                                        <MenuItem value={"MM/DD/YYYY"}>MM/DD/YYYY</MenuItem>
+                                        <MenuItem value={"DD/MM/YYYY"}>DD/MM/YYYY</MenuItem>
+                                        <MenuItem value={"YYYY/MM/DD"}>YYYY/MM/DD</MenuItem>
+                                    </Select>
                                 </Grid>
                             </Grid>
                         </Grid>
@@ -447,7 +509,7 @@ const DialogStatistics = (props) => {
                 label: 'Dataset 1',
                 data: labelsLineChart.map(() => faker.datatype.number({ min: 0, max: 1000 })),
                 borderColor: 'rgb(217, 85, 80)',
-                backgroundColor: 'rgb(217, 85, 80)',
+                backgroundColor: 'rgb(255 142 138)',
             }
         ],
     };
@@ -469,7 +531,7 @@ const DialogStatistics = (props) => {
             {
                 label: 'Productive time',
                 data: labelsBarChart.map(() => faker.datatype.number({ min: 0, max: 100 })),
-                backgroundColor: 'rgb(217, 85, 80)',
+                backgroundColor: 'rgb(255 142 138)',
             },
         ],
     };
@@ -527,17 +589,7 @@ const DialogStatistics = (props) => {
             <DialogContent dividers>
                 <Grid container direction='column' spacing={2}>
                     <Stack spacing={4} sx={{ paddingLeft: '16px', paddingTop: '16px' }}>
-                        <Grid container item justifyContent='space-between' alignItems='center'>
-                            <Grid item>
-                                <Typography>Total stats</Typography>
-                            </Grid>
-                            <Grid item>
-                                <Select value={'time'}>
-                                    <MenuItem value={'time'}>Time</MenuItem>
-                                    <MenuItem value={'sessions'}>Pomodoros</MenuItem>
-                                </Select>
-                            </Grid>
-                        </Grid>
+                        <Typography>Total stats</Typography>
                         <Grid container item>
                             <Grid item xs>
                                 <Stack alignItems={'center'}>
@@ -588,7 +640,7 @@ const DialogStatistics = (props) => {
                             <Grid item>
                                 <Select value={'days'}>
                                     <MenuItem value={'days'}>Minutes</MenuItem>
-                                    <MenuItem value={'weeks'}>Pomdoros</MenuItem>
+                                    <MenuItem value={'weeks'}>Hours</MenuItem>
                                 </Select>
                             </Grid>
                         </Grid>
