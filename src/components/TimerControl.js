@@ -7,6 +7,7 @@ export default function TimerControl(props) {
   const [timerState, setTimerState] = useState(false);
   const [clockStarted, setClockStarted] = useState(false);
   const [rest, setRest] = useState(false);
+  const [pomodoros, setPomodoros] = useState(0);
   
   const changeTimerState = () => {
     setTimerState(!timerState);
@@ -32,6 +33,7 @@ export default function TimerControl(props) {
   useEffect(() => {
     console.log(timerMinuts, timerSeconds)
 
+    //if the timer is on and the clock hasn't been set to started, start
     if (timerState) {
       if (!clockStarted) {
         setClockStarted(true);
