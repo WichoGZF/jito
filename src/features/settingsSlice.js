@@ -11,9 +11,9 @@ const mockSettings = {
     // notification
 
     alarmVolume: 50, 
-    alarmSound: "bird",
+    alarmSound: "bell",
     tickingVolume: 50,
-    tickingSound: "clock",
+    tickingSound: "clocktick",
     alarmOnPomdoroEnd: true,
     alarmOnBreakEnd: true,
     tickingSoundOnBreak: false,
@@ -21,9 +21,9 @@ const mockSettings = {
     //app
 
     colorTheme: 'light',
-    timeZone: 'EST',
-    timeFormat: '', //12 or 24
-    dateFormat: '', //how to sort date
+    hoursPastMidnight: 0,
+    timeFormat: '12', //12 or 24
+    dateFormat: 'MM/DD/YYYY', //how to sort date
 
 }
 

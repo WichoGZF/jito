@@ -58,6 +58,10 @@ import faker from '@faker-js/faker'
 import { useSelector } from 'react-redux'
 import { GridHeaderPlaceholder } from "@mui/x-data-grid";
 
+import differenceInCalendarWeeks from "date-fns/differenceInCalendarWeeks";
+import { differenceInCalendarDays, differenceInCalendarMonths } from "date-fns";
+import getDay from 'date-fns/getDay'
+
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -475,6 +479,196 @@ const DialogLogIn = (props) => {
 
 
 const DialogStatistics = (props) => {
+    const tags = useSelector(state => state.tasks.tags)
+    const history = useSelector(state => state.tasks.history)
+
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    const todayDate = new Date();
+    const todayMonth = String(todayDate.getMonth() + 1).padStart(2, 0)
+    const todayMonthName = monthNames[todayDate.getMonth()]
+    const todayDay = String(todayDate.getDate()).padStart(2, 0);
+    const todayYear = String(todayDate.getFullYear())
+    const todayStringDate = todayMonth + "/" + todayDay + "/" + todayYear
+
+    const dayTime = () => {
+        let totalTimeSpent = 0;
+        for (const completedTask of history) {
+            console.log(completedTask)
+            const { completeDate, time } = completedTask
+            if (completeDate === todayStringDate) {
+                totalTimeSpent += time
+            }
+        }
+        return totalTimeSpent
+    }
+
+    const weekTime = () => {
+        let totalTimeSpent = 0;
+        for (const completedTask of history) {
+            const { completeDate, time } = completedTask
+            const [completedMonth, completedDay, completedYear] = completeDate.split('/')
+
+            const weekDifference = differenceInCalendarWeeks(
+                todayDate,
+                new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
+            )
+            if (weekDifference < 1) {
+                totalTimeSpent += time;
+            }
+        }
+        return totalTimeSpent
+    }
+
+    const monthTime = () => {
+        let totalMonthTime = 0;
+        for (const completedTask of history) {
+            const { completeDate, time } = completedTask
+            console.log(completeDate)
+            const [completedMonth, completedDay, completedYear] = completeDate.split('/')
+            console.log(todayYear, completedYear, todayMonth, completedMonth)
+            if (todayYear === completedYear && todayMonth === completedMonth) {
+                totalMonthTime += time
+            }
+        }
+        return totalMonthTime
+    }
+
+    const totalTime = () => {
+        let totalTime = 0;
+        for (const completeTask of history) {
+            totalTime += completeTask.time
+        }
+        return totalTime
+    }
+
+    const daysTime = () => {
+        let dayTimeSpent = [0, 0, 0, 0, 0, 0, 0];
+        for (const completedTask of history) {
+            const [completedTime, spentTime] = completedTask
+            const [completedMonth, completedDay, completedYear] = completedTime.split('/')
+
+            const dayDifference = differenceInCalendarDays(
+                todayDate,
+                new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
+            )
+            if (dayDifference < 7) {
+                dayTimeSpent[dayDifference] += spentTime;
+            }
+        }
+        return dayTimeSpent
+    }
+
+    const weeksTime = () => {
+        let weekTimeSpent = [0, 0, 0, 0, 0, 0, 0];
+        for (const completedTask of history) {
+            const [completedTime, spentTime] = completedTask
+            const [completedMonth, completedDay, completedYear] = completedTime.split('/')
+
+            const weekDifference = differenceInCalendarWeeks(
+                todayDate,
+                new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
+            )
+            if (weekDifference < 7) {
+                weekTimeSpent[weekDifference] += spentTime;
+            }
+        }
+        return weekTimeSpent
+    }
+
+    const monthsTime = () => {
+        let monthTimeSpent = [0, 0, 0, 0, 0, 0, 0];
+        for (const completedTask of history) {
+            const [completedTime, spentTime] = completedTask
+            const [completedMonth, completedDay, completedYear] = completedTime.split('/')
+
+            const monthDifference = differenceInCalendarMonths(
+                todayDate,
+                new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
+            )
+            if (monthDifference < 7) {
+                monthTimeSpent[monthDifference] += spentTime;
+            }
+        }
+        return monthTimeSpent
+    }
+
+    const daysOfTheWeekTime = () => {
+        let daysOfTheWeek = [0, 0, 0, 0, 0, 0, 0];
+        for (const completedTask of history) {
+            const [completedTime, spentTime] = completedTask
+            const [completedMonth, completedDay, completedYear] = completedTime.split('/')
+
+            const dayOfTheWeek = getDay(new Date(completedYear, parseInt(completedMonth) - 1, completedDay))
+            daysOfTheWeek[dayOfTheWeek] += spentTime;
+        }
+        return daysOfTheWeek
+    }
+
+
+    const tagsTime = (time) => {
+        let tagTime = {}
+        for (const tag in tags) {
+            tagTime[tag] = 0
+        }
+        switch (time) {
+            case 'today':
+                for (const completedTask of history) {
+                    const [completedTime, time, tag] = completedTask
+                    if (todayStringDate === completedTime) {
+                        tagTime[tag] += time;
+                    }
+                }
+                break;
+            case 'week':
+                for (const completedTask of history) {
+                    const [completedTime, time, tag] = completedTask
+                    const [completedMonth, completedDay, completedYear] = completedTime
+                    const dayDifference = differenceInCalendarDays(
+                        todayDate,
+                        new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
+                    )
+                    if (dayDifference < 7) {
+                        tagTime[tag] += time;
+                    }
+                }
+                break;
+            case 'month':
+                for (const completedTask of history) {
+                    const [completedTime, time, tag] = completedTask
+                    const [completedMonth, completedDay, completedYear] = completedTime
+                    const monthDifference = differenceInCalendarMonths(
+                        todayDate,
+                        new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
+                    )
+                    if (monthDifference < 1) {
+                        tagTime[tag] += time;
+                    }
+                }
+                break;
+            case 'all':
+                for (const completedTask of history) {
+                    const [completedTime, time, tag] = completedTask
+                    tagTime[tag] += time;
+                }
+                break;
+        }
+        return (tagTime)
+    }
+
+    const secondsToHourMins = (seconds) => {
+        const minutes = Math.trunc(seconds/60)
+        const hours = Math.trunc(minutes/60)
+        if(hours>0){
+            return(`${hours}h ${minutes%60}m`)
+        }
+        else{
+            return(`${minutes}m`)
+        }
+    }
+
     ChartJS.register(
         CategoryScale,
         LinearScale,
@@ -593,25 +787,25 @@ const DialogStatistics = (props) => {
                         <Grid container item>
                             <Grid item xs>
                                 <Stack alignItems={'center'}>
-                                    <Typography>0m</Typography>
+                                    <Typography>{secondsToHourMins(dayTime())}</Typography>
                                     <Typography>Today</Typography>
                                 </Stack>
                             </Grid>
                             <Grid item xs>
                                 <Stack alignItems={'center'}>
-                                    <Typography>3h 45m</Typography>
-                                    <Typography>Week 24</Typography>
+                                    <Typography>{secondsToHourMins(weekTime())}</Typography>
+                                    <Typography>This week</Typography>
                                 </Stack>
                             </Grid>
                             <Grid item xs>
                                 <Stack alignItems={'center'}>
-                                    <Typography>4h 48m</Typography>
-                                    <Typography>June</Typography>
+                                    <Typography>{secondsToHourMins(monthTime())}</Typography>
+                                    <Typography>{todayMonthName}</Typography>
                                 </Stack>
                             </Grid>
                             <Grid item xs>
                                 <Stack alignItems={'center'}>
-                                    <Typography>6h 1m</Typography>
+                                    <Typography>{secondsToHourMins(totalTime())}</Typography>
                                     <Typography>Total</Typography>
                                 </Stack>
                             </Grid>

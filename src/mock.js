@@ -134,7 +134,16 @@ export const mockTasks =
     "completeDate": "04/10/2022",
     "time": 4500,
     "tag": "programming"
+  },{
+    "completeDate": "06/23/2022",
+    "time": 1250,
+    "tag": "My tasks"
+  },{
+    "completeDate": "06/19/2022",
+    "time": 900,
+    "tag": "casa"
   }],
+
 }
 
 
