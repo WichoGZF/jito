@@ -555,7 +555,7 @@ const DialogStatistics = (props) => {
     const daysTime = () => {
         let dayTimeSpent = [0, 0, 0, 0, 0, 0, 0];
         for (const completedTask of history) {
-            const {completeDate, time} = completedTask
+            const { completeDate, time } = completedTask
             const [completedMonth, completedDay, completedYear] = completeDate.split('/')
 
             const dayDifference = differenceInCalendarDays(
@@ -563,7 +563,7 @@ const DialogStatistics = (props) => {
                 new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
             )
             if (dayDifference < 7) {
-                dayTimeSpent[6-dayDifference] += time;
+                dayTimeSpent[6 - dayDifference] += time;
             }
         }
         return dayTimeSpent
@@ -572,7 +572,7 @@ const DialogStatistics = (props) => {
     const weeksTime = () => {
         let weekTimeSpent = [0, 0, 0, 0, 0, 0, 0];
         for (const completedTask of history) {
-            const {completeDate, time} = completedTask
+            const { completeDate, time } = completedTask
             const [completedMonth, completedDay, completedYear] = completeDate.split('/')
 
             const weekDifference = differenceInCalendarWeeks(
@@ -580,7 +580,7 @@ const DialogStatistics = (props) => {
                 new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
             )
             if (weekDifference < 7) {
-                weekTimeSpent[6-weekDifference] += time;
+                weekTimeSpent[6 - weekDifference] += time;
             }
         }
         return weekTimeSpent
@@ -589,7 +589,7 @@ const DialogStatistics = (props) => {
     const monthsTime = () => {
         let monthTimeSpent = [0, 0, 0, 0, 0, 0, 0];
         for (const completedTask of history) {
-            const {completeDate, time} = completedTask
+            const { completeDate, time } = completedTask
             const [completedMonth, completedDay, completedYear] = completeDate.split('/')
 
             const monthDifference = differenceInCalendarMonths(
@@ -597,7 +597,7 @@ const DialogStatistics = (props) => {
                 new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
             )
             if (monthDifference < 7) {
-                monthTimeSpent[6-monthDifference] += time;
+                monthTimeSpent[6 - monthDifference] += time;
             }
         }
         return monthTimeSpent
@@ -606,7 +606,7 @@ const DialogStatistics = (props) => {
     const daysOfTheWeekTime = () => {
         let daysOfTheWeek = [0, 0, 0, 0, 0, 0, 0];
         for (const completedTask of history) {
-            const {completeDate, time} = completedTask
+            const { completeDate, time } = completedTask
             const [completedMonth, completedDay, completedYear] = completeDate.split('/')
 
             const dayOfTheWeek = getDay(new Date(completedYear, parseInt(completedMonth) - 1, completedDay))
@@ -624,7 +624,7 @@ const DialogStatistics = (props) => {
         switch (time) {
             case 'today':
                 for (const completedTask of history) {
-                    const {completeDate, time, tag} = completedTask
+                    const { completeDate, time, tag } = completedTask
                     if (todayStringDate === completeDate) {
                         tagTime[tag] += time;
                     }
@@ -632,7 +632,7 @@ const DialogStatistics = (props) => {
                 break;
             case 'week':
                 for (const completedTask of history) {
-                    const {completeDate, time, tag} = completedTask
+                    const { completeDate, time, tag } = completedTask
                     const [completedMonth, completedDay, completedYear] = completeDate
                     const dayDifference = differenceInCalendarDays(
                         todayDate,
@@ -677,6 +677,17 @@ const DialogStatistics = (props) => {
         }
     }
 
+
+    const secondsArrayToMinutesArray = (secondsArray) => {
+        secondsArray.forEach((seconds, index) => secondsArray[index] = Math.floor(seconds / 60))
+        return secondsArray
+    }
+
+    const secondsArrayToHoursArray = (secondsArray) => {
+        secondsArray.forEach((seconds, index) => secondsArray[index] = ((seconds / 60)/60))
+        return secondsArray
+    }
+
     ChartJS.register(
         CategoryScale,
         LinearScale,
@@ -715,7 +726,7 @@ const DialogStatistics = (props) => {
             };
             labelsLineChart.push("This week")
             break;
-        case "months": 
+        case "months":
             for (let i = 6; i >= 0; i--) {
                 const newDate = subMonths(todayDate, i)
                 labelsLineChart.push(`${monthNames[newDate.getMonth()]}`)
@@ -725,22 +736,24 @@ const DialogStatistics = (props) => {
     }
 
     let dataLineData = []
-    switch(historySelect){
-        case "days": 
-            dataLineData = daysTime();
+    switch (historySelect) {
+        case "days":
+            dataLineData = secondsArrayToMinutesArray(daysTime());
             break;
         case "weeks":
-            dataLineData = weeksTime();
+            dataLineData = secondsArrayToMinutesArray(weeksTime());
             break;
         case "months":
-            dataLineData = monthsTime();
+            dataLineData = secondsArrayToMinutesArray(monthsTime());
     }
+
+    console.log("Data line data:", dataLineData)
 
     const dataLineChart = {
         labels: labelsLineChart,
         datasets: [
             {
-                label: 'Time',
+                label: 'Minutes',
                 data: dataLineData,
                 borderColor: 'rgb(217, 85, 80)',
                 backgroundColor: 'rgb(255 142 138)',
@@ -749,7 +762,7 @@ const DialogStatistics = (props) => {
     };
 
     const labelsBarChart = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-    
+
 
     const optionsBarChart = {
         responsive: true,
@@ -764,8 +777,8 @@ const DialogStatistics = (props) => {
         labels: labelsBarChart,
         datasets: [
             {
-                label: 'Productive time',
-                data: daysOfTheWeekTime(),
+                label: productiveTimeSelect === 'minutes'? "Minutes": "Hours",
+                data: productiveTimeSelect === 'minutes'? secondsArrayToMinutesArray(daysOfTheWeekTime()): secondsArrayToHoursArray(daysOfTheWeekTime()),
                 backgroundColor: 'rgb(255 142 138)',
             },
         ],
@@ -775,14 +788,14 @@ const DialogStatistics = (props) => {
         var letters = '0123456789ABCDEF';
         var color = '#';
         for (var i = 0; i < 6; i++) {
-          color += letters[Math.floor(Math.random() * 16)];
+            color += letters[Math.floor(Math.random() * 16)];
         }
         return color;
-      }
-    
-    const doughnutColors = () =>{
+    }
+
+    const doughnutColors = () => {
         let colors = []
-        for(const tag of tags){
+        for (const tag of tags) {
             colors.push(getRandomColor())
         }
     }
@@ -813,7 +826,7 @@ const DialogStatistics = (props) => {
 
                 <Grid container direction="row" justifyContent="space-between" alignItems="center">
                     <Grid item>
-                        <Typography>
+                        <Typography color="grey.700" variant="h5">
                             Statistics
                         </Typography>
                     </Grid>
@@ -827,42 +840,42 @@ const DialogStatistics = (props) => {
             <DialogContent dividers>
                 <Grid container direction='column' spacing={2}>
                     <Stack spacing={4} sx={{ paddingLeft: '16px', paddingTop: '16px' }}>
-                        <Typography>Total stats</Typography>
+                        <Typography color="primary.main">Total stats</Typography>
                         <Grid container item>
                             <Grid item xs>
                                 <Stack alignItems={'center'}>
-                                    <Typography>{secondsToHourMins(dayTime())}</Typography>
-                                    <Typography>Today</Typography>
+                                    <Typography color="primary.main">{secondsToHourMins(dayTime())}</Typography>
+                                    <Typography color="grey.600">Today</Typography>
                                 </Stack>
                             </Grid>
                             <Grid item xs>
                                 <Stack alignItems={'center'}>
-                                    <Typography>{secondsToHourMins(weekTime())}</Typography>
-                                    <Typography>This week</Typography>
+                                    <Typography color="primary.main">{secondsToHourMins(weekTime())}</Typography>
+                                    <Typography color="grey.600">This week</Typography>
                                 </Stack>
                             </Grid>
                             <Grid item xs>
                                 <Stack alignItems={'center'}>
-                                    <Typography>{secondsToHourMins(monthTime())}</Typography>
-                                    <Typography>{todayMonthName}</Typography>
+                                    <Typography color="primary.main">{secondsToHourMins(monthTime())}</Typography>
+                                    <Typography color="grey.600">{todayMonthName}</Typography>
                                 </Stack>
                             </Grid>
                             <Grid item xs>
                                 <Stack alignItems={'center'}>
-                                    <Typography>{secondsToHourMins(totalTime())}</Typography>
-                                    <Typography>Total</Typography>
+                                    <Typography color="primary.main">{secondsToHourMins(totalTime())}</Typography>
+                                    <Typography color="grey.600">Total</Typography>
                                 </Stack>
                             </Grid>
                         </Grid>
                     </Stack>
                     <Grid container item direction={'column'}>
                         <Grid container item justifyContent='space-between' alignItems='center'>
-                            <Grid item><Typography>History</Typography></Grid>
+                            <Grid item><Typography color="primary.main">History</Typography></Grid>
                             <Grid item>
                                 <Select value={historySelect} onChange={(event) => { setHistorySelect(event.target.value) }}>
-                                    <MenuItem value={'days'}>Days</MenuItem>
-                                    <MenuItem value={'weeks'}>Weeks</MenuItem>
-                                    <MenuItem value={'months'}>Months</MenuItem>
+                                    <MenuItem value={'days'}><Typography>Days</Typography></MenuItem>
+                                    <MenuItem value={'weeks'}><Typography>Weeks</Typography></MenuItem>
+                                    <MenuItem value={'months'}><Typography>Months</Typography></MenuItem>
                                 </Select>
                             </Grid>
                         </Grid>

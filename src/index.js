@@ -10,6 +10,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme({
   palette: {
+    text: {
+      primary: "#616161",
+    },
     primary: {
       main: 'rgb(217, 85, 80)'
     }
