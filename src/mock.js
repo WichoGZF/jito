@@ -10,8 +10,8 @@ export const mockTasks =
       "date": "06/22/2022",
       "type": "regular",
       "blocks": null,
-      "repeat": false,
-      "repeatOn": null,
+      "repeat": 'daily',
+      "repeatOn": [1, 1, 1, 1, 1, 1, 1],
     },
     {
       "name": "Dos",
@@ -22,7 +22,7 @@ export const mockTasks =
       "type": "block",
       "blocks": 2, 
       "repeat": false,
-      "repeatOn": null,
+      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {
       "name": "Tres",
@@ -33,7 +33,7 @@ export const mockTasks =
       "type": "block",
       "blocks": 3,
       "repeat": false,
-      "repeatOn": null,
+      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {
       "name": "Cuatro",
@@ -44,7 +44,7 @@ export const mockTasks =
       "type": "regular",
       "blocks": null,
       "repeat": false,
-      "repeatOn": null,
+      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {
       "name": "Cinco",
@@ -55,7 +55,7 @@ export const mockTasks =
       "type": "regular",
       "blocks": null,
       "repeat": false,
-      "repeatOn": null,
+      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {
       "name": "Seis",
@@ -66,7 +66,7 @@ export const mockTasks =
       "type": "regular",
       "blocks": null,
       "repeat": false,
-      "repeatOn": null,
+      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {
       "name": "Siete",
@@ -77,7 +77,7 @@ export const mockTasks =
       "type": "regular",
       "blocks": null,
       "repeat": false,
-      "repeatOn": "day",
+      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {
       "name": "Ocho",
@@ -88,7 +88,7 @@ export const mockTasks =
       "type": "regular",
       "blocks": null,
       "repeat": true,
-      "repeatOn": [0],
+      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {
       "name": "Nueve",
@@ -99,7 +99,7 @@ export const mockTasks =
       "type": "regular",
       "blocks": null,
       "repeat": true,
-      "repeatOn": [0, 3, 6],
+      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {
       "name": "Diez",
@@ -110,7 +110,7 @@ export const mockTasks =
       "type": "regular",
       "blocks": null,
       "repeat": true,
-      "repeatOn": "day",
+      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
 
   ],

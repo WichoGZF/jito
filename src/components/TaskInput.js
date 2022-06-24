@@ -27,12 +27,14 @@ import Checkbox from '@mui/material/Checkbox'
 
 
 export default function TaskInput(props) {
-    const [taskName, setTaskName] = useState(props.edit ? props.task.name : "")
-    const [taskDesc, setTaskDesc] = useState(props.edit ? props.task.description : "")
-    const [taskType, setTaskType] = useState('normal')
+    const [taskName, setTaskName] = useState(props.edit ? props.name : "")
+    const [taskDesc, setTaskDesc] = useState(props.edit ? props.description : "")
+    const [taskType, setTaskType] = useState(props.edit? props.type:'normal') //normal or block
+    const [blocks, setBlocks] = useState(props.edit? props.blocks : null) //nuumber of blocks
+    const [repeat, setRepeat] = useState(props.edit? props.repeat : false) //true or false
+    const [repeatOn, setRepeatOn] = useState(props.edit? props.repeatOn: [0, 0, 0, 0, 0, 0, 0])
+    //for comps.
     const [toggleRepeat, setToggleRepeat] = useState(false)
-    const [repeat, setRepeat] = useState(false)
-    const [repeatOn, setRepeatOn] = useState([false, false, false, false, false, false, false])
 
     const handleRepeatSelect = () => {
         setToggleRepeat(!toggleRepeat);
@@ -56,7 +58,8 @@ export default function TaskInput(props) {
 
     }
 
-    const isWeekly = repeat === "daily"
+    const isWeekly = repeat === 'weekly'
+
     return (
         <Box sx={{ width: '95%' }}>
             <Grid container direction='column' gap={0.5} sx={{ padding: "15px", border: '1px', borderStyle: 'solid', borderColor: "#e2e2e2", borderRadius: '25px' }}>
@@ -85,13 +88,13 @@ export default function TaskInput(props) {
                         onChange={handleChangeTaskType}
                         row
                     >
-                        <FormControlLabel value="normal" control={<Radio />} label="Normal" />
-                        <FormControlLabel value="square" control={<Radio />} label="Square" />
+                        <FormControlLabel value="regular" control={<Radio></Radio>} label="Normal" sx={{color:'text.primary'}} />
+                        <FormControlLabel value="block" control={<Radio />} label="Square" sx={{color:'text.primary'}} />
                     </RadioGroup>
                 </FormControl>
                 <Stack direction="row" justifyContent={"space-between"}>
                     <Typography sx={{ color: "rgba(0, 0, 0, 0.6)" }}>Repeat</Typography>
-                    <IconButton onClick={handleRepeatSelect}><RepeatIcon></RepeatIcon></IconButton>
+                    <IconButton onClick={handleRepeatSelect}><RepeatIcon color={repeat?'primary':'disabled'}></RepeatIcon></IconButton>
                 </Stack>
 
             </Grid>
@@ -111,44 +114,45 @@ export default function TaskInput(props) {
                             onChange={handleChangeRepeat}
                             row
                         >
+                            <FormControlLabel value={false} control={<Radio/>} label="No repeat"/>
                             <FormControlLabel value="daily" control={<Radio />} label="Daily" />
-                            <FormControlLabel value="week" control={<Radio></Radio>} label="Weekly" />
+                            <FormControlLabel value="weekly" control={<Radio></Radio>} label="Weekly" />
                         </RadioGroup>
                     </FormControl>
                     <FormLabel component="legend">Select days</FormLabel>
                     <FormGroup>
-                        <FormControlLabel disabled={isWeekly}
-                            control={<Checkbox checked={repeatOn[0]}
+                        <FormControlLabel disabled={!isWeekly}
+                            control={<Checkbox checked={ repeatOn[0]}
                                 onChange={() => handleChangeRepeatOn(0)} />}
                             label="Sunday"
                         ></FormControlLabel>
-                        <FormControlLabel disabled={isWeekly}
-                            control={<Checkbox checked={repeatOn[1]}
+                        <FormControlLabel disabled={!isWeekly}
+                            control={<Checkbox checked={ repeatOn[1]}
                                 onChange={() => handleChangeRepeatOn(1)} />}
                             label="Monday"
                         ></FormControlLabel>
-                        <FormControlLabel disabled={isWeekly}
-                            control={<Checkbox checked={repeatOn[2]}
+                        <FormControlLabel disabled={!isWeekly}
+                            control={<Checkbox checked={ repeatOn[2]}
                                 onChange={() => handleChangeRepeatOn(2)} />}
                             label="Tuesday"
                         ></FormControlLabel>
-                        <FormControlLabel disabled={isWeekly}
-                            control={<Checkbox checked={repeatOn[3]}
+                        <FormControlLabel disabled={!isWeekly}
+                            control={<Checkbox checked={ repeatOn[3]}
                                 onChange={() => handleChangeRepeatOn(3)} />}
                             label="Wednesday"
                         ></FormControlLabel>
-                        <FormControlLabel disabled={isWeekly}
-                            control={<Checkbox checked={repeatOn[4]}
+                        <FormControlLabel disabled={!isWeekly}
+                            control={<Checkbox checked={ repeatOn[4]}
                                 onChange={() => handleChangeRepeatOn(4)} />}
                             label="Thursday"
                         ></FormControlLabel>
-                        <FormControlLabel disabled={isWeekly}
-                            control={<Checkbox checked={repeatOn[5]}
+                        <FormControlLabel disabled={!isWeekly}
+                            control={<Checkbox checked={ repeatOn[5]}
                                 onChange={() => handleChangeRepeatOn(5)} />}
                             label="Friday"
                         ></FormControlLabel>
-                        <FormControlLabel disabled={isWeekly}
-                            control={<Checkbox checked={repeatOn[6]}
+                        <FormControlLabel disabled={!isWeekly}
+                            control={<Checkbox checked={ repeatOn[6]}
                                 onChange={() => handleChangeRepeatOn(6)} />}
                             label="Saturday"
                         ></FormControlLabel>
