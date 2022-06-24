@@ -61,6 +61,8 @@ import { GridHeaderPlaceholder } from "@mui/x-data-grid";
 import differenceInCalendarWeeks from "date-fns/differenceInCalendarWeeks";
 import { differenceInCalendarDays, differenceInCalendarMonths } from "date-fns";
 import getDay from 'date-fns/getDay'
+import subDays from 'date-fns/subDays'
+import subMonths from "date-fns/subMonths";
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -553,15 +555,15 @@ const DialogStatistics = (props) => {
     const daysTime = () => {
         let dayTimeSpent = [0, 0, 0, 0, 0, 0, 0];
         for (const completedTask of history) {
-            const [completedTime, spentTime] = completedTask
-            const [completedMonth, completedDay, completedYear] = completedTime.split('/')
+            const {completeDate, time} = completedTask
+            const [completedMonth, completedDay, completedYear] = completeDate.split('/')
 
             const dayDifference = differenceInCalendarDays(
                 todayDate,
                 new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
             )
             if (dayDifference < 7) {
-                dayTimeSpent[dayDifference] += spentTime;
+                dayTimeSpent[6-dayDifference] += time;
             }
         }
         return dayTimeSpent
@@ -570,15 +572,15 @@ const DialogStatistics = (props) => {
     const weeksTime = () => {
         let weekTimeSpent = [0, 0, 0, 0, 0, 0, 0];
         for (const completedTask of history) {
-            const [completedTime, spentTime] = completedTask
-            const [completedMonth, completedDay, completedYear] = completedTime.split('/')
+            const {completeDate, time} = completedTask
+            const [completedMonth, completedDay, completedYear] = completeDate.split('/')
 
             const weekDifference = differenceInCalendarWeeks(
                 todayDate,
                 new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
             )
             if (weekDifference < 7) {
-                weekTimeSpent[weekDifference] += spentTime;
+                weekTimeSpent[6-weekDifference] += time;
             }
         }
         return weekTimeSpent
@@ -587,15 +589,15 @@ const DialogStatistics = (props) => {
     const monthsTime = () => {
         let monthTimeSpent = [0, 0, 0, 0, 0, 0, 0];
         for (const completedTask of history) {
-            const [completedTime, spentTime] = completedTask
-            const [completedMonth, completedDay, completedYear] = completedTime.split('/')
+            const {completeDate, time} = completedTask
+            const [completedMonth, completedDay, completedYear] = completeDate.split('/')
 
             const monthDifference = differenceInCalendarMonths(
                 todayDate,
                 new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
             )
             if (monthDifference < 7) {
-                monthTimeSpent[monthDifference] += spentTime;
+                monthTimeSpent[6-monthDifference] += time;
             }
         }
         return monthTimeSpent
@@ -604,11 +606,11 @@ const DialogStatistics = (props) => {
     const daysOfTheWeekTime = () => {
         let daysOfTheWeek = [0, 0, 0, 0, 0, 0, 0];
         for (const completedTask of history) {
-            const [completedTime, spentTime] = completedTask
-            const [completedMonth, completedDay, completedYear] = completedTime.split('/')
+            const {completeDate, time} = completedTask
+            const [completedMonth, completedDay, completedYear] = completeDate.split('/')
 
             const dayOfTheWeek = getDay(new Date(completedYear, parseInt(completedMonth) - 1, completedDay))
-            daysOfTheWeek[dayOfTheWeek] += spentTime;
+            daysOfTheWeek[dayOfTheWeek] += time;
         }
         return daysOfTheWeek
     }
@@ -622,16 +624,16 @@ const DialogStatistics = (props) => {
         switch (time) {
             case 'today':
                 for (const completedTask of history) {
-                    const [completedTime, time, tag] = completedTask
-                    if (todayStringDate === completedTime) {
+                    const {completeDate, time, tag} = completedTask
+                    if (todayStringDate === completeDate) {
                         tagTime[tag] += time;
                     }
                 }
                 break;
             case 'week':
                 for (const completedTask of history) {
-                    const [completedTime, time, tag] = completedTask
-                    const [completedMonth, completedDay, completedYear] = completedTime
+                    const {completeDate, time, tag} = completedTask
+                    const [completedMonth, completedDay, completedYear] = completeDate
                     const dayDifference = differenceInCalendarDays(
                         todayDate,
                         new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
@@ -665,13 +667,13 @@ const DialogStatistics = (props) => {
     }
 
     const secondsToHourMins = (seconds) => {
-        const minutes = Math.trunc(seconds/60)
-        const hours = Math.trunc(minutes/60)
-        if(hours>0){
-            return(`${hours}h ${minutes%60}m`)
+        const minutes = Math.trunc(seconds / 60)
+        const hours = Math.trunc(minutes / 60)
+        if (hours > 0) {
+            return (`${hours}h ${minutes % 60}m`)
         }
-        else{
-            return(`${minutes}m`)
+        else {
+            return (`${minutes}m`)
         }
     }
 
@@ -699,30 +701,55 @@ const DialogStatistics = (props) => {
             },
         },
     };
+    let labelsLineChart = []
+    switch (historySelect) {
+        case "days":
+            for (let i = 6; i >= 0; i--) {
+                const newDate = subDays(todayDate, i)
+                labelsLineChart.push(String(newDate.getDate()))
+            }
+            break;
+        case "weeks":
+            for (let i = 6; i > 0; i--) {
+                labelsLineChart.push(`${i} weeks ago`)
+            };
+            labelsLineChart.push("This week")
+            break;
+        case "months": 
+            for (let i = 6; i >= 0; i--) {
+                const newDate = subMonths(todayDate, i)
+                labelsLineChart.push(`${monthNames[newDate.getMonth()]}`)
 
-    /*
+            }
+            break;
+    }
+
+    let dataLineData = []
     switch(historySelect){
         case "days": 
-        ; break; 
-        case "weeks": ; break;
-        case "months": ; break;
+            dataLineData = daysTime();
+            break;
+        case "weeks":
+            dataLineData = weeksTime();
+            break;
+        case "months":
+            dataLineData = monthsTime();
     }
-    */
-    const labelsLineChart = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
     const dataLineChart = {
         labels: labelsLineChart,
         datasets: [
             {
-                label: 'Dataset 1',
-                data: labelsLineChart.map(() => faker.datatype.number({ min: 0, max: 1000 })),
+                label: 'Time',
+                data: dataLineData,
                 borderColor: 'rgb(217, 85, 80)',
                 backgroundColor: 'rgb(255 142 138)',
             }
         ],
     };
 
-    const labelsBarChart = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sundayb ']
+    const labelsBarChart = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    
 
     const optionsBarChart = {
         responsive: true,
@@ -738,34 +765,37 @@ const DialogStatistics = (props) => {
         datasets: [
             {
                 label: 'Productive time',
-                data: labelsBarChart.map(() => faker.datatype.number({ min: 0, max: 100 })),
+                data: daysOfTheWeekTime(),
                 backgroundColor: 'rgb(255 142 138)',
             },
         ],
     };
 
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+    
+    const doughnutColors = () =>{
+        let colors = []
+        for(const tag of tags){
+            colors.push(getRandomColor())
+        }
+    }
+
+
     const dataDoughnut = {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: tags,
         datasets: [
             {
                 label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)',
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)',
-                ],
+                data: tagsTime[timeDistribuitionSelect],
+                backgroundColor: doughnutColors(),
+                borderColor: doughnutColors(),
                 borderWidth: 1,
             },
         ],
@@ -829,7 +859,7 @@ const DialogStatistics = (props) => {
                         <Grid container item justifyContent='space-between' alignItems='center'>
                             <Grid item><Typography>History</Typography></Grid>
                             <Grid item>
-                                <Select value={historySelect} onChange={(event)=>{setHistorySelect(event.target.value)}}>
+                                <Select value={historySelect} onChange={(event) => { setHistorySelect(event.target.value) }}>
                                     <MenuItem value={'days'}>Days</MenuItem>
                                     <MenuItem value={'weeks'}>Weeks</MenuItem>
                                     <MenuItem value={'months'}>Months</MenuItem>
@@ -846,7 +876,7 @@ const DialogStatistics = (props) => {
                                 <Typography>Productive time</Typography>
                             </Grid>
                             <Grid item>
-                                <Select value={productiveTimeSelect} onChange={(event)=>{setProductiveTimeSelect(event.target.value)}}>
+                                <Select value={productiveTimeSelect} onChange={(event) => { setProductiveTimeSelect(event.target.value) }}>
                                     <MenuItem value={'minutes'}>Minutes</MenuItem>
                                     <MenuItem value={'hours'}>Hours</MenuItem>
                                 </Select>
@@ -862,7 +892,7 @@ const DialogStatistics = (props) => {
                                 <Typography>Time distribution</Typography>
                             </Grid>
                             <Grid item>
-                                <Select value={timeDistribuitionSelect} onChange={(event)=>{setTimeDistribuitionSelect(event.target.value)}}>
+                                <Select value={timeDistribuitionSelect} onChange={(event) => { setTimeDistribuitionSelect(event.target.value) }}>
                                     <MenuItem value={'today'}>Today</MenuItem>
                                     <MenuItem value={'week'}>This week</MenuItem>
                                     <MenuItem value={'month'}>This month</MenuItem>
