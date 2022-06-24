@@ -479,8 +479,14 @@ const DialogLogIn = (props) => {
 
 
 const DialogStatistics = (props) => {
+    //Redux selectors
     const tags = useSelector(state => state.tasks.tags)
     const history = useSelector(state => state.tasks.history)
+
+    //Component state
+    const [historySelect, setHistorySelect] = useState("days")
+    const [productiveTimeSelect, setProductiveTimeSelect] = useState("minutes")
+    const [timeDistribuitionSelect, setTimeDistribuitionSelect] = useState("today")
 
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -694,6 +700,14 @@ const DialogStatistics = (props) => {
         },
     };
 
+    /*
+    switch(historySelect){
+        case "days": 
+        ; break; 
+        case "weeks": ; break;
+        case "months": ; break;
+    }
+    */
     const labelsLineChart = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
 
     const dataLineChart = {
@@ -815,7 +829,7 @@ const DialogStatistics = (props) => {
                         <Grid container item justifyContent='space-between' alignItems='center'>
                             <Grid item><Typography>History</Typography></Grid>
                             <Grid item>
-                                <Select value={'days'}>
+                                <Select value={historySelect} onChange={(event)=>{setHistorySelect(event.target.value)}}>
                                     <MenuItem value={'days'}>Days</MenuItem>
                                     <MenuItem value={'weeks'}>Weeks</MenuItem>
                                     <MenuItem value={'months'}>Months</MenuItem>
@@ -832,9 +846,9 @@ const DialogStatistics = (props) => {
                                 <Typography>Productive time</Typography>
                             </Grid>
                             <Grid item>
-                                <Select value={'days'}>
-                                    <MenuItem value={'days'}>Minutes</MenuItem>
-                                    <MenuItem value={'weeks'}>Hours</MenuItem>
+                                <Select value={productiveTimeSelect} onChange={(event)=>{setProductiveTimeSelect(event.target.value)}}>
+                                    <MenuItem value={'minutes'}>Minutes</MenuItem>
+                                    <MenuItem value={'hours'}>Hours</MenuItem>
                                 </Select>
                             </Grid>
                         </Grid>
@@ -848,11 +862,11 @@ const DialogStatistics = (props) => {
                                 <Typography>Time distribution</Typography>
                             </Grid>
                             <Grid item>
-                                <Select value={'days'}>
-                                    <MenuItem value={'days'}>Today</MenuItem>
-                                    <MenuItem value={'weeks'}>This week</MenuItem>
-                                    <MenuItem value={'months'}>This month</MenuItem>
-                                    <MenuItem value={'months'}>Total</MenuItem>
+                                <Select value={timeDistribuitionSelect} onChange={(event)=>{setTimeDistribuitionSelect(event.target.value)}}>
+                                    <MenuItem value={'today'}>Today</MenuItem>
+                                    <MenuItem value={'week'}>This week</MenuItem>
+                                    <MenuItem value={'month'}>This month</MenuItem>
+                                    <MenuItem value={'all'}>Total</MenuItem>
                                 </Select>
                             </Grid>
                         </Grid>
