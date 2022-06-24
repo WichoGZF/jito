@@ -617,8 +617,10 @@ const DialogStatistics = (props) => {
 
 
     const tagsTime = (time) => {
+        console.log("Entering tags time")
         let tagTime = {}
-        for (const tag in tags) {
+        for (const tag of tags) {
+            console.log(tag)
             tagTime[tag] = 0
         }
         switch (time) {
@@ -633,7 +635,7 @@ const DialogStatistics = (props) => {
             case 'week':
                 for (const completedTask of history) {
                     const { completeDate, time, tag } = completedTask
-                    const [completedMonth, completedDay, completedYear] = completeDate
+                    const [completedMonth, completedDay, completedYear] = completeDate.split('/')
                     const dayDifference = differenceInCalendarDays(
                         todayDate,
                         new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
@@ -645,8 +647,8 @@ const DialogStatistics = (props) => {
                 break;
             case 'month':
                 for (const completedTask of history) {
-                    const [completedTime, time, tag] = completedTask
-                    const [completedMonth, completedDay, completedYear] = completedTime
+                    const {completeDate, time, tag} = completedTask
+                    const [completedMonth, completedDay, completedYear] = completeDate.split('/')
                     const monthDifference = differenceInCalendarMonths(
                         todayDate,
                         new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
@@ -658,12 +660,17 @@ const DialogStatistics = (props) => {
                 break;
             case 'all':
                 for (const completedTask of history) {
-                    const [completedTime, time, tag] = completedTask
+                    const {completedTime, time, tag} = completedTask
                     tagTime[tag] += time;
                 }
                 break;
         }
-        return (tagTime)
+
+
+        let array = []
+        Object.values(tagTime).forEach((value, index)=> array.push(value))
+        console.log("Tags time:", tagTime, array)
+        return (array)
     }
 
     const secondsToHourMins = (seconds) => {
@@ -785,12 +792,10 @@ const DialogStatistics = (props) => {
     };
 
     function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+        const color1 = Math.floor(Math.random()*255)
+        const color2 = Math.floor(Math.random()*255)
+        const color3 = Math.floor(Math.random()*255)
+        return `rgb(${color1} ${color2} ${color3})`;
     }
 
     const doughnutColors = () => {
@@ -798,6 +803,7 @@ const DialogStatistics = (props) => {
         for (const tag of tags) {
             colors.push(getRandomColor())
         }
+        return(colors)
     }
 
 
@@ -805,8 +811,8 @@ const DialogStatistics = (props) => {
         labels: tags,
         datasets: [
             {
-                label: '# of Votes',
-                data: tagsTime[timeDistribuitionSelect],
+                label: 'Minutes',
+                data: tagsTime(timeDistribuitionSelect),
                 backgroundColor: doughnutColors(),
                 borderColor: doughnutColors(),
                 borderWidth: 1,
