@@ -62,6 +62,8 @@ import DialogActions from '@mui/material/DialogActions';
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
+import { TwitterPicker } from 'react-color'
+
 function NewTask(props) {
   const [addNewTask, setAddNewTask] = useState(false);
 
@@ -317,32 +319,47 @@ function ListEntry(props) {
 }
 
 function TagEntry(props) {
-  const [colorPick, setColorPick] = useState(null)
+  const [colorPick, setColorPick] = useState(false)
   const [editName, setEditName] = useState(false)
   const [tagName, setTagName] = useState(props.tag)
-  const [editSave, setEditSave] = useState(false)
+
+  const colorRef = useRef(null)
+  const colorBounding = colorRef.current?.getBoundingClientRect()
+  
+  const colorX = colorRef.current? colorBounding.x-260+16: 0
+  const colorY = colorRef.current? colorBounding.y+24+12: 0
+
+  const colorSelector = <Box sx={{ position: 'absolute', zIndex: '2' }}>
+    <Box sx={{ position: 'fixed', top:`${colorY}px`, right:'0px', bottom: '0px', left: `${colorX}px`, }}>
+      <TwitterPicker triangle="top-right"></TwitterPicker>
+    </Box>
+  </Box>
 
   if (!editName) {
     return (
       <ListItem>
-        <IconButton 
+        <IconButton
+          onClick={() => setColorPick(!colorPick)}
           sx={{ marginRight: '12px' }}>
-          <Box sx={{ height: '24px', width: '24px', backgroundColor: 'black', borderRadius: '50%' }}></Box>
+          <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: 'black', borderRadius: '50%' }}></Box>
         </IconButton>
+        {colorPick? colorSelector: null}
         <ListItemText>{tagName}</ListItemText>
-        <IconButton onClick={()=>setEditName(true)}><EditIcon></EditIcon></IconButton>
+        <IconButton onClick={() => setEditName(true)}><EditIcon></EditIcon></IconButton>
       </ListItem>
     )
   }
   else {
     return (
       <ListItem>
-        <IconButton 
+        <IconButton
+          onClick={() => setColorPick(!colorPick)}
           sx={{ marginRight: '12px' }}>
-          <Box sx={{ height: '24px', width: '24px', backgroundColor: 'black', borderRadius: '50%' }}></Box>
+          <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: 'black', borderRadius: '50%' }}></Box>
         </IconButton>
-        <Input value={tagName} onChange={(event)=>setTagName(event.target.value)}></Input>
-        <IconButton onClick={()=>{setEditName(false)}}><CheckIcon></CheckIcon></IconButton>
+        {colorPick ? colorSelector : null}
+        <Input value={tagName} onChange={(event) => setTagName(event.target.value)}></Input>
+        <IconButton onClick={() => { setEditName(false) }}><CheckIcon></CheckIcon></IconButton>
       </ListItem>
     )
   }
