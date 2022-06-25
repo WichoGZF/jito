@@ -108,6 +108,10 @@ function ListEntry(props) {
     dropDownRef && handleCloseDropDown()
   }
 
+  const tagWhole = props.tags.find(tag => tag.name === props.tag)
+  const tagColor = tagWhole.color
+  console.log(tagWhole, tagColor)
+
 
   const ref = useRef(null)
 
@@ -225,16 +229,16 @@ function ListEntry(props) {
 
   const selectedTag = props.tag
   const tags = props.tags.map((tag) => {
-    if (tag === selectedTag) {
+    if (tag.name=== selectedTag) {
       return (
         <MenuItem onClick={handleCloseDropDown} selected>
-          {tag}
+          {tag.name}
         </MenuItem>
       )
     }
     else {
       return (
-        <MenuItem onClick={handleCloseDropDown}>{tag}</MenuItem>
+        <MenuItem onClick={handleCloseDropDown}>{tag.name}</MenuItem>
       )
     }
   })
@@ -312,7 +316,7 @@ function ListEntry(props) {
         </ListItemText>
 
         {props.repeat ? <RepeatIcon sx={{ marginRight: 1, color: "rgba(0, 0, 0, 0.6)" }}></RepeatIcon> : null}
-        <Chip onClick={props.openTagDialog} label={props.tag}></Chip>
+        <Chip onClick={props.openTagDialog} label={props.tag} sx={{backgroundColor: tagColor}}></Chip>
       </ListItem>
     )
   }
@@ -325,12 +329,12 @@ function TagEntry(props) {
 
   const colorRef = useRef(null)
   const colorBounding = colorRef.current?.getBoundingClientRect()
-  
-  const colorX = colorRef.current? colorBounding.x-260+16: 0
-  const colorY = colorRef.current? colorBounding.y+24+12: 0
+
+  const colorX = colorRef.current ? colorBounding.x - 260 + 16 : 0
+  const colorY = colorRef.current ? colorBounding.y + 24 + 12 : 0
 
   const colorSelector = <Box sx={{ position: 'absolute', zIndex: '2' }}>
-    <Box sx={{ position: 'fixed', top:`${colorY}px`, right:'0px', bottom: '0px', left: `${colorX}px`, }}>
+    <Box sx={{ position: 'fixed', top: `${colorY}px`, right: '0px', bottom: '0px', left: `${colorX}px`, }}>
       <TwitterPicker triangle="top-right"></TwitterPicker>
     </Box>
   </Box>
@@ -341,9 +345,9 @@ function TagEntry(props) {
         <IconButton
           onClick={() => setColorPick(!colorPick)}
           sx={{ marginRight: '12px' }}>
-          <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: 'black', borderRadius: '50%' }}></Box>
+          <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: props.color, borderRadius: '50%' }}></Box>
         </IconButton>
-        {colorPick? colorSelector: null}
+        {colorPick ? colorSelector : null}
         <ListItemText>{tagName}</ListItemText>
         <IconButton onClick={() => setEditName(true)}><EditIcon></EditIcon></IconButton>
       </ListItem>
@@ -355,7 +359,7 @@ function TagEntry(props) {
         <IconButton
           onClick={() => setColorPick(!colorPick)}
           sx={{ marginRight: '12px' }}>
-          <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: 'black', borderRadius: '50%' }}></Box>
+          <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: props.color, borderRadius: '50%' }}></Box>
         </IconButton>
         {colorPick ? colorSelector : null}
         <Input value={tagName} onChange={(event) => setTagName(event.target.value)}></Input>
@@ -381,10 +385,10 @@ function TagDialog(props) {
       <DialogContent>
         <List>
           {
-            tags.map((tag, index) => {
+            tags.map((tagObject, index) => {
               return (
-                <ListItemButton selected={props.tagSelected === tag}>
-                  <ListItemText>{tag}</ListItemText>
+                <ListItemButton selected={props.tagSelected === tagObject.name}>
+                  <ListItemText>{tagObject.name}</ListItemText>
                 </ListItemButton>
               )
             })
@@ -404,9 +408,9 @@ function TagDialog(props) {
       <DialogContent>
         <List>
           {
-            tags.map((tag, index) => {
+            tags.map((tagObject, index) => {
               return (
-                <TagEntry tag={tag}></TagEntry>
+                <TagEntry tag={tagObject.name} color={tagObject.color}></TagEntry>
               )
             })
           }
@@ -519,17 +523,15 @@ export default function TaskList(props) {
   })
 
   let tagsMenuItems = []
-  for (const [index, tag] of tasks.tags.entries()) {
-    console.log(index)
+  tasks.tags.forEach((tag, index) => {
     tagsMenuItems.push(
       <MenuItem
         key={(1 + index).toString()}
-        selected={tag === tagSelected}
-        onClick={() => handleChangeTagSelected(tag)}>
-        {tag}
+        selected={tag.name === tagSelected}
+        onClick={() => handleChangeTagSelected(tag.name)}>
+        {tag.name}
       </MenuItem>)
-  }
-  console.log('exited loop')
+  })
 
   return (
     <Box>

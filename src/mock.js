@@ -1,6 +1,8 @@
 export const mockTasks =
 {
-  tags: ['My tasks', 'escuela', 'programming', 'casa'],
+  tags: [
+    {name:'My tasks', color: '#FF6900'}, {name:'escuela', color: '#FCB900'}, {name:'programming', color:'#7BDCB5'}, {name:'casa', color:'#00D084'}
+],
   tasks: [
     {
       "name": "Uno",
