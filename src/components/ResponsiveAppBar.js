@@ -745,13 +745,13 @@ const DialogStatistics = (props) => {
     let dataLineData = []
     switch (historySelect) {
         case "days":
-            dataLineData = secondsArrayToMinutesArray(daysTime());
+            dataLineData = secondsArrayToHoursArray(daysTime());
             break;
         case "weeks":
-            dataLineData = secondsArrayToMinutesArray(weeksTime());
+            dataLineData = secondsArrayToHoursArray(weeksTime());
             break;
         case "months":
-            dataLineData = secondsArrayToMinutesArray(monthsTime());
+            dataLineData = secondsArrayToHoursArray(monthsTime());
     }
 
     console.log("Data line data:", dataLineData)
@@ -760,7 +760,7 @@ const DialogStatistics = (props) => {
         labels: labelsLineChart,
         datasets: [
             {
-                label: 'Minutes',
+                label: 'Hours',
                 data: dataLineData,
                 borderColor: 'rgb(217, 85, 80)',
                 backgroundColor: 'rgb(255 142 138)',
@@ -812,7 +812,7 @@ const DialogStatistics = (props) => {
         datasets: [
             {
                 label: 'Minutes',
-                data: tagsTime(timeDistribuitionSelect),
+                data: secondsArrayToHoursArray(tagsTime(timeDistribuitionSelect)),
                 backgroundColor: doughnutColors(),
                 borderColor: doughnutColors(),
                 borderWidth: 1,

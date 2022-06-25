@@ -25,22 +25,34 @@ function ProgressBox(props) {
 }
 
 export default function TimerCard(props) {
+  let pomodorosCompleted = [];
+  for(let i=0; i<props.longBreakEvery; i++){
+    console.log('for repeat timer card')
+    if (props.pomodoros>i){
+      pomodorosCompleted.push(
+        <Grid item xs><LinearProgress  variant='determinate' value={100}></LinearProgress></Grid>
+      )
+    }
+    else {
+      pomodorosCompleted.push(
+        <Grid item xs><LinearProgress  variant='determinate' value={0}></LinearProgress></Grid>
+      )
+    }
+
+  }
   return (
     <Stack alignItems='center' spacing={2}>
-      <Typography component="div" variant="h2">
+      <Typography component="div" variant="h2" color="grey.900">
         {String(props.minutes).padStart(2, '0')}:{String(props.seconds).padStart(2, '0')}
       </Typography>
-      <LinearProgress sx={{ width: '80%' }} variant='determinate' value={100 - (props.minutes * 4)}></LinearProgress>
+      <LinearProgress sx={{ width: '80%' }} variant='determinate' value={props.progress}></LinearProgress>
       <Grid container direction="row" spacing={1} sx={{width: "80%"}}>
-        <Grid item xs={3}><LinearProgress  variant='determinate' value={100 - (props.minutes * 4)}></LinearProgress></Grid>
-        <Grid item xs={3}><LinearProgress  variant='determinate' value={100 - (props.minutes * 4)}></LinearProgress></Grid>
-        <Grid item xs={3}><LinearProgress  variant='determinate' value={100 - (props.minutes * 4)}></LinearProgress></Grid>
-        <Grid item xs={3}><LinearProgress variant='determinate' value={100 - (props.minutes * 4)}></LinearProgress></Grid>
+        {pomodorosCompleted}
       </Grid>
       <Stack direction="row" justifyContent="center" sx={{ width: '100%' }}>
         <Box sx={{ height: '54px', width: '54px' }}></Box>
         <IconButton onClick={props.onClickStartStop} aria-label="play/pause">
-          {props.clockStarted && !props.timerState ? <PlayArrowIcon sx={{ height: 38, width: 38 }} /> : <PauseIcon sx={{ height: 38, width: 38 }} />}
+          {!props.timerState ? <PlayArrowIcon sx={{ height: 38, width: 38 }} /> : <PauseIcon sx={{ height: 38, width: 38 }} />}
         </IconButton>
         <IconButton onClick={props.onClickSkip} aria-label="next" sx={{ visibility: props.clockStarted ? 'visible' : 'hidden' }}>
           <SkipNextIcon sx={{ height: 38, width: 38 }} />
