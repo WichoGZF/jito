@@ -228,20 +228,7 @@ function ListEntry(props) {
   drag(drop(ref))
 
   const selectedTag = props.tag
-  const tags = props.tags.map((tag) => {
-    if (tag.name=== selectedTag) {
-      return (
-        <MenuItem onClick={handleCloseDropDown} selected>
-          {tag.name}
-        </MenuItem>
-      )
-    }
-    else {
-      return (
-        <MenuItem onClick={handleCloseDropDown}>{tag.name}</MenuItem>
-      )
-    }
-  })
+  
   if (editTask) {
     return (
       <ListItem>
@@ -294,9 +281,7 @@ function ListEntry(props) {
               }}
             >
               <MenuItem onClick={handleEditTask}>Edit task</MenuItem>
-              <MenuItem onClick={handleCloseDropDown} divider>Delete task</MenuItem>
-              <MenuItem disabled>Change task tag</MenuItem>
-              {tags}
+              <MenuItem onClick={handleCloseDropDown} >Delete task</MenuItem>
 
             </Menu>
           </>
@@ -500,7 +485,6 @@ export default function TaskList(props) {
 
   /*Task filtering */
   tasks.tasks.forEach((task, index) => {
-    if (task.tag === tagSelected) {
       if (task.repeat) {
         if (Array.isArray(task.repeatOn)) {
           for (const dayOfTheWeek of task.repeatOn) {
@@ -519,7 +503,6 @@ export default function TaskList(props) {
           allTagTasks.push(taskToListEntry(task, index))
         }
       }
-    }
   })
 
   let tagsMenuItems = []
@@ -535,51 +518,7 @@ export default function TaskList(props) {
 
   return (
     <Box>
-      <Typography variant="overline" sx={{ pl: 1 }}>Tasks</Typography>
-      <Grid container direction="row" justifyContent="space-between">
-        <Grid item xs="auto">
-          <Button endIcon={<ArrowDropDownIcon></ArrowDropDownIcon>} onClick={onClickTagSelection}>{tagSelected}</Button>
-          <Menu
-            id="tag selection"
-            anchorEl={tagAnchorEl}
-            open={openTags}
-            onClose={handleCloseTags}
-            MenuListProps={{
-              'aria-labelledby': 'options-button',
-            }}
-          >
-            <MenuItem divider
-              key={"0"}
-              onClick={() => { }}>
-              <Stack direction="row" spacing={1}>
-                <AddIcon></AddIcon>
-                <Typography>Add new tag</Typography>
-              </Stack>
-            </MenuItem>
-            {tagsMenuItems}
-          </Menu>
-        </Grid>
-        <Grid item xs="auto">
-          <IconButton
-            aria-label="task-list-options-button"
-            onClick={onClickOptions}>
-            <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
-          </IconButton>
-          <Menu
-            id="task-list-options"
-            anchorEl={optionsAnchorEl}
-            open={openOptions}
-            onClose={handleCloseOptions}
-            MenuListProps={{
-              'aria-labelledby': 'options-button',
-            }}
-          >
-            <MenuItem onClick={handleCloseTags}>Change tag name</MenuItem>
-            {tagSelected === "My tasks" ? <MenuItem disabled><Stack><Typography>Delete tag</Typography><Typography variant="subtitle2">Cannot delete the default tag</Typography></Stack></MenuItem> : <MenuItem onClick={handleCloseTags}>Delete tag</MenuItem>}
-
-          </Menu>
-        </Grid>
-      </Grid>
+      <Typography variant="overline" sx={{ pl: 1 }}>Scheduled tasks</Typography>
       <List>
         <Divider></Divider>
         <NewTask></NewTask>

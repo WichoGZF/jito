@@ -29,10 +29,10 @@ import Checkbox from '@mui/material/Checkbox'
 export default function TaskInput(props) {
     const [taskName, setTaskName] = useState(props.edit ? props.name : "")
     const [taskDesc, setTaskDesc] = useState(props.edit ? props.description : "")
-    const [taskType, setTaskType] = useState(props.edit? props.type:'normal') //normal or block
-    const [blocks, setBlocks] = useState(props.edit? props.blocks : null) //nuumber of blocks
-    const [repeat, setRepeat] = useState(props.edit? props.repeat : false) //true or false
-    const [repeatOn, setRepeatOn] = useState(props.edit? props.repeatOn: [0, 0, 0, 0, 0, 0, 0])
+    const [taskType, setTaskType] = useState(props.edit ? props.type : 'normal') //normal or block
+    const [blocks, setBlocks] = useState(props.edit ? props.blocks : null) //nuumber of blocks
+    const [repeat, setRepeat] = useState(props.edit ? props.repeat : false) //true or false
+    const [repeatOn, setRepeatOn] = useState(props.edit ? props.repeatOn : [0, 0, 0, 0, 0, 0, 0])
     //for comps.
     const [toggleRepeat, setToggleRepeat] = useState(false)
 
@@ -70,31 +70,41 @@ export default function TaskInput(props) {
                     sx={{ flexGrow: 9, gridRow: '1', gridColumn: '2' }}
                     multiline
                     autoFocus={true}
-                    placeholder="Task name"
+                    placeholder="Title"
                 />
                 <Input id="task-description"
                     value={taskDesc}
                     onChange={(e) => setTaskDesc(e.target.value)}
                     sx={{ fontSize: 14, gridColumn: '2', gridRow: '2', color: "GrayText" }}
-                    placeholder="Task description"
+                    placeholder="Details"
                     multiline
                 />
-                <FormControl>
-                    <FormLabel id="task-type-radio-buttons-group">Task type</FormLabel>
-                    <RadioGroup
-                        aria-labelledby="demo-controlled-radio-buttons-group"
-                        name="controlled-radio-buttons-group"
-                        value={taskType}
-                        onChange={handleChangeTaskType}
-                        row
-                    >
-                        <FormControlLabel value="regular" control={<Radio></Radio>} label="Normal" sx={{color:'text.primary'}} />
-                        <FormControlLabel value="block" control={<Radio />} label="Square" sx={{color:'text.primary'}} />
-                    </RadioGroup>
-                </FormControl>
+                <Stack direction="row" justifyContent="space-between" sx={{marginTop:'10px'}}>
+                    <FormControl>
+                        <FormLabel>Task type</FormLabel>
+                        <RadioGroup
+                            aria-labelledby="demo-controlled-radio-buttons-group"
+                            name="controlled-radio-buttons-group"
+                            value={taskType}
+                            onChange={handleChangeTaskType}
+                            row
+                        >
+                            <FormControlLabel value="normal" control={<Radio></Radio>} label="Normal" sx={{ color: 'text.primary' }} />
+                            <FormControlLabel value="block" control={<Radio />} label="Square" sx={{ color: 'text.primary' }} />
+                        </RadioGroup>
+                    </FormControl>
+                    <Stack>
+                        <FormLabel>Number of blocks</FormLabel>
+                        <Input disabled={taskType==='normal'}></Input>
+                    </Stack>
+                </Stack>
+                                    <Stack direction="row" justifyContent="space-between">
+                        <FormLabel>Tag</FormLabel>
+                        <Chip label="Task"></Chip>
+                    </Stack>
                 <Stack direction="row" justifyContent={"space-between"}>
-                    <Typography sx={{ color: "rgba(0, 0, 0, 0.6)" }}>Repeat</Typography>
-                    <IconButton onClick={handleRepeatSelect}><RepeatIcon color={repeat?'primary':'disabled'}></RepeatIcon></IconButton>
+                    <FormLabel>Repeat</FormLabel>
+                    <IconButton onClick={handleRepeatSelect}><RepeatIcon color={repeat ? 'primary' : 'disabled'}></RepeatIcon></IconButton>
                 </Stack>
 
             </Grid>
@@ -114,7 +124,7 @@ export default function TaskInput(props) {
                             onChange={handleChangeRepeat}
                             row
                         >
-                            <FormControlLabel value={false} control={<Radio/>} label="No repeat"/>
+                            <FormControlLabel value={false} control={<Radio />} label="No repeat" />
                             <FormControlLabel value="daily" control={<Radio />} label="Daily" />
                             <FormControlLabel value="weekly" control={<Radio></Radio>} label="Weekly" />
                         </RadioGroup>
@@ -122,37 +132,37 @@ export default function TaskInput(props) {
                     <FormLabel component="legend">Select days</FormLabel>
                     <FormGroup>
                         <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={ repeatOn[0]}
+                            control={<Checkbox checked={repeatOn[0]}
                                 onChange={() => handleChangeRepeatOn(0)} />}
                             label="Sunday"
                         ></FormControlLabel>
                         <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={ repeatOn[1]}
+                            control={<Checkbox checked={repeatOn[1]}
                                 onChange={() => handleChangeRepeatOn(1)} />}
                             label="Monday"
                         ></FormControlLabel>
                         <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={ repeatOn[2]}
+                            control={<Checkbox checked={repeatOn[2]}
                                 onChange={() => handleChangeRepeatOn(2)} />}
                             label="Tuesday"
                         ></FormControlLabel>
                         <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={ repeatOn[3]}
+                            control={<Checkbox checked={repeatOn[3]}
                                 onChange={() => handleChangeRepeatOn(3)} />}
                             label="Wednesday"
                         ></FormControlLabel>
                         <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={ repeatOn[4]}
+                            control={<Checkbox checked={repeatOn[4]}
                                 onChange={() => handleChangeRepeatOn(4)} />}
                             label="Thursday"
                         ></FormControlLabel>
                         <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={ repeatOn[5]}
+                            control={<Checkbox checked={repeatOn[5]}
                                 onChange={() => handleChangeRepeatOn(5)} />}
                             label="Friday"
                         ></FormControlLabel>
                         <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={ repeatOn[6]}
+                            control={<Checkbox checked={repeatOn[6]}
                                 onChange={() => handleChangeRepeatOn(6)} />}
                             label="Saturday"
                         ></FormControlLabel>
