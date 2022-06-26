@@ -14,7 +14,7 @@ const mockSettings = {
     alarmSound: "bell",
     tickingVolume: 50,
     tickingSound: "clock",
-    alarmOnPomdoroEnd: true,
+    alarmOnPomodoroEnd: true,
     alarmOnBreakEnd: true,
     tickingSoundOnBreak: true,
     tickingSoundOnPomodoro: true,
@@ -22,19 +22,18 @@ const mockSettings = {
 
     colorTheme: 'light',
     hoursPastMidnight: 0,
-    timeFormat: '12', //12 or 24
-    dateFormat: 'MM/DD/YYYY', //how to sort date
+    language: "English"
 
 }
 
-const settingSlice = createSlice({
+const settingsSlice = createSlice({
     name: 'settings',
     initialState: mockSettings,
     reducers: {
        updateSettings: (state, action) => {
-           state.settings = action.payload
+            return action.payload
        }
     }
 })
-
-export default settingSlice.reducer 
+export const {updateSettings} = settingsSlice.actions
+export default settingsSlice.reducer 

@@ -55,7 +55,9 @@ import { Line, Bar, Doughnut } from 'react-chartjs-2';
 
 import faker from '@faker-js/faker'
 
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { updateSettings } from '../features/settingsSlice.js'
+
 import { GridHeaderPlaceholder } from "@mui/x-data-grid";
 
 import differenceInCalendarWeeks from "date-fns/differenceInCalendarWeeks";
@@ -100,6 +102,7 @@ function a11yProps(index) {
 
 const DialogSettings = (props) => {
     const settings = useSelector(state => state.settings)
+    const dispatch = useDispatch()
     //State holding the setting's values
     const [tabSelected, setTabSelected] = useState(0) //0 for timer, 1 for notification, 2 for app section.
     //Timer settings
@@ -123,9 +126,40 @@ const DialogSettings = (props) => {
     const [hoursPastMidnight, setHoursPastMidnight] = useState(settings.hoursPastMidnight)
     const [language, setLanguage] = useState(settings.language)
 
+    console.log('Settings in navbar dialog:', settings)
+
     const handleChangeTabSelected = (event, newValue) => {
         setTabSelected(newValue)
     };
+
+    const saveSettings = () => {
+        dispatch(updateSettings(
+            {
+                pomodoroDuration: parseInt(pomodoroDuration),
+                shortBreakDuration: parseInt(shortBreakDuration),
+                longBreakDuration: parseInt(longBreakDuration),
+                longBreakEvery: parseInt(longBreakEvery), //pomodoros
+                automaticPomodoroStart: automaticPomodoroStart,
+                automaticBreakStart: automaticBreakStart,
+        
+                // notification
+        
+                alarmVolume: alarmVolume,
+                alarmSound: alarmSound,
+                tickingVolume: tickingVolume,
+                tickingSound: tickingSound,
+                alarmOnPomodoroEnd: alarmOnPomodoroEnd,
+                alarmOnBreakEnd: alarmOnBreakEnd,
+                tickingSoundOnBreak: tickingSoundOnBreak,
+                tickingSoundOnPomodoro: tickingSoundOnPomodoro,
+                //app
+        
+                colorTheme: colorTheme,
+                hoursPastMidnight: parseInt(hoursPastMidnight),
+                language: language
+            }
+        ))
+    }
 
     return (
         <Dialog
@@ -182,7 +216,7 @@ const DialogSettings = (props) => {
 
                         </Grid>
                         <Grid item>
-                            <TextField label="Long break every" helperText="Pomodoros"
+                            <TextField  label="Long break every" helperText="Pomodoros"
                                 value={longBreakEvery}
                                 onChange={(event) => setLongBreakEvery(event.target.value)}
                                 sx={{ width: "100%" }}
@@ -395,7 +429,12 @@ const DialogSettings = (props) => {
                 </TabPanel>
             </DialogContent>
             <DialogActions >
-                <Button onClick={props.handleClose}> Save </Button>
+                <Button onClick={
+                    ()=>{ 
+                    props.handleClose()
+                    saveSettings()
+                }}
+                > Save </Button>
             </DialogActions>
 
         </Dialog>
@@ -603,7 +642,7 @@ const DialogStatistics = (props) => {
         let tagTime = {}
         for (const tag of tags) {
             console.log(tag)
-            tagTime[tag] = 0
+            tagTime[tag.name] = 0
         }
         switch (time) {
             case 'today':
@@ -783,14 +822,14 @@ const DialogStatistics = (props) => {
     const doughnutColors = () => {
         let colors = []
         for (const tag of tags) {
-            colors.push(getRandomColor())
+            colors.push(tag.color)
         }
         return (colors)
     }
 
 
     const dataDoughnut = {
-        labels: tags,
+        labels: tags.map((tag)=>{return(tag.name)}),
         datasets: [
             {
                 label: 'Minutes',
@@ -825,10 +864,10 @@ const DialogStatistics = (props) => {
                     </Grid>
                 </Grid>
             </DialogTitle>
-            <DialogContent dividers>
+            <DialogContent>
                 <Grid container direction='column' spacing={2}>
-                    <Stack spacing={4} sx={{ paddingLeft: '16px', paddingTop: '16px' }}>
-                        <Typography color="primary.main">Total stats</Typography>
+                    <Stack spacing={4} sx={{ paddingLeft: '16px', paddingTop: '16px', marginBottom: '16px'}}>
+                        <Typography >Total stats</Typography>
                         <Grid container item>
                             <Grid item xs>
                                 <Stack alignItems={'center'}>
@@ -856,9 +895,10 @@ const DialogStatistics = (props) => {
                             </Grid>
                         </Grid>
                     </Stack>
-                    <Grid container item direction={'column'}>
+                    <Divider></Divider>
+                    <Grid container item direction={'column'} spacing={2} sx={{marginBottom:'32px'}}>
                         <Grid container item justifyContent='space-between' alignItems='center'>
-                            <Grid item><Typography color="primary.main">History</Typography></Grid>
+                            <Grid item><Typography>History</Typography></Grid>
                             <Grid item>
                                 <Select value={historySelect} onChange={(event) => { setHistorySelect(event.target.value) }}>
                                     <MenuItem value={'days'}><Typography>Days</Typography></MenuItem>
@@ -871,10 +911,11 @@ const DialogStatistics = (props) => {
                             <Line options={optionsLineChart} data={dataLineChart}></Line>
                         </Grid>
                     </Grid>
-                    <Grid container item>
+                    <Divider></Divider>
+                    <Grid container item spacing={2} sx={{marginBottom:'32px'}}>
                         <Grid container item justifyContent='space-between' alignItems='center'>
                             <Grid item>
-                                <Typography>Productive time</Typography>
+                                <Typography >Productive time</Typography>
                             </Grid>
                             <Grid item>
                                 <Select value={productiveTimeSelect} onChange={(event) => { setProductiveTimeSelect(event.target.value) }}>
@@ -887,10 +928,14 @@ const DialogStatistics = (props) => {
                             <Bar options={optionsBarChart} data={dataBarChart}></Bar>
                         </Grid>
                     </Grid>
-                    <Grid container item>
+                    <Divider></Divider>
+                    <Grid container item spacing={2} sx={{marginBottom:'32px'}}>
                         <Grid container item justifyContent='space-between' alignItems='center'>
                             <Grid item>
-                                <Typography>Time distribution</Typography>
+                            <Stack>
+                            <Typography >Time distribution (hours)</Typography>
+                            </Stack>
+
                             </Grid>
                             <Grid item>
                                 <Select value={timeDistribuitionSelect} onChange={(event) => { setTimeDistribuitionSelect(event.target.value) }}>
@@ -969,7 +1014,7 @@ const ResponsiveAppBar = (props) => {
                         component="div"
                         sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
                     >
-                        Domodoro
+                        Pomodoro Planner
                     </Typography>
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open menu">

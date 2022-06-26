@@ -34,6 +34,7 @@ export default function TimerControl(props) {
   const [warningDialog, setWarningDialog] = useState(false);
   const [showWarning, setShowWarning] = useState(true);
 
+  console.log('Settings in timer control: ', settings)
 
   const alarmSound = settings.alarmSound
   const [alarm] = useSound(notifications, {
@@ -131,7 +132,7 @@ export default function TimerControl(props) {
               }
             }
             else {
-              if(settings.alarmOnPomdoroEnd){
+              if(settings.alarmOnPomodoroEnd){
                 alarm({id:settings.alarmSound})
               }
               if (pomodoros + 1 === settings.longBreakEvery) {
