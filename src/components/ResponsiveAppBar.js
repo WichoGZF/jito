@@ -121,8 +121,7 @@ const DialogSettings = (props) => {
     //App 
     const [colorTheme, setColorTheme] = useState(settings.colorTheme)
     const [hoursPastMidnight, setHoursPastMidnight] = useState(settings.hoursPastMidnight)
-    const [timeFormat, setTimeFormat] = useState(settings.timeFormat)
-    const [dateFormat, setDateFormat] = useState(settings.dateFormat)
+    const [language, setLanguage] = useState(settings.language)
 
     const handleChangeTabSelected = (event, newValue) => {
         setTabSelected(newValue)
@@ -380,37 +379,20 @@ const DialogSettings = (props) => {
                         <Grid item>
                             <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
                                 <Grid item xs>
-                                    <Typography>Time format</Typography>
+                                    <Typography>Language</Typography>
                                 </Grid>
                                 <Grid item xs={5}>
                                     <Select sx={{ width: '100%' }}
-                                        value={timeFormat}
-                                        onChange={(event) => { setTimeFormat(event.target.value) }}>
-                                        <MenuItem value={"24"}>24H</MenuItem>
-                                        <MenuItem value={"12"}>12H</MenuItem>
-                                    </Select>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        <Grid item>
-                            <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
-                                <Grid item xs>
-                                    <Typography>Date format</Typography>
-                                </Grid>
-                                <Grid item xs={5}>
-                                    <Select sx={{ width: '100%' }}
-                                        value={dateFormat}
-                                        onChange={(event) => { setDateFormat(event.target.value) }}>
-                                        <MenuItem value={"MM/DD/YYYY"}>MM/DD/YYYY</MenuItem>
-                                        <MenuItem value={"DD/MM/YYYY"}>DD/MM/YYYY</MenuItem>
-                                        <MenuItem value={"YYYY/MM/DD"}>YYYY/MM/DD</MenuItem>
+                                        value={language}
+                                        onChange={(event) => { setLanguage(event.target.value) }}>
+                                        <MenuItem value={"English"}>English</MenuItem>
+                                        <MenuItem value={"Español"}>Español</MenuItem>
                                     </Select>
                                 </Grid>
                             </Grid>
                         </Grid>
                     </Grid>
                 </TabPanel>
-
             </DialogContent>
             <DialogActions >
                 <Button onClick={props.handleClose}> Save </Button>
