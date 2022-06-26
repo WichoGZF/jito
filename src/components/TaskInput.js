@@ -25,6 +25,9 @@ import { DialogContent, DialogTitle, DialogActions, Dialog } from "@mui/material
 import FormGroup from '@mui/material/FormGroup'
 import Checkbox from '@mui/material/Checkbox'
 
+import { TagDialog } from "./TaskList.js";
+
+
 
 export default function TaskInput(props) {
     const [taskName, setTaskName] = useState(props.edit ? props.name : "")
@@ -33,11 +36,15 @@ export default function TaskInput(props) {
     const [blocks, setBlocks] = useState(props.edit ? props.blocks : null) //nuumber of blocks
     const [repeat, setRepeat] = useState(props.edit ? props.repeat : false) //true or false
     const [repeatOn, setRepeatOn] = useState(props.edit ? props.repeatOn : [0, 0, 0, 0, 0, 0, 0])
+    const [tag, setTag] = useState(props.edit? props.tagName: null)
     //for comps.
     const [toggleRepeat, setToggleRepeat] = useState(false)
+    const [openTagSelect, setOpenTagSelect] = useState(false)
 
-    console.log(props.tagName, props.tagColor)
-
+    const handleOpenTagSelect = () => {
+        console.log("Opened tag select")
+        setOpenTagSelect(!openTagSelect)
+    }
     const handleRepeatSelect = () => {
         setToggleRepeat(!toggleRepeat);
     }
@@ -59,6 +66,8 @@ export default function TaskInput(props) {
         })
 
     }
+
+    console.log(openTagSelect)
 
     const isWeekly = repeat === 'weekly'
 
@@ -97,12 +106,12 @@ export default function TaskInput(props) {
                     </FormControl>
                     <Stack>
                         <FormLabel>Number of blocks</FormLabel>
-                        <Input disabled={taskType==='normal'}></Input>
+                        <Input disabled={taskType==='normal'} value={blocks} onChange={(event)=>{setBlocks(event.target.value)}}></Input>
                     </Stack>
                 </Stack>
                                     <Stack direction="row" justifyContent="space-between">
                         <FormLabel>Tag</FormLabel>
-                        <Chip clickable onClick={props.handleOpenTagSelect} label={props.tagName} sx={{backgroundColor: props.tagColor}}></Chip>
+                        <Chip clickable onClick={handleOpenTagSelect} label={props.tagName? props.tagName: 'None'} sx={{backgroundColor: props.tagColor}}></Chip>
                     </Stack>
                 <Stack direction="row" justifyContent={"space-between"}>
                     <FormLabel>Repeat</FormLabel>
@@ -114,6 +123,7 @@ export default function TaskInput(props) {
                 <Button onClick={props.handleTaskSelectClose}>Cancel</Button>
                 <Button onClick={props.handleTaskSelectClose}>OK</Button>
             </Grid>
+            
             <Dialog
                 open={toggleRepeat}
                 onClose={handleRepeatSelect}>
@@ -175,6 +185,7 @@ export default function TaskInput(props) {
                     <Button onClick={handleRepeatSelect}>OK</Button>
                 </DialogActions>
             </Dialog>
+            <TagDialog openTagSelect={openTagSelect} handleOpenTagSelect={handleOpenTagSelect} tagSelected={props.tagName}></TagDialog>
         </Box>
     )
 }

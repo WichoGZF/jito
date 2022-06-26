@@ -66,6 +66,7 @@ import { TwitterPicker } from 'react-color'
 
 function NewTask(props) {
   const [addNewTask, setAddNewTask] = useState(false);
+  const [openTagSelect, setOpenTagSelect] = useState(false)
 
   const handleClickNewTask = () => {
     setAddNewTask(!addNewTask)
@@ -77,7 +78,6 @@ function NewTask(props) {
         <Button icon={<AddTaskIcon></AddTaskIcon>} variant="outlined" clickable onClick={handleClickNewTask} sx={{ width: "100%" }}>Add new task</Button>
       </ListItem>
       {addNewTask ? <TaskInput
-
         edit={false} handleTaskSelectClose={handleClickNewTask}></TaskInput> : <></>}
     </>
   )
@@ -93,14 +93,6 @@ function ListEntry(props) {
   const [dropDownRef, setDropDownRef] = useState(null)
 
   const [editTask, setEditTask] = useState(false)
-
-  
-  const [openTagSelect, setOpenTagSelect] = useState(false)
-
-  const handleOpenTagSelect = () => {
-    setOpenTagSelect(!openTagSelect)
-    console.log(openTagSelect)
-  }
 
   const handleDragHover = () => setDragHover(null);
 
@@ -228,84 +220,82 @@ function ListEntry(props) {
   if (editTask) {
     return (
       <>
-      <ListItem>
-        <TaskInput
-          edit={true}
-          name={props.text}
-          description={props.description}
-          tag={props.tag}
-          type={props.type}
-          blocks={props.blocks}
-          repeat={props.repeat}
-          repeatOn={props.repeatOn}
-          tagName={props.tag}
-          tagColor={tagColor}
-          handleTaskSelectClose={handleEditTask}
-          handleOpenTagSelect={handleOpenTagSelect}
-        >
-        </TaskInput>
-        <TagDialog openTagSelect={openTagSelect} handleOpenTagSelect={handleOpenTagSelect} tagSelected={props.tag}></TagDialog>
-      </ListItem>
+        <ListItem>
+          <TaskInput
+            edit={true}
+            name={props.text}
+            description={props.description}
+            tag={props.tag}
+            type={props.type}
+            blocks={props.blocks}
+            repeat={props.repeat}
+            repeatOn={props.repeatOn}
+            tagName={props.tag}
+            tagColor={tagColor}
+            handleTaskSelectClose={handleEditTask}
+          >
+          </TaskInput>
+        </ListItem>
       </>
     )
   }
   else {
     return (
       <>
-      <ListItem
-        ref={ref}
-        key={'primary' + String(props.id)}
-        sx={{
-          '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
-          borderBottom: borderBottom,
-          borderTop: borderTop,
-          borderColor: "primary.main"
-        }}
-        onMouseEnter={(e) => setOnHover({ display: 'block' })}
-        onMouseLeave={(e) => setOnHover({ display: 'none' })}
-        secondaryAction={
-          <>
-            <IconButton
+        <ListItem
+          ref={ref}
+          key={'primary' + String(props.id)}
+          sx={{
+            '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
+            borderBottom: borderBottom,
+            borderTop: borderTop,
+            borderColor: "primary.main"
+          }}
+          onMouseEnter={(e) => setOnHover({ display: 'block' })}
+          onMouseLeave={(e) => setOnHover({ display: 'none' })}
+          secondaryAction={
+            <>
+              <IconButton
 
-              edge="end"
-              aria-label="options"
-              onClick={handleDropDown}
-              sx={onHover}>
-              <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
+                edge="end"
+                aria-label="options"
+                onClick={handleDropDown}
+                sx={onHover}>
+                <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
 
-            </IconButton>
-            <Menu
-              id="task-entry-options"
-              anchorEl={dropDownRef}
-              open={openDropDown}
-              onClose={handleCloseDropDown}
-              MenuListProps={{
-                'aria-labelledby': 'options-button',
-              }}
-            >
-              <MenuItem onClick={handleEditTask}>Edit task</MenuItem>
-              <MenuItem onClick={handleCloseDropDown} >Delete task</MenuItem>
+              </IconButton>
+              <Menu
+                id="task-entry-options"
+                anchorEl={dropDownRef}
+                open={openDropDown}
+                onClose={handleCloseDropDown}
+                MenuListProps={{
+                  'aria-labelledby': 'options-button',
+                }}
+              >
+                <MenuItem onClick={handleEditTask}>Edit task</MenuItem>
+                <MenuItem onClick={handleCloseDropDown} >Delete task</MenuItem>
 
-            </Menu>
-          </>
+              </Menu>
+            </>
 
-        }>
-        <ListItemIcon
-          onMouseEnter={(e) => setCompleteHover(true)}
-          onMouseLeave={(e) => setCompleteHover(false)}
-        >
-          {
-            props.type === "block" ? <Typography sx={{ margin: 1, pl: 1, pr: 1, border: "1px", borderStyle: "solid" }}>{props.blocks}</Typography>
-              : <IconButton>{completeHover ? <CheckOutlinedIcon></CheckOutlinedIcon> : <CircleOutlined></CircleOutlined>}</IconButton>
-          }
+          }>
+          <ListItemIcon
+            onMouseEnter={(e) => setCompleteHover(true)}
+            onMouseLeave={(e) => setCompleteHover(false)}
+          >
+            {
+              props.type === "block" ? <Typography sx={{ margin: 1, pl: 1, pr: 1, border: "1px", borderStyle: "solid" }}>{props.blocks}</Typography>
+                : <IconButton>{completeHover ? <CheckOutlinedIcon></CheckOutlinedIcon> : <CircleOutlined></CircleOutlined>}</IconButton>
+            }
 
-        </ListItemIcon>
-        <ListItemText primary={props.text} secondary={props.description}>
-        </ListItemText>
+          </ListItemIcon>
+          <ListItemText primary={props.text} secondary={props.description}>
+          </ListItemText>
 
-        {props.repeat ? <RepeatIcon sx={{ marginRight: 1, color: "rgba(0, 0, 0, 0.6)" }}></RepeatIcon> : null}
-        <Chip label={props.tag} sx={{ backgroundColor: tagColor }}></Chip>
-      </ListItem>
+          {props.repeat ? <RepeatIcon sx={{ marginRight: 1, color: "rgba(0, 0, 0, 0.6)" }}></RepeatIcon> : null}
+          <Chip label={props.tag} sx={{ backgroundColor: tagColor }}></Chip>
+        </ListItem>
       </>
     )
   }
@@ -366,7 +356,7 @@ function TagEntry(props) {
 }
 
 
-function TagDialog(props) {
+export function TagDialog(props) {
   const tags = useSelector(state => state.tasks.tags)
 
   const [openTagEdit, setOpenTagEdit] = useState(false)
