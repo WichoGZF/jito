@@ -102,7 +102,7 @@ export default function TaskInput(props) {
                 </Stack>
                                     <Stack direction="row" justifyContent="space-between">
                         <FormLabel>Tag</FormLabel>
-                        <Chip clickable label={props.tagName} sx={{backgroundColor: props.tagColor}}></Chip>
+                        <Chip clickable onClick={props.handleOpenTagSelect} label={props.tagName} sx={{backgroundColor: props.tagColor}}></Chip>
                     </Stack>
                 <Stack direction="row" justifyContent={"space-between"}>
                     <FormLabel>Repeat</FormLabel>

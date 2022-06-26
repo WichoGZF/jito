@@ -89,11 +89,18 @@ function ListEntry(props) {
   const [completeHover, setCompleteHover] = useState(false)
 
   const [dragHover, setDragHover] = useState(null)
-  const [parentDragHover, setParentDragHover] = useState(null)
 
   const [dropDownRef, setDropDownRef] = useState(null)
 
   const [editTask, setEditTask] = useState(false)
+
+  
+  const [openTagSelect, setOpenTagSelect] = useState(false)
+
+  const handleOpenTagSelect = () => {
+    setOpenTagSelect(!openTagSelect)
+    console.log(openTagSelect)
+  }
 
   const handleDragHover = () => setDragHover(null);
 
@@ -110,8 +117,6 @@ function ListEntry(props) {
 
   const tagWhole = props.tags.find(tag => tag.name === props.tag)
   const tagColor = tagWhole.color
-  console.log(tagWhole, tagColor)
-
 
   const ref = useRef(null)
 
@@ -127,29 +132,26 @@ function ListEntry(props) {
       }
       const dragIndex = item.index //What is being dragged 
       const hoverIndex = props.index //Current index
-      //If hovered on same place do nothing
-      if (dragIndex === hoverIndex) {
-        if (props.fatherIndex === item.fatherIndex) {
-          return
-        }
-      }
+
 
       const clientOffset = monitor.getClientOffset();
 
       //Gets current item total height.
       const hoverBoundingRect = ref.current?.getBoundingClientRect()
-
-      //Divides by number of tasks the total size of the component, then divides by 2 to get the middle of current one.
-
+      //Get the middle of the task
       const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
-      // Get pixels to the middle of the 'main' task
+      //Get distance to 'middle' of the task. 
+      // 0 then the cursor is in the middle;
+      // positive: the dragging target is below the middle of the task
+      // negative: the dragging target is above the middle of the task
       const hoverClientY = clientOffset.y - (hoverBoundingRect.top + hoverMiddleY)
 
+      console.log(hoverClientY)
 
-      if (hoverClientY > 0 && hoverClientY < hoverMiddleY) {
+      if (hoverClientY > 0) {
         setDragHover("below");
       }
-      else if (hoverClientY < 0 && hoverClientY > (-1 * hoverMiddleY)) {
+      else if (hoverClientY < 0) {
         setDragHover("above");
       }
 
@@ -203,10 +205,6 @@ function ListEntry(props) {
       isDragging: monitor.isDragging(),
     })
   });
-  //For line highlighting 
-
-  //Opacity?
-  const opacity = isDragging ? 0 : 1;
 
   let borderBottom;
   let borderTop;
@@ -227,36 +225,41 @@ function ListEntry(props) {
 
   drag(drop(ref))
 
-  const selectedTag = props.tag
-  
   if (editTask) {
     return (
+      <>
       <ListItem>
         <TaskInput
           edit={true}
           name={props.text}
           description={props.description}
+          tag={props.tag}
           type={props.type}
           blocks={props.blocks}
           repeat={props.repeat}
           repeatOn={props.repeatOn}
+          tagName={props.tag}
+          tagColor={tagColor}
           handleTaskSelectClose={handleEditTask}
+          handleOpenTagSelect={handleOpenTagSelect}
         >
         </TaskInput>
+        <TagDialog openTagSelect={openTagSelect} handleOpenTagSelect={handleOpenTagSelect} tagSelected={props.tag}></TagDialog>
       </ListItem>
+      </>
     )
   }
   else {
     return (
+      <>
       <ListItem
         ref={ref}
         key={'primary' + String(props.id)}
         sx={{
           '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
-          pl: props.subtask ? 4 : 0,
           borderBottom: borderBottom,
           borderTop: borderTop,
-          borderColor: "primary.main",
+          borderColor: "primary.main"
         }}
         onMouseEnter={(e) => setOnHover({ display: 'block' })}
         onMouseLeave={(e) => setOnHover({ display: 'none' })}
@@ -301,14 +304,16 @@ function ListEntry(props) {
         </ListItemText>
 
         {props.repeat ? <RepeatIcon sx={{ marginRight: 1, color: "rgba(0, 0, 0, 0.6)" }}></RepeatIcon> : null}
-        <Chip onClick={props.openTagDialog} label={props.tag} sx={{backgroundColor: tagColor}}></Chip>
+        <Chip label={props.tag} sx={{ backgroundColor: tagColor }}></Chip>
       </ListItem>
+      </>
     )
   }
 }
 
 function TagEntry(props) {
   const [colorPick, setColorPick] = useState(false)
+  const [color, setColor] = useState(props.color)
   const [editName, setEditName] = useState(false)
   const [tagName, setTagName] = useState(props.tag)
 
@@ -318,9 +323,15 @@ function TagEntry(props) {
   const colorX = colorRef.current ? colorBounding.x - 260 + 16 : 0
   const colorY = colorRef.current ? colorBounding.y + 24 + 12 : 0
 
+  const handleChangeColor = (color) => {
+    console.log('Changing color into: ', color, color.hex)
+    setColor(color.hex);
+    setColorPick(!colorPick)
+  }
+
   const colorSelector = <Box sx={{ position: 'absolute', zIndex: '2' }}>
     <Box sx={{ position: 'fixed', top: `${colorY}px`, right: '0px', bottom: '0px', left: `${colorX}px`, }}>
-      <TwitterPicker triangle="top-right"></TwitterPicker>
+      <TwitterPicker color={color} onChange={handleChangeColor} triangle="top-right"></TwitterPicker>
     </Box>
   </Box>
 
@@ -330,7 +341,7 @@ function TagEntry(props) {
         <IconButton
           onClick={() => setColorPick(!colorPick)}
           sx={{ marginRight: '12px' }}>
-          <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: props.color, borderRadius: '50%' }}></Box>
+          <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: color, borderRadius: '50%' }}></Box>
         </IconButton>
         {colorPick ? colorSelector : null}
         <ListItemText>{tagName}</ListItemText>
@@ -344,7 +355,7 @@ function TagEntry(props) {
         <IconButton
           onClick={() => setColorPick(!colorPick)}
           sx={{ marginRight: '12px' }}>
-          <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: props.color, borderRadius: '50%' }}></Box>
+          <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: color, borderRadius: '50%' }}></Box>
         </IconButton>
         {colorPick ? colorSelector : null}
         <Input value={tagName} onChange={(event) => setTagName(event.target.value)}></Input>
@@ -359,6 +370,7 @@ function TagDialog(props) {
   const tags = useSelector(state => state.tasks.tags)
 
   const [openTagEdit, setOpenTagEdit] = useState(false)
+  const [tagSelected, setTagSelected] = useState(props.tagSelected)
 
   const handleOpenTagEdit = () => {
     setOpenTagEdit(!openTagEdit)
@@ -366,19 +378,33 @@ function TagDialog(props) {
 
   if (!openTagEdit) {
     return (<Dialog open={props.openTagSelect} >
-      <DialogTitle>Select a tag<IconButton onClick={handleOpenTagEdit}><EditIcon></EditIcon></IconButton></DialogTitle>
+      <Stack direction="row" justifyContent="space-between">
+        <DialogTitle>Select a tag</DialogTitle>
+        <IconButton sx={{ mr: '12px' }} onClick={handleOpenTagEdit}><EditIcon></EditIcon></IconButton>
+      </Stack>
       <DialogContent>
-        <List>
+        <Grid container spacing={1}>
           {
             tags.map((tagObject, index) => {
-              return (
-                <ListItemButton selected={props.tagSelected === tagObject.name}>
-                  <ListItemText>{tagObject.name}</ListItemText>
-                </ListItemButton>
-              )
+              if (tagSelected === tagObject.name) {
+                return (
+                  <Grid item xs='auto'>
+                    <Chip disabled label={tagObject.name} sx={{ backgroundColor: tagObject.color }}></Chip>
+                  </Grid>
+                )
+              }
+              else {
+                return (
+                  <Grid item xs='auto'>
+                    <Chip clickable onClick={() => { setTagSelected(tagObject.name) }}
+                      label={tagObject.name} sx={{ backgroundColor: tagObject.color }}>
+                    </Chip>
+                  </Grid>
+                )
+              }
             })
           }
-        </List>
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={props.handleOpenTagSelect}>Cancel</Button>
@@ -389,7 +415,7 @@ function TagDialog(props) {
   }
   else {
     return (<Dialog open={props.openTagSelect}>
-      <DialogTitle><IconButton onClick={handleOpenTagEdit}><ArrowBackIcon></ArrowBackIcon></IconButton>Edit tags</DialogTitle>
+      <DialogTitle><IconButton onClick={handleOpenTagEdit} sx={{ mr: '5px' }}><ArrowBackIcon></ArrowBackIcon></IconButton>Edit tags</DialogTitle>
       <DialogContent>
         <List>
           {
@@ -407,46 +433,10 @@ function TagDialog(props) {
 }
 
 export default function TaskList(props) {
-  const [tagSelected, setTagSelected] = useState('My tasks')
-  const [tagAnchorEl, setTagAnchorEl] = useState(null)
-  const [optionsAnchorEl, setOptionsAnchorEl] = useState(null)
-  const [openTagSelect, setOpenTagSelect] = useState(false)
-  const [changeListName, setChangeListName] = useState(false)
-  const [deleteList, setDeleteList] = useState(false)
   const [deletedTask, setDeletedTask] = useState(null) //saves deleted task, controls redo pop up. after 5s changes are
   //stored in tasks.history via use effect and state turned into null thus disappearing the pop up
 
-  const handleOpenTagSelect = () => {
-    setOpenTagSelect(!openTagSelect)
-  }
-
-
-
   const tasks = useSelector(state => state.tasks)
-
-  const openTags = Boolean(tagAnchorEl);
-  const openOptions = Boolean(optionsAnchorEl)
-
-  const onClickTagSelection = (event) => {
-    setTagAnchorEl(event.currentTarget);
-  }
-
-  const onClickOptions = (event) => {
-    setOptionsAnchorEl(event.currentTarget);
-  }
-
-  const handleCloseTags = () => {
-    setTagAnchorEl(null)
-  }
-
-  const handleCloseOptions = () => {
-    setOptionsAnchorEl(null)
-  }
-
-  const handleChangeTagSelected = (tagName) => {
-    setTagSelected(tagName);
-    setTagAnchorEl(null);
-  }
 
   function nextTodoId(todos) {
     const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1)
@@ -465,55 +455,39 @@ export default function TaskList(props) {
         blocks={task.blocks}
         repeat={task.repeat}
         repeatOn={task.repeatOn}
-        tag={tagSelected}
+        tag={task.tag}
         tags={tasks.tags}
-        openTagDialog={handleOpenTagSelect}
       ></ListEntry>
     )
   }
 
-  console.log(props.date)
   const dd = String(props.date.getDate()).padStart(2, '0');
   const mm = String(props.date.getMonth() + 1).padStart(2, '0'); //January is 0!
   const yyyy = props.date.getFullYear();
-
   const date = mm + '/' + dd + '/' + yyyy;
-
   const day = props.date.getDay();
 
   let allTagTasks = []
-
   /*Task filtering */
   tasks.tasks.forEach((task, index) => {
-      if (task.repeat) {
-        if (Array.isArray(task.repeatOn)) {
-          for (const dayOfTheWeek of task.repeatOn) {
-            if (dayOfTheWeek === day) {
-              allTagTasks.push(taskToListEntry(task, index))
-              break;
-            }
-          }
-        }
-        if (task.repeatOn === "day") {
-          allTagTasks.push(taskToListEntry(task, index))
-        }
+    if (task.repeat) {
+      if (task.repeat === 'daily') {
+        allTagTasks.push(taskToListEntry(task, index))
       }
       else {
-        if (date === task.date) {
-          allTagTasks.push(taskToListEntry(task, index))
+        for (const dayOfTheWeek of task.repeatOn) {
+          if (task.repeatOn[day]) {
+            allTagTasks.push(taskToListEntry(task, index))
+            break;
+          }
         }
       }
-  })
-
-  let tagsMenuItems = []
-  tasks.tags.forEach((tag, index) => {
-    tagsMenuItems.push(
-      <MenuItem
-        key={(1 + index).toString()}
-        selected={tag.name === tagSelected}
-        onClick={() => handleChangeTagSelected(tag.name)}>
-        {tag.name}
-      </MenuItem>)
+    }
+    else {
+      if (date === task.date) {
+        allTagTasks.push(taskToListEntry(task, index))
+      }
+    }
   })
 
   return (
@@ -524,7 +498,6 @@ export default function TaskList(props) {
         <NewTask></NewTask>
         {allTagTasks}
       </List>
-      <TagDialog openTagSelect={openTagSelect} handleOpenTagSelect={handleOpenTagSelect} tagSelected={tagSelected}></TagDialog>
     </Box>
   )
 }
