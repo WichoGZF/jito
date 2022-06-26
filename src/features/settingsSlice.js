@@ -13,11 +13,11 @@ const mockSettings = {
     alarmVolume: 50, 
     alarmSound: "bell",
     tickingVolume: 50,
-    tickingSound: "clocktick",
+    tickingSound: "clock",
     alarmOnPomdoroEnd: true,
     alarmOnBreakEnd: true,
-    tickingSoundOnBreak: false,
-    tickingSoundOnPomodoro: false,
+    tickingSoundOnBreak: true,
+    tickingSoundOnPomodoro: true,
     //app
 
     colorTheme: 'light',

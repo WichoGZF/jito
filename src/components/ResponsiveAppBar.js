@@ -247,12 +247,12 @@ const DialogSettings = (props) => {
                                         sx={{ width: "100%" }}
                                         value={alarmSound}
                                         onChange={(event) => { setAlarmSound(event.target.value) }}>
-                                        <MenuItem value="answer-tone">Answer tone</MenuItem>
+                                        <MenuItem value="answerTone">Answer tone</MenuItem>
                                         <MenuItem value="bell">Bell</MenuItem>
-                                        <MenuItem value="clear-announce">Clear announce</MenuItem>
-                                        <MenuItem value="confirmation-tone">Confirmation tone</MenuItem>
-                                        <MenuItem value="doorbell-light">Doorbell light</MenuItem>
-                                        <MenuItem value="doorbell-plain">Doorbell plain</MenuItem>
+                                        <MenuItem value="clearAnnounce">Clear announce</MenuItem>
+                                        <MenuItem value="confirmationTone">Confirmation tone</MenuItem>
+                                        <MenuItem value="doorbellLight">Doorbell light</MenuItem>
+                                        <MenuItem value="doorbellPlain">Doorbell plain</MenuItem>
                                         <MenuItem value="flute">Flute</MenuItem>
                                         <MenuItem value="positive">Positive</MenuItem>
                                     </Select>
@@ -290,9 +290,9 @@ const DialogSettings = (props) => {
                                     <Select sx={{ width: '100%' }}
                                         value={tickingSound}
                                         onChange={(event) => setTickingSound(event.target.value)}>
-                                        <MenuItem value="clocktick">Clock tick</MenuItem>
+                                        <MenuItem value="clock">Clock tick</MenuItem>
                                         <MenuItem value="pendulum">Pendulum</MenuItem>
-                                        <MenuItem value="wall-clock-tick">Wall clock tick</MenuItem>
+                                        <MenuItem value="wallClockTick">Wall clock tick</MenuItem>
                                     </Select>
                                 </Grid>
                             </Grid>

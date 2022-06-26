@@ -14,6 +14,13 @@ import { Checkbox } from '@mui/material';
 import Button from '@mui/material/Button'
 import { ElevatorSharp } from '@mui/icons-material';
 
+import useSound from 'use-sound';
+
+//notification sounds
+import notifications from '../sounds/tones.mp3'
+//ticking sounds
+import tickers from '../sounds/tickers.mp3'
+
 export default function TimerControl(props) {
 
   const settings = useSelector(state => state.settings)
@@ -27,13 +34,39 @@ export default function TimerControl(props) {
   const [warningDialog, setWarningDialog] = useState(false);
   const [showWarning, setShowWarning] = useState(true);
 
+
+  const alarmSound = settings.alarmSound
+  const [alarm] = useSound(notifications, {
+    sprite: {
+      answerTone: [0, 2000],
+      bell: [2000, 6000],
+      clearAnnounce: [6000, 11000],
+      confirmationTone: [11000, 13000],
+      doorbellLight: [13000, 15000],
+      doorbellPlain: [15000, 17000],
+      flute: [17000, 21000],
+      positive: [22000, 25000]
+    },
+    volume: settings.alarmVolume / 100,
+  })
+  const tickingSound = settings.tickingSound
+  const [tick] = useSound(tickers, {
+    sprite: {
+      clock: [0, 100],
+      pendulum: [100, 230],
+      wallClockTick: [230, 350]
+    },
+    volume: settings.tickingVolume / 100,
+
+  })
+
   let progress;
   if (rest) {
-    if(pomodoros===settings.longBreakEvery){
-      progress = ((timerMinuts * 60 + timerSeconds) / (settings.longBreakDuration))*100
+    if (pomodoros === settings.longBreakEvery) {
+      progress = ((timerMinuts * 60 + timerSeconds) / (settings.longBreakDuration)) * 100
     }
-    else{
-      progress = ((timerMinuts * 60 + timerSeconds) / (settings.shortBreakDuration))*100
+    else {
+      progress = ((timerMinuts * 60 + timerSeconds) / (settings.shortBreakDuration)) * 100
     }
   }
   else {
@@ -84,33 +117,56 @@ export default function TimerControl(props) {
         if (timerSeconds === 0) {
           if (timerMinuts === 0) {
             if (rest) {
+              if(settings.alarmOnBreakEnd){
+                alarm({id: settings.alarmSound})
+              }
               setRest(false)
-              changeTimerState();
-              setClockStarted(false)
+              if (!settings.automaticPomodoroStart) {
+                changeTimerState();
+                setClockStarted(false)
+              }
               setTime(settings.pomodoroDuration)
               if (pomodoros === settings.longBreakEvery) {
                 setPomodoros(0)
               }
             }
             else {
+              if(settings.alarmOnPomdoroEnd){
+                alarm({id:settings.alarmSound})
+              }
               if (pomodoros + 1 === settings.longBreakEvery) {
                 setTime(settings.longBreakDuration, 0)
               }
               else {
                 setTime(settings.shortBreakDuration, 0)
               }
-              changeTimerState();
+              if (!settings.automaticBreakStart) {
+                changeTimerState();
+                setClockStarted(false)
+              }
               setRest(true)
-              setClockStarted(false)
               setPomodoros(pomodoros + 1)
             }
           }
           else {
             setTime(timerMinuts - 1, 59)
+            if (rest && settings.tickingSoundOnBreak) {
+              tick({ id: settings.tickingSound })
+            }
+            else if (!rest && settings.tickingSoundOnPomodoro) {
+              tick({ id: settings.tickingSound })
+            }
           }
         }
         else {
           setTimerSeconds(timerSeconds - 1);
+          if (rest && settings.tickingSoundOnBreak) {
+            tick({ id: settings.tickingSound })
+          }
+          else if (!rest && settings.tickingSoundOnPomodoro) {
+            tick({ id: settings.tickingSound })
+          }
+
         }
       }, 1000);
       return () => clearInterval(interval);

@@ -33,7 +33,7 @@ export default function TaskInput(props) {
     const [taskName, setTaskName] = useState(props.edit ? props.name : "")
     const [taskDesc, setTaskDesc] = useState(props.edit ? props.description : "")
     const [taskType, setTaskType] = useState(props.edit ? props.type : 'normal') //normal or block
-    const [blocks, setBlocks] = useState(props.edit ? props.blocks : null) //nuumber of blocks
+    const [blocks, setBlocks] = useState(props.edit ? props.blocks : 0) //nuumber of blocks
     const [repeat, setRepeat] = useState(props.edit ? props.repeat : false) //true or false
     const [repeatOn, setRepeatOn] = useState(props.edit ? props.repeatOn : [0, 0, 0, 0, 0, 0, 0])
     const [tag, setTag] = useState(props.edit? props.tagName: null)
