@@ -647,7 +647,7 @@ const DialogStatistics = (props) => {
                 break;
             case 'month':
                 for (const completedTask of history) {
-                    const {completeDate, time, tag} = completedTask
+                    const { completeDate, time, tag } = completedTask
                     const [completedMonth, completedDay, completedYear] = completeDate.split('/')
                     const monthDifference = differenceInCalendarMonths(
                         todayDate,
@@ -660,7 +660,7 @@ const DialogStatistics = (props) => {
                 break;
             case 'all':
                 for (const completedTask of history) {
-                    const {completedTime, time, tag} = completedTask
+                    const { completedTime, time, tag } = completedTask
                     tagTime[tag] += time;
                 }
                 break;
@@ -668,7 +668,7 @@ const DialogStatistics = (props) => {
 
 
         let array = []
-        Object.values(tagTime).forEach((value, index)=> array.push(value))
+        Object.values(tagTime).forEach((value, index) => array.push(value))
         console.log("Tags time:", tagTime, array)
         return (array)
     }
@@ -691,7 +691,7 @@ const DialogStatistics = (props) => {
     }
 
     const secondsArrayToHoursArray = (secondsArray) => {
-        secondsArray.forEach((seconds, index) => secondsArray[index] = ((seconds / 60)/60))
+        secondsArray.forEach((seconds, index) => secondsArray[index] = ((seconds / 60) / 60))
         return secondsArray
     }
 
@@ -784,17 +784,17 @@ const DialogStatistics = (props) => {
         labels: labelsBarChart,
         datasets: [
             {
-                label: productiveTimeSelect === 'minutes'? "Minutes": "Hours",
-                data: productiveTimeSelect === 'minutes'? secondsArrayToMinutesArray(daysOfTheWeekTime()): secondsArrayToHoursArray(daysOfTheWeekTime()),
+                label: productiveTimeSelect === 'minutes' ? "Minutes" : "Hours",
+                data: productiveTimeSelect === 'minutes' ? secondsArrayToMinutesArray(daysOfTheWeekTime()) : secondsArrayToHoursArray(daysOfTheWeekTime()),
                 backgroundColor: 'rgb(255 142 138)',
             },
         ],
     };
 
     function getRandomColor() {
-        const color1 = Math.floor(Math.random()*255)
-        const color2 = Math.floor(Math.random()*255)
-        const color3 = Math.floor(Math.random()*255)
+        const color1 = Math.floor(Math.random() * 255)
+        const color2 = Math.floor(Math.random() * 255)
+        const color3 = Math.floor(Math.random() * 255)
         return `rgb(${color1} ${color2} ${color3})`;
     }
 
@@ -803,7 +803,7 @@ const DialogStatistics = (props) => {
         for (const tag of tags) {
             colors.push(getRandomColor())
         }
-        return(colors)
+        return (colors)
     }
 
 
@@ -932,6 +932,7 @@ const DialogStatistics = (props) => {
 const ResponsiveAppBar = (props) => {
     const [anchorElUser, setAnchorElUser] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(null)
+    const [loggedIn, setLoggedIn] = useState(true)
 
     console.log(dialogOpen);
 
@@ -986,13 +987,16 @@ const ResponsiveAppBar = (props) => {
                         component="div"
                         sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
                     >
-                        Pomodoro Pizza
+                        Domodoro
                     </Typography>
                     <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open settings">
-                            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                            </IconButton>
+                        <Tooltip title="Open menu">
+                            {loggedIn
+                                ? <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                    <Avatar alt="?" src="/static/images/avatar/2.jpg" />
+                                </IconButton>
+                                : <Button onClick={handleOpenUserMenu}>user</Button>
+                            }
                         </Tooltip>
                         <Menu
                             sx={{ mt: "45px" }}
