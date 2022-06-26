@@ -36,6 +36,8 @@ export default function TaskInput(props) {
     //for comps.
     const [toggleRepeat, setToggleRepeat] = useState(false)
 
+    console.log(props.tagName, props.tagColor)
+
     const handleRepeatSelect = () => {
         setToggleRepeat(!toggleRepeat);
     }
@@ -90,7 +92,7 @@ export default function TaskInput(props) {
                             row
                         >
                             <FormControlLabel value="normal" control={<Radio></Radio>} label="Normal" sx={{ color: 'text.primary' }} />
-                            <FormControlLabel value="block" control={<Radio />} label="Square" sx={{ color: 'text.primary' }} />
+                            <FormControlLabel value="block" control={<Radio />} label="Block" sx={{ color: 'text.primary' }} />
                         </RadioGroup>
                     </FormControl>
                     <Stack>
@@ -100,7 +102,7 @@ export default function TaskInput(props) {
                 </Stack>
                                     <Stack direction="row" justifyContent="space-between">
                         <FormLabel>Tag</FormLabel>
-                        <Chip label="Task"></Chip>
+                        <Chip clickable label={props.tagName} sx={{backgroundColor: props.tagColor}}></Chip>
                     </Stack>
                 <Stack direction="row" justifyContent={"space-between"}>
                     <FormLabel>Repeat</FormLabel>

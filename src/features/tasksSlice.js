@@ -90,6 +90,14 @@ const tasksSlice = createSlice({
             state.tasks.history.append(
                 action.payload
             )
+        },
+        changeTagColor: (state, action) => {
+            const [tagToChange, color] = action
+            state.tasks.tags.forEach((tag, index) => {
+                if(tag.name === tagToChange){
+                    state.tasks.tags[index].color = color
+                }
+            })
         }
     }
 })
