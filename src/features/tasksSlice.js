@@ -17,19 +17,19 @@ const tasksSlice = createSlice({
     reducers: {
         addTask: (state, action) => {
             const { task } = action.payload
-            state.tasks.tasks.append(
+            state.tasks.append(
                 {
                     ...task,
-                    id: nextTodoId(state.tasks.tasks)
+                    id: nextTodoId(state.tasks)
                 })
         },
         editTask: (state, action) => {
             const { index, task } = action.payload
-            state.tasks.tasks[index] = task
+            state.tasks[index] = task
         },
         updateTime: (state, action) => {
             const { index, time } = action.payload
-            state.tasks.tasks[index].time += time
+            state.tasks[index].time += time
         },
         deleteTask: (state, action) => {
             /*state.tasks[action.payload.tag].forEach(
@@ -41,29 +41,29 @@ const tasksSlice = createSlice({
             )
             */
             const { index } = action.payload
-            state.tasks.tasks.splice(index, 1)
+            state.tasks.splice(index, 1)
         },
         completeTask: (state, action) => {
             const { finishedTask, index } = action.payload
-            state.tasks.history.append(finishedTask)
+            state.history.append(finishedTask)
             tasksSlice.caseReducers.deleteTask(state, { index: index })
         },
         reorderTask: (state, action) => {
             //index hover, index drag
             const { hoverIndex, dragIndex } = action.payload
             let taskHolder;
-            taskHolder = state.tasks.tasks[hoverIndex]
-            state.tasks.tasks[hoverIndex] = state.tasks.tasks[dragIndex]
-            state.tasks.tasks[dragIndex] = taskHolder
+            taskHolder = state.tasks[hoverIndex]
+            state.tasks[hoverIndex] = state.tasks[dragIndex]
+            state.tasks[dragIndex] = taskHolder
         },
         addTag: (state, action) => {
             const newTagName = action.payload
-            state.tags.push(newTagName)
+            state.tags.unshift(newTagName)
         },
         deleteTag: (state, action) => {
             const tagToDelete = action.payload
 
-            delete state.tasks.tags.splice(tagToDelete, 1)
+            state.tags.splice(tagToDelete, 1)
         },
 
         changeTagName: (state, action) => {

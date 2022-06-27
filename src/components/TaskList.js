@@ -21,7 +21,7 @@ import { ItemTypes } from './ItemTypes.js'
 import Chip from '@mui/material/Chip';
 import Button from '@mui/material/Button';
 import AddTaskIcon from '@mui/icons-material/AddTask';
-import { Box} from '@mui/system';
+import { Box } from '@mui/system';
 import { Stack } from '@mui/material';
 
 import Menu from '@mui/material/Menu'
@@ -51,6 +51,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useDispatch } from 'react-redux';
 import { addTask, editTask, deleteTask, completeTask, reorderTask, addTag, deleteTag, changeTagName, changeTagColor } from '../features/tasksSlice.js'
+
+import Alert from '@mui/material/Alert';
+import Collapse from '@mui/material/Collapse';
+import CloseIcon from '@mui/icons-material/Close'
 
 function NewTask(props) {
   const [addNewTask, setAddNewTask] = useState(false);
@@ -291,6 +295,8 @@ function ListEntry(props) {
 }
 
 function TagEntry(props) {
+  const dispatch = useDispatch()
+
   const [colorPick, setColorPick] = useState(false)
   const [color, setColor] = useState(props.color)
   const [editName, setEditName] = useState(false)
@@ -307,6 +313,15 @@ function TagEntry(props) {
     console.log('Changing color into: ', color, color.hex)
     setColor(color.hex);
     setColorPick(!colorPick)
+  }
+  
+  const handleDeleteDialog = () => {
+    setDeleteDialog(false)
+  }
+
+  const dispatchDelete = () => {
+    dispatch(deleteTag(props.index))
+    handleDeleteDialog()
   }
 
   const colorSelector = <Box sx={{ position: 'absolute', zIndex: '2' }}>
@@ -332,31 +347,31 @@ function TagEntry(props) {
   else {
     return (
       <>
-      <ListItem>
-        <IconButton
-          onClick={() => setColorPick(!colorPick)}
-          sx={{ marginRight: '12px' }}>
-          <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: color, borderRadius: '50%' }}></Box>
-        </IconButton>
-        {colorPick ? colorSelector : null}
-        <Input value={tagName} onChange={(event) => setTagName(event.target.value)}></Input>
-        <IconButton onClick={() => { setEditName(false) }}><CheckIcon></CheckIcon></IconButton>
-        <IconButton onClick={()=> setDeleteDialog(true)}><DeleteIcon></DeleteIcon></IconButton>
-      </ListItem>
-      <Dialog open={deleteDialog}>
-      <DialogTitle>
-        Delete tag?
-      </DialogTitle>
-      <DialogContent>
-      <DialogContentText>
-        Deleting the tag will delete all the existing tasks with it. It won't delete completed tasks from the history.
-      </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button  onClick={()=>{setDeleteDialog(false)}}>Cancel</Button>
-        <Button>Delete</Button>
-      </DialogActions>
-      </Dialog>
+        <ListItem>
+          <IconButton
+            onClick={() => setColorPick(!colorPick)}
+            sx={{ marginRight: '12px' }}>
+            <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: color, borderRadius: '50%' }}></Box>
+          </IconButton>
+          {colorPick ? colorSelector : null}
+          <Input value={tagName} onChange={(event) => setTagName(event.target.value)}></Input>
+          <IconButton onClick={() => { setEditName(false) }}><CheckIcon></CheckIcon></IconButton>
+          <IconButton onClick={() => setDeleteDialog(true)}><DeleteIcon></DeleteIcon></IconButton>
+        </ListItem>
+        <Dialog open={deleteDialog}>
+          <DialogTitle>
+            Delete tag?
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Deleting the tag will delete all the existing tasks with it. It won't delete completed tasks from the history.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDeleteDialog}>Cancel</Button>
+            <Button onClick={dispatchDelete}>Delete</Button>
+          </DialogActions>
+        </Dialog>
       </>
     )
   }
@@ -367,7 +382,9 @@ function AddTag(props) {
   const [color, setColor] = useState('gray')
   const [tagName, setTagName] = useState('')
   const [addNewTag, setAddNewTag] = useState(false)
+  const [alert, setAlert] = useState(false)
 
+  const tags = useSelector((state) => state.tasks.tags)
   const dispatch = useDispatch()
 
   const colorRef = useRef(null)
@@ -386,10 +403,26 @@ function AddTag(props) {
     setAddNewTag(!addNewTag)
   }
 
+  const handleAlert = () => {
+    setAlert(!alert)
+  }
+
   const saveTag = () => {
-    dispatch(addTag({name: tagName, color: color}))
-    handleAddNewTag()
-    console.log('Saved tag,', addNewTag)
+    let uniqueName = true;
+    for (const tagObject of tags) {
+      if (tagObject.name === tagName) {
+        uniqueName = false;
+      }
+    }
+    if (uniqueName) {
+      dispatch(addTag({ name: tagName, color: color }))
+      handleAddNewTag()
+      console.log('Saved tag,', addNewTag)
+    }
+    else {
+      handleAlert()
+    }
+
   }
 
   const colorSelector = <Box sx={{ position: 'absolute', zIndex: '2' }}>
@@ -402,9 +435,22 @@ function AddTag(props) {
 
   return (
     <Box>
-      <Button onClick={() => setAddNewTag(!addNewTag)} variant="outlined" startIcon={<AddCircleOutlineIcon></AddCircleOutlineIcon>} sx={{ width: '100%' }}>
+      <Stack spacing={1}>
+          <Collapse in={alert}>
+      <Alert
+        action={
+        <IconButton color="inherit" size="small" onClick={handleAlert}>
+          <CloseIcon fontSize="inherit"></CloseIcon>
+        </IconButton>}
+        severity='error'>
+        Please use a unique name for the tag
+      </Alert>
+      </Collapse>
+      <Button onClick={handleAddNewTag} variant="outlined" startIcon={<AddCircleOutlineIcon></AddCircleOutlineIcon>} sx={{ width: '100%' }}>
         Add new tag
       </Button>
+      </Stack>
+  
       {addNewTag
         ? <ListItem>
           <IconButton
@@ -415,6 +461,7 @@ function AddTag(props) {
           {colorPick ? colorSelector : null}
           <Input placeholder='New tag' value={tagName} onChange={(event) => setTagName(event.target.value)}></Input>
           <IconButton onClick={saveTag}><CheckIcon></CheckIcon></IconButton>
+          <IconButton onClick={handleAddNewTag}><CloseIcon></CloseIcon></IconButton>
         </ListItem>
         : <></>
       }
@@ -446,14 +493,14 @@ export function TagDialog(props) {
             tags.map((tagObject, index) => {
               if (tagSelected === tagObject.name) {
                 return (
-                  <Grid item xs='auto'>
+                  <Grid item xs='auto' key={tagObject.name}>
                     <Chip disabled label={tagObject.name} sx={{ backgroundColor: tagObject.color }}></Chip>
                   </Grid>
                 )
               }
               else {
                 return (
-                  <Grid item xs='auto'>
+                  <Grid item xs='auto' key={tagObject.name}>
                     <Chip clickable onClick={() => { setTagSelected(tagObject.name) }}
                       label={tagObject.name} sx={{ backgroundColor: tagObject.color }}>
                     </Chip>
@@ -480,7 +527,7 @@ export function TagDialog(props) {
           {
             tags.map((tagObject, index) => {
               return (
-                <TagEntry tag={tagObject.name} color={tagObject.color}></TagEntry>
+                <TagEntry key={tagObject.name} tag={tagObject.name} color={tagObject.color} index={index}></TagEntry>
               )
             })
           }
