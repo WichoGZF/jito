@@ -56,9 +56,9 @@ const tasksSlice = createSlice({
             state.tasks.tasks[hoverIndex] = state.tasks.tasks[dragIndex]
             state.tasks.tasks[dragIndex] = taskHolder
         },
-        changeTag: (state, action) => {
-            const { index, newTag } = action.payload
-            state.tasks.tasks[index].tag = newTag
+        addTag: (state, action) => {
+            const newTagName = action.payload
+            state.tasks.tags.push(newTagName)
         },
         deleteTag: (state, action) => {
             const tagToDelete = action.payload
@@ -66,35 +66,26 @@ const tasksSlice = createSlice({
             delete state.tasks.tags.splice(tagToDelete, 1)
         },
 
-        addTag: (state, action) => {
-            const newTagName = action.payload
-            state.tasks.tags.push(newTagName)
-        },
         changeTagName: (state, action) => {
             const { tagToChange, newTagName } = action.payload
 
-            for(const [index, tag] of state.tasks.tags.entries()){
-                if(tag === tagToChange) {
-                    state.tasks.tags[index] = newTagName; 
+            for (const [index, tag] of state.tasks.tags.entries()) {
+                if (tag === tagToChange) {
+                    state.tasks.tags[index] = newTagName;
                     break;
                 }
             }
 
-            state.tasks.tasks.forEach( (task, index) => {
-                if(task.tag === tagToChange){
+            state.tasks.tasks.forEach((task, index) => {
+                if (task.tag === tagToChange) {
                     state.tasks.tasks[index] = newTagName;
                 }
             })
         },
-        addCompleted: (state, action) => {
-            state.tasks.history.append(
-                action.payload
-            )
-        },
         changeTagColor: (state, action) => {
             const [tagToChange, color] = action
             state.tasks.tags.forEach((tag, index) => {
-                if(tag.name === tagToChange){
+                if (tag.name === tagToChange) {
                     state.tasks.tags[index].color = color
                 }
             })
@@ -102,4 +93,6 @@ const tasksSlice = createSlice({
     }
 })
 
+export const { addTask, editTask, deleteTask, completeTask, reorderTask,
+    addTag, deleteTag, changeTagName, changeTagColor } = tasksSlice.actions
 export default tasksSlice.reducer

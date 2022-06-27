@@ -27,9 +27,11 @@ import Checkbox from '@mui/material/Checkbox'
 
 import { TagDialog } from "./TaskList.js";
 
-
+import { useDispatch } from "react-redux";
+import {addTask, editTask} from '../features/tasksSlice.js'
 
 export default function TaskInput(props) {
+    const dispatch = useDispatch()
     const [taskName, setTaskName] = useState(props.edit ? props.name : "")
     const [taskDesc, setTaskDesc] = useState(props.edit ? props.description : "")
     const [taskType, setTaskType] = useState(props.edit ? props.type : 'normal') //normal or block
@@ -66,6 +68,25 @@ export default function TaskInput(props) {
         })
 
     }
+    /*
+    const handleSaveTask = () => {
+        if(props.edit){
+            
+        }
+        else{
+            dispatch(addTask({
+                "name": taskName,
+                "tag": tag,
+                "description": taskDesc,
+                "date": "06/22/2022",
+                "type": taskType,
+                "blocks": 0,
+                "repeat": repeat,
+                "repeatOn": repeatOn,
+              }))
+        }
+    }
+    */
 
     console.log(openTagSelect)
 
