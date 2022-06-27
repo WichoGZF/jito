@@ -58,7 +58,7 @@ const tasksSlice = createSlice({
         },
         addTag: (state, action) => {
             const newTagName = action.payload
-            state.tasks.tags.push(newTagName)
+            state.tags.push(newTagName)
         },
         deleteTag: (state, action) => {
             const tagToDelete = action.payload
