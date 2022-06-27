@@ -93,12 +93,12 @@ const tasksSlice = createSlice({
         },
         changeTagColor: {
             reducer(state, action) {
-                const [tagToChange, color] = action
-                state.tasks.tags.forEach((tag, index) => {
-                    if (tag.name === tagToChange) {
-                        state.tasks.tags[index].color = color
-                    }
+                const {tagToChange, color} = action.payload
+
+                const tagToChangeIndex = state.tags.findIndex((tag) => {
+                    return (tag.name === tagToChange)
                 })
+                state.tags[tagToChangeIndex].color = color
             },
             prepare(tagToChange, color) {
                 return {

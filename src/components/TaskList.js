@@ -315,6 +315,9 @@ function TagEntry(props) {
   const handleChangeColor = (color) => {
     console.log('Changing color into: ', color, color.hex)
     setColor(color.hex);
+    if (color !== props.color){
+      dispatch(changeTagColor(props.tag, color.hex))
+    }
     setColorPick(!colorPick)
   }
   
@@ -330,10 +333,6 @@ function TagEntry(props) {
   const dispatchEdit = () => {
     if(tagName !== props.tag){
       dispatch(changeTagName(props.tag, tagName))
-    }
-
-    if (color !== props.color){
-      dispatch(changeTagColor(props.tag, color))
     }
     handleEditName()
   }
