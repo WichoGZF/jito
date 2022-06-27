@@ -13,7 +13,7 @@ import SendIcon from '@mui/icons-material/Send';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import StarBorder from '@mui/icons-material/StarBorder';
-import { IconButton, Input, Typography } from '@mui/material';
+import { DialogContentText, IconButton, Input, Typography } from '@mui/material';
 import { ListItem } from '@mui/material';
 import { Grid } from '@mui/material';
 import Check from '@mui/icons-material/Check'
@@ -65,6 +65,9 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { TwitterPicker } from 'react-color'
 
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+import { useDispatch } from 'react-redux';
 
 function NewTask(props) {
   const [addNewTask, setAddNewTask] = useState(false);
@@ -309,6 +312,7 @@ function TagEntry(props) {
   const [color, setColor] = useState(props.color)
   const [editName, setEditName] = useState(false)
   const [tagName, setTagName] = useState(props.tag)
+  const [deleteDialog, setDeleteDialog] = useState(false)
 
   const colorRef = useRef(null)
   const colorBounding = colorRef.current?.getBoundingClientRect()
@@ -344,6 +348,7 @@ function TagEntry(props) {
   }
   else {
     return (
+      <>
       <ListItem>
         <IconButton
           onClick={() => setColorPick(!colorPick)}
@@ -353,7 +358,23 @@ function TagEntry(props) {
         {colorPick ? colorSelector : null}
         <Input value={tagName} onChange={(event) => setTagName(event.target.value)}></Input>
         <IconButton onClick={() => { setEditName(false) }}><CheckIcon></CheckIcon></IconButton>
+        <IconButton onClick={()=> setDeleteDialog(true)}><DeleteIcon></DeleteIcon></IconButton>
       </ListItem>
+      <Dialog open={deleteDialog}>
+      <DialogTitle>
+        Delete tag?
+      </DialogTitle>
+      <DialogContent>
+      <DialogContentText>
+        Deleting the tag will delete all the existing tasks with it. It won't delete completed tasks from the history.
+      </DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button  onClick={()=>{setDeleteDialog(false)}}>Cancel</Button>
+        <Button>Delete</Button>
+      </DialogActions>
+      </Dialog>
+      </>
     )
   }
 }
