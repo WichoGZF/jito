@@ -66,29 +66,48 @@ const tasksSlice = createSlice({
             state.tags.splice(tagToDelete, 1)
         },
 
-        changeTagName: (state, action) => {
-            const { tagToChange, newTagName } = action.payload
+        changeTagName: {
+            reducer(state, action) {
+                const { tagToChange, newTagName } = action.payload
 
-            for (const [index, tag] of state.tasks.tags.entries()) {
-                if (tag === tagToChange) {
-                    state.tasks.tags[index] = newTagName;
-                    break;
+                const tagToChangeIndex = state.tags.findIndex((tag) => {
+                    return (tag.name === tagToChange)
+                })
+
+                state.tags[tagToChangeIndex].name = newTagName
+
+                state.tasks.forEach((task, index) => {
+                    if (task.tag === tagToChange) {
+                        state.tasks[index] = newTagName;
+                    }
+                })
+            },
+            prepare(tagToChange, newTagName) {
+                return {
+                    payload: {
+                        tagToChange,
+                        newTagName
+                    }
                 }
             }
-
-            state.tasks.tasks.forEach((task, index) => {
-                if (task.tag === tagToChange) {
-                    state.tasks.tasks[index] = newTagName;
-                }
-            })
         },
-        changeTagColor: (state, action) => {
-            const [tagToChange, color] = action
-            state.tasks.tags.forEach((tag, index) => {
-                if (tag.name === tagToChange) {
-                    state.tasks.tags[index].color = color
+        changeTagColor: {
+            reducer(state, action) {
+                const [tagToChange, color] = action
+                state.tasks.tags.forEach((tag, index) => {
+                    if (tag.name === tagToChange) {
+                        state.tasks.tags[index].color = color
+                    }
+                })
+            },
+            prepare(tagToChange, color) {
+                return {
+                    payload: {
+                        tagToChange,
+                        color
+                    }
                 }
-            })
+            }
         }
     }
 })

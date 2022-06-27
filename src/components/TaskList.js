@@ -309,6 +309,9 @@ function TagEntry(props) {
   const colorX = colorRef.current ? colorBounding.x - 260 + 16 : 0
   const colorY = colorRef.current ? colorBounding.y + 24 + 12 : 0
 
+  const handleEditName = () => {
+    setEditName(!editName)
+  }
   const handleChangeColor = (color) => {
     console.log('Changing color into: ', color, color.hex)
     setColor(color.hex);
@@ -322,6 +325,17 @@ function TagEntry(props) {
   const dispatchDelete = () => {
     dispatch(deleteTag(props.index))
     handleDeleteDialog()
+  }
+
+  const dispatchEdit = () => {
+    if(tagName !== props.tag){
+      dispatch(changeTagName(props.tag, tagName))
+    }
+
+    if (color !== props.color){
+      dispatch(changeTagColor(props.tag, color))
+    }
+    handleEditName()
   }
 
   const colorSelector = <Box sx={{ position: 'absolute', zIndex: '2' }}>
@@ -340,7 +354,7 @@ function TagEntry(props) {
         </IconButton>
         {colorPick ? colorSelector : null}
         <ListItemText>{tagName}</ListItemText>
-        <IconButton onClick={() => setEditName(true)}><EditIcon></EditIcon></IconButton>
+        <IconButton onClick={handleEditName}><EditIcon></EditIcon></IconButton>
       </ListItem>
     )
   }
@@ -355,8 +369,8 @@ function TagEntry(props) {
           </IconButton>
           {colorPick ? colorSelector : null}
           <Input value={tagName} onChange={(event) => setTagName(event.target.value)}></Input>
-          <IconButton onClick={() => { setEditName(false) }}><CheckIcon></CheckIcon></IconButton>
-          <IconButton onClick={() => setDeleteDialog(true)}><DeleteIcon></DeleteIcon></IconButton>
+          <IconButton onClick={dispatchEdit}><CheckIcon></CheckIcon></IconButton>
+          <IconButton onClick={handleDeleteDialog}><DeleteIcon></DeleteIcon></IconButton>
         </ListItem>
         <Dialog open={deleteDialog}>
           <DialogTitle>
