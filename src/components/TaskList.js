@@ -487,8 +487,13 @@ export function TagDialog(props) {
   const tags = useSelector(state => state.tasks.tags)
 
   const [openTagEdit, setOpenTagEdit] = useState(false)
-  const [tagSelected, setTagSelected] = useState(props.tagSelected)
+  const tagSelected = props.tagSelected
 
+  const handleTagSelected = (tagName, tagColor)=> {
+    props.handleChangeTag(tagName)
+    props.handleChangeColor(tagColor)
+    props.handleOpenTagSelect()
+  }
 
   const handleOpenTagEdit = () => {
     setOpenTagEdit(!openTagEdit)
@@ -514,7 +519,7 @@ export function TagDialog(props) {
               else {
                 return (
                   <Grid item xs='auto' key={tagObject.name}>
-                    <Chip clickable onClick={() => { setTagSelected(tagObject.name) }}
+                    <Chip clickable onClick={() => {handleTagSelected(tagObject.name, tagObject.color)}}
                       label={tagObject.name} sx={{ backgroundColor: tagObject.color }}>
                     </Chip>
                   </Grid>
@@ -525,8 +530,6 @@ export function TagDialog(props) {
         </Grid>
       </DialogContent>
       <DialogActions>
-        <Button onClick={props.handleOpenTagSelect}>Cancel</Button>
-        <Button onClick={props.handleOpenTagSelect}>Save</Button>
       </DialogActions>
     </Dialog>
     )

@@ -28,17 +28,18 @@ import Checkbox from '@mui/material/Checkbox'
 import { TagDialog } from "./TaskList.js";
 
 import { useDispatch } from "react-redux";
-import {addTask, editTask} from '../features/tasksSlice.js'
+import { addTask, editTask } from '../features/tasksSlice.js'
 
 export default function TaskInput(props) {
     const dispatch = useDispatch()
     const [taskName, setTaskName] = useState(props.edit ? props.name : "")
     const [taskDesc, setTaskDesc] = useState(props.edit ? props.description : "")
     const [taskType, setTaskType] = useState(props.edit ? props.type : 'normal') //normal or block
-    const [blocks, setBlocks] = useState(props.edit ? props.blocks : 0) //nuumber of blocks
+    const [blocks, setBlocks] = useState(props.edit ? props.blocks : '') //nuumber of blocks
     const [repeat, setRepeat] = useState(props.edit ? props.repeat : false) //true or false
     const [repeatOn, setRepeatOn] = useState(props.edit ? props.repeatOn : [0, 0, 0, 0, 0, 0, 0])
-    const [tag, setTag] = useState(props.edit? props.tagName: null)
+    const [tag, setTag] = useState(props.edit ? props.tagName : 'None')
+    const [color, setColor] = useState(props.edit? props.tagColor : 'gray')
     //for comps.
     const [toggleRepeat, setToggleRepeat] = useState(false)
     const [openTagSelect, setOpenTagSelect] = useState(false)
@@ -53,6 +54,7 @@ export default function TaskInput(props) {
 
     const handleChangeRepeat = (event) => {
         setRepeat(event.target.value)
+        console.log("Repeat:", repeat)
     }
 
     const handleChangeTaskType = (event) => {
@@ -66,7 +68,20 @@ export default function TaskInput(props) {
             newState[digit] = !newState[digit]
             return newState
         })
+    }
 
+    const handleChangeTag = (tag) => {
+        setTag(tag)
+    }
+
+    const handleChangeColor = (color) => {
+        setColor(color)
+    }
+
+    const handleBlocks = (event) => {
+        const input = event.target.value
+        const filteredInput = input.replace(/\D/g, '')
+        setBlocks(filteredInput)
     }
     /*
     const handleSaveTask = () => {
@@ -111,7 +126,7 @@ export default function TaskInput(props) {
                     placeholder="Details"
                     multiline
                 />
-                <Stack direction="row" justifyContent="space-between" sx={{marginTop:'10px'}}>
+                <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '10px' }}>
                     <FormControl>
                         <FormLabel>Task type</FormLabel>
                         <RadioGroup
@@ -127,16 +142,16 @@ export default function TaskInput(props) {
                     </FormControl>
                     <Stack>
                         <FormLabel>Number of blocks</FormLabel>
-                        <Input disabled={taskType==='normal'} value={blocks} onChange={(event)=>{setBlocks(event.target.value)}}></Input>
+                        <Input disabled={taskType === 'normal'} value={blocks} onChange={handleBlocks}></Input>
                     </Stack>
                 </Stack>
-                                    <Stack direction="row" justifyContent="space-between">
-                        <FormLabel>Tag</FormLabel>
-                        <Chip clickable onClick={handleOpenTagSelect} label={props.tagName? props.tagName: 'None'} sx={{backgroundColor: props.tagColor}}></Chip>
-                    </Stack>
+                <Stack direction="row" justifyContent="space-between">
+                    <FormLabel>Tag</FormLabel>
+                    <Chip clickable onClick={handleOpenTagSelect} label={tag} sx={{ backgroundColor: color }}></Chip>
+                </Stack>
                 <Stack direction="row" justifyContent={"space-between"}>
                     <FormLabel>Repeat</FormLabel>
-                    <IconButton onClick={handleRepeatSelect}><RepeatIcon color={repeat ? 'primary' : 'disabled'}></RepeatIcon></IconButton>
+                    <IconButton onClick={handleRepeatSelect}><RepeatIcon color={ repeat!=='false' ? 'primary' : 'disabled'}></RepeatIcon></IconButton>
                 </Stack>
 
             </Grid>
@@ -144,7 +159,7 @@ export default function TaskInput(props) {
                 <Button onClick={props.handleTaskSelectClose}>Cancel</Button>
                 <Button onClick={props.handleTaskSelectClose}>OK</Button>
             </Grid>
-            
+
             <Dialog
                 open={toggleRepeat}
                 onClose={handleRepeatSelect}>
@@ -206,7 +221,13 @@ export default function TaskInput(props) {
                     <Button onClick={handleRepeatSelect}>OK</Button>
                 </DialogActions>
             </Dialog>
-            <TagDialog openTagSelect={openTagSelect} handleOpenTagSelect={handleOpenTagSelect} tagSelected={props.tagName}></TagDialog>
+            <TagDialog openTagSelect={openTagSelect}
+                handleOpenTagSelect={handleOpenTagSelect}
+                tagSelected={tag}
+                handleChangeTag={handleChangeTag}
+                handleChangeColor={handleChangeColor}
+                ></TagDialog>
+
         </Box>
     )
 }
