@@ -101,7 +101,7 @@ const tasksSlice = createSlice({
             const tagToDelete = action.payload
             
             const tagToChangeIndex = state.tags.findIndex((tag) => {
-                return (tag.name === tagToChange)
+                return (tag.name === tagToDelete)
             })
 
             state.tags.splice(tagToChangeIndex, 1)

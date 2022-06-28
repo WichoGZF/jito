@@ -322,11 +322,11 @@ function TagEntry(props) {
   }
   
   const handleDeleteDialog = () => {
-    setDeleteDialog(false)
+    setDeleteDialog(!deleteDialog)
   }
 
   const dispatchDelete = () => {
-    dispatch(deleteTag(props.index))
+    dispatch(deleteTag(props.tag))
     handleDeleteDialog()
   }
 
@@ -336,6 +336,7 @@ function TagEntry(props) {
     }
     handleEditName()
   }
+  
 
   const colorSelector = <Box sx={{ position: 'absolute', zIndex: '2' }}>
     <Box sx={{ position: 'fixed', top: `${colorY}px`, right: '0px', bottom: '0px', left: `${colorX}px`, }}>
@@ -412,6 +413,7 @@ function AddTag(props) {
     setColorPick(!colorPick)
   }
 
+
   const handleAddNewTag = () => {
     setAddNewTag(!addNewTag)
   }
@@ -437,6 +439,7 @@ function AddTag(props) {
     }
 
   }
+
 
   const colorSelector = <Box sx={{ position: 'absolute', zIndex: '2' }}>
     <Box sx={{ position: 'fixed', top: `${colorY}px`, right: '0px', bottom: '0px', left: `${colorX}px`, }}>
@@ -604,7 +607,7 @@ export default function TaskList(props) {
   let allTagTasks = []
   /*Task filtering */
   tasks.tasks.forEach((task, index) => {
-    if (task.repeat) {
+    if (task.repeat!=='false') {
       if (task.repeat === 'daily') {
         allTagTasks.push(taskToListEntry(task, index))
       }
