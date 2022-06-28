@@ -150,9 +150,7 @@ function ListEntry(props) {
       const hoverIndex = props.index //Current index
 
       if (dragIndex === hoverIndex) {
-        if (props.fatherIndex === item.fatherIndex) {
-          return
-        }
+        return;
       }
 
       const clientOffset = monitor.getClientOffset();
