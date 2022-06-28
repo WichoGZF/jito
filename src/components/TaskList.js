@@ -499,8 +499,14 @@ export function TagDialog(props) {
     setOpenTagEdit(!openTagEdit)
   }
 
+  const handleDialogBackDrop = () => {
+    props.handleOpenTagSelect()
+  }
+
   if (!openTagEdit) {
-    return (<Dialog open={props.openTagSelect} >
+    return (<Dialog open={props.openTagSelect} 
+    onClose={handleDialogBackDrop}
+    >
       <Stack direction="row" justifyContent="space-between">
         <DialogTitle>Select a tag</DialogTitle>
         <IconButton sx={{ mr: '12px' }} onClick={handleOpenTagEdit}><EditIcon></EditIcon></IconButton>
@@ -535,7 +541,9 @@ export function TagDialog(props) {
     )
   }
   else {
-    return (<Dialog open={props.openTagSelect}>
+    return (<Dialog open={props.openTagSelect}
+        onClose={handleDialogBackDrop}
+    >
       <DialogTitle><IconButton onClick={handleOpenTagEdit} sx={{ mr: '5px' }}><ArrowBackIcon></ArrowBackIcon></IconButton>Edit tags</DialogTitle>
       <DialogContent>
         <AddTag></AddTag>
