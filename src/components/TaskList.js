@@ -77,6 +77,9 @@ function NewTask(props) {
 
 //Rendering first task
 function ListEntry(props) {
+
+  const dispatch = useDispatch()
+
   const [onHover, setOnHover] = useState({ display: 'none' })
   const [completeHover, setCompleteHover] = useState(false)
 
@@ -169,10 +172,12 @@ function ListEntry(props) {
       const hoverClientY = clientOffset.y - (hoverBoundingRect.top + hoverMiddleY)
 
       if (hoverClientY > 0 && hoverClientY < hoverMiddleY) {
+        dispatch(reorderTask(hoverIndex, dragIndex, 'below'))
         //props.moveTask(item.fatherIndex, dragIndex, props.fatherIndex, hoverIndex + 1)
       }
       else if (hoverClientY < 0 && hoverClientY > (-1 * hoverMiddleY)) {
         //props.moveTask(item.fatherIndex, dragIndex, props.fatherIndex, hoverIndex)
+        dispatch(reorderTask(hoverIndex, dragIndex, 'above'))
       }
 
     }

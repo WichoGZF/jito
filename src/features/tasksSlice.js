@@ -76,19 +76,30 @@ const tasksSlice = createSlice({
         },
         reorderTask: {
             reducer(state, action) { 
-                const {targetIndex, sourceIndex} = action.payload
+                const {targetIndex, sourceIndex, position} = action.payload
 
-                const tempTarget = state.tasks[targetIndex]
-
-                state.tasks[targetIndex] = state.tasks[sourceIndex]
-                state.tasks[sourceIndex] = tempTarget
+                //Add task to desired position
+                if(position === 'above'){
+                    state.tasks.splice(targetIndex, 0, state.tasks[sourceIndex])
+                }
+                else{//POSITION BELOW
+                    state.tasks.splice(targetIndex+1, 0, state.tasks[sourceIndex])
+                }
+                //Delete added task from original position
+                if(sourceIndex > targetIndex){
+                    state.tasks.splice(sourceIndex+1, 1)
+                }
+                else if (targetIndex > sourceIndex){
+                    state.tasks.splice(sourceIndex, 1)
+                }
 
             },
-            prepare(hoverIndex, dragIndex){
+            prepare(hoverIndex, dragIndex, position){
                 return{
                     payload:{
                         targetIndex: hoverIndex, 
                         sourceIndex: dragIndex,
+                        position: position
                     }
                 }
             }
