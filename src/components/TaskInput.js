@@ -27,19 +27,23 @@ import Checkbox from '@mui/material/Checkbox'
 
 import { TagDialog } from "./TaskList.js";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addTask, editTask } from '../features/tasksSlice.js'
 
+import { format } from 'date-fns'
+
 export default function TaskInput(props) {
+    const tags = useSelector(state => state.tasks.tags)
     const dispatch = useDispatch()
+
     const [taskName, setTaskName] = useState(props.edit ? props.name : "")
     const [taskDesc, setTaskDesc] = useState(props.edit ? props.description : "")
     const [taskType, setTaskType] = useState(props.edit ? props.type : 'normal') //normal or block
     const [blocks, setBlocks] = useState(props.edit ? props.blocks : '') //nuumber of blocks
-    const [repeat, setRepeat] = useState(props.edit ? props.repeat : false) //true or false
-    const [repeatOn, setRepeatOn] = useState(props.edit ? props.repeatOn : [0, 0, 0, 0, 0, 0, 0])
-    const [tag, setTag] = useState(props.edit ? props.tagName : 'None')
-    const [color, setColor] = useState(props.edit? props.tagColor : 'gray')
+    const [repeat, setRepeat] = useState(props.edit ? props.repeat : 'false') //true or false
+    const [repeatOn, setRepeatOn] = useState(props.edit ? props.repeatOn : [false, false, false, false, false, false, false])
+    const [tag, setTag] = useState(props.edit ? props.tagName : tags[0].name)
+    const [color, setColor] = useState(props.edit ? props.tagColor : tags[0].color)
     //for comps.
     const [toggleRepeat, setToggleRepeat] = useState(false)
     const [openTagSelect, setOpenTagSelect] = useState(false)
@@ -83,25 +87,30 @@ export default function TaskInput(props) {
         const filteredInput = input.replace(/\D/g, '')
         setBlocks(filteredInput)
     }
-    /*
+
     const handleSaveTask = () => {
-        if(props.edit){
-            
+        const todayDate = format(new Date(), 'MM/dd/yyyy')
+
+        const taskToSend = {
+            "name": taskName,
+            "tag": tag,
+            "description": taskDesc,
+            "date": todayDate,
+            "type": taskType,
+            "blocks": (blocks === '' || blocks === '0') ? '1' : blocks,
+            "repeat": repeat,
+            "repeatOn": repeatOn,
         }
-        else{
-            dispatch(addTask({
-                "name": taskName,
-                "tag": tag,
-                "description": taskDesc,
-                "date": "06/22/2022",
-                "type": taskType,
-                "blocks": 0,
-                "repeat": repeat,
-                "repeatOn": repeatOn,
-              }))
+
+        if (props.edit) {
+            dispatch(editTask(taskToSend, props.index))
         }
+        else {
+            dispatch(addTask(taskToSend))
+        }
+        props.handleTaskSelectClose()
     }
-    */
+
 
     console.log(openTagSelect)
 
@@ -151,13 +160,13 @@ export default function TaskInput(props) {
                 </Stack>
                 <Stack direction="row" justifyContent={"space-between"}>
                     <FormLabel>Repeat</FormLabel>
-                    <IconButton onClick={handleRepeatSelect}><RepeatIcon color={ repeat!=='false' ? 'primary' : 'disabled'}></RepeatIcon></IconButton>
+                    <IconButton onClick={handleRepeatSelect}><RepeatIcon color={repeat !== 'false' ? 'primary' : 'disabled'}></RepeatIcon></IconButton>
                 </Stack>
 
             </Grid>
             <Grid container direction="row" justifyContent='flex-end' alignItems={'center'} sx={{ marginTop: 2 }}>
                 <Button onClick={props.handleTaskSelectClose}>Cancel</Button>
-                <Button onClick={props.handleTaskSelectClose}>OK</Button>
+                <Button onClick={handleSaveTask}>Save</Button>
             </Grid>
 
             <Dialog
@@ -226,7 +235,7 @@ export default function TaskInput(props) {
                 tagSelected={tag}
                 handleChangeTag={handleChangeTag}
                 handleChangeColor={handleChangeColor}
-                ></TagDialog>
+            ></TagDialog>
 
         </Box>
     )

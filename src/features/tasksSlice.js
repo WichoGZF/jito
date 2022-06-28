@@ -15,17 +15,34 @@ const tasksSlice = createSlice({
     name: 'tasks',
     initialState,
     reducers: {
-        addTask: (state, action) => {
-            const { task } = action.payload
-            state.tasks.append(
-                {
-                    ...task,
-                    id: nextTodoId(state.tasks)
-                })
+        addTask: {
+            reducer(state, action) {
+                const task = action.payload
+                state.tasks.push(
+                    {
+                        ...task,
+                        id: nextTodoId(state.tasks)
+                    })
+            },
+            prepare(task) {
+                return {
+                    payload: task
+                }
+            }
         },
-        editTask: (state, action) => {
-            const { index, task } = action.payload
-            state.tasks[index] = task
+        editTask: {
+            reducer(state, action) {
+                const { task, index } = action.payload
+                state.tasks[index] = task
+            },
+            prepare(task, index) {
+                return{
+                    payload: {
+                        task: task,
+                        index: index,
+                    }
+                }
+            }
         },
         updateTime: (state, action) => {
             const { index, time } = action.payload
@@ -93,7 +110,7 @@ const tasksSlice = createSlice({
         },
         changeTagColor: {
             reducer(state, action) {
-                const {tagToChange, color} = action.payload
+                const { tagToChange, color } = action.payload
 
                 const tagToChangeIndex = state.tags.findIndex((tag) => {
                     return (tag.name === tagToChange)

@@ -542,7 +542,10 @@ export function TagDialog(props) {
   }
   else {
     return (<Dialog open={props.openTagSelect}
-        onClose={handleDialogBackDrop}
+        onClose={()=>{
+          handleDialogBackDrop()
+        }
+          }
     >
       <DialogTitle><IconButton onClick={handleOpenTagEdit} sx={{ mr: '5px' }}><ArrowBackIcon></ArrowBackIcon></IconButton>Edit tags</DialogTitle>
       <DialogContent>
