@@ -1,8 +1,9 @@
 import { mockTasks } from '../mock.js'
 
 import { createSlice } from '@reduxjs/toolkit'
-import { Splitscreen } from '@mui/icons-material';
+import { NestCamWiredStandTwoTone, Splitscreen } from '@mui/icons-material';
 import { sliderClasses } from '@mui/material';
+import { format } from 'date-fns'
 
 const initialState = mockTasks;
 
@@ -36,7 +37,7 @@ const tasksSlice = createSlice({
                 state.tasks[index] = task
             },
             prepare(task, index) {
-                return{
+                return {
                     payload: {
                         task: task,
                         index: index,
@@ -44,34 +45,53 @@ const tasksSlice = createSlice({
                 }
             }
         },
-        updateTime: (state, action) => {
-            const { index, time } = action.payload
-            state.tasks[index].time += time
-        },
-        deleteTask: (state, action) => {
-            /*state.tasks[action.payload.tag].forEach(
-                (task, index)=>{
-                    if(task.id === action.payload.id){
-                        state.tasks[action.payload.tag].splice(index, 1)
+        deleteTask: {
+            reducer(state, action) {
+                const { index } = action.payload
+                state.tasks.splice(index, 1)
+            },
+            prepare(index) {
+                return {
+                    payload: {
+                        index: index
                     }
                 }
-            )
-            */
-            const { index } = action.payload
-            state.tasks.splice(index, 1)
+            }
         },
-        completeTask: (state, action) => {
-            const { finishedTask, index } = action.payload
-            state.history.append(finishedTask)
-            tasksSlice.caseReducers.deleteTask(state, { index: index })
+        addTimeEntry: {
+            reducer(state, action) {
+                const completedEntry = action.payload
+                state.history.push(completedEntry)
+            },
+            prepare(time, tag) {
+                return {
+                    payload: {
+                        completeDate: format(new Date(), 'MM/dd/yyyy'),
+                        time: time,
+                        tag: tag,
+                    }
+                }
+            }
+
         },
-        reorderTask: (state, action) => {
-            //index hover, index drag
-            const { hoverIndex, dragIndex } = action.payload
-            let taskHolder;
-            taskHolder = state.tasks[hoverIndex]
-            state.tasks[hoverIndex] = state.tasks[dragIndex]
-            state.tasks[dragIndex] = taskHolder
+        reorderTask: {
+            reducer(state, action) { 
+                const {targetIndex, sourceIndex} = action.payload
+
+                const tempTarget = state.tasks[targetIndex]
+
+                state.tasks[targetIndex] = state.tasks[sourceIndex]
+                state.tasks[sourceIndex] = tempTarget
+
+            },
+            prepare(hoverIndex, dragIndex){
+                return{
+                    payload:{
+                        targetIndex: hoverIndex, 
+                        sourceIndex: dragIndex,
+                    }
+                }
+            }
         },
         addTag: (state, action) => {
             const newTagName = action.payload
@@ -79,8 +99,19 @@ const tasksSlice = createSlice({
         },
         deleteTag: (state, action) => {
             const tagToDelete = action.payload
+            
+            const tagToChangeIndex = state.tags.findIndex((tag) => {
+                return (tag.name === tagToChange)
+            })
 
-            state.tags.splice(tagToDelete, 1)
+            state.tags.splice(tagToChangeIndex, 1)
+
+            state.tasks.forEach((task, index) => {
+                if (task.tag === tagToDelete) {
+                    state.tasks.splice(index, 1)
+                }
+            })
+
         },
 
         changeTagName: {
@@ -129,6 +160,6 @@ const tasksSlice = createSlice({
     }
 })
 
-export const { addTask, editTask, deleteTask, completeTask, reorderTask,
+export const { addTask, editTask, deleteTask, addTimeEntry, reorderTask,
     addTag, deleteTag, changeTagName, changeTagColor } = tasksSlice.actions
 export default tasksSlice.reducer
