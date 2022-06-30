@@ -166,11 +166,35 @@ const tasksSlice = createSlice({
                         color
                     }
                 }
+            },
+
+        },
+        updateBlocks:(state, action) => {
+            const index = action.payload;
+            if(state.tasks[index].type === 'block'){
+                if(state.tasks[index].blocks === 1){
+                    tasksSlice.caseReducers.deleteTask(index)
+                }
+                else{
+                    state.tasks[index].blocks-=1
+                }
             }
+            else{ //Is normal
+                state.tasks[index].blocks+= 1
+            }
+        },
+        completeTask: (state, action) => {
+            const {index, time} = action.payload
+
+            const tag = state.tasks[index].tag;
+
+            tasksSlice.caseReducers.addTimeEntry(time, tag)
+
+            tasksSlice.caseReducers.deleteTask(index)
         }
     }
 })
 
 export const { addTask, editTask, deleteTask, addTimeEntry, reorderTask,
-    addTag, deleteTag, changeTagName, changeTagColor } = tasksSlice.actions
+    addTag, deleteTag, changeTagName, changeTagColor, updateBlocks, completeTask } = tasksSlice.actions
 export default tasksSlice.reducer
