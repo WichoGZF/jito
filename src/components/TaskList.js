@@ -51,10 +51,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useDispatch } from 'react-redux';
 import { addTask, editTask, deleteTask, completeTask, reorderTask, addTag, deleteTag, changeTagName, changeTagColor } from '../features/tasksSlice.js'
-
+import {currentTag, currentIndex} from '../features/appSlice.js'
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close'
+import { format } from 'date-fns';
 
 function NewTask(props) {
   const [addNewTask, setAddNewTask] = useState(false);
@@ -576,7 +577,12 @@ export default function TaskList(props) {
   const [deletedTask, setDeletedTask] = useState(null) //saves deleted task, controls redo pop up. after 5s changes are
   //stored in tasks.history via use effect and state turned into null thus disappearing the pop up
 
+  const dispatch = useDispatch()
+
   const tasks = useSelector(state => state.tasks)
+  const calendarDate = useSelector(state => state.app.calendarDate)
+
+  
 
   function nextTodoId(todos) {
     const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1)
@@ -601,11 +607,11 @@ export default function TaskList(props) {
     )
   }
 
-  const dd = String(props.date.getDate()).padStart(2, '0');
-  const mm = String(props.date.getMonth() + 1).padStart(2, '0'); //January is 0!
-  const yyyy = props.date.getFullYear();
-  const date = mm + '/' + dd + '/' + yyyy;
-  const day = props.date.getDay();
+  const date = format(calendarDate, 'MM/dd/yyyy')
+
+  const day = calendarDate.getDay();
+
+
 
   let allTagTasks = []
   /*Task filtering */
@@ -627,6 +633,10 @@ export default function TaskList(props) {
       if (date === task.date) {
         allTagTasks.push(taskToListEntry(task, index))
       }
+    }
+    if(allTagTasks.length){
+      dispatch(currentTag(task.tag));
+      dispatch(currentIndex(index))
     }
   })
 

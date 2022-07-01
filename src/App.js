@@ -14,9 +14,20 @@ import { CalendarPicker } from '@mui/x-date-pickers/CalendarPicker';
 
 import { Divider } from '@mui/material';
 
+import {useDispatch, useSelector} from 'react-redux'
+import {setCalendarDate} from './features/appSlice.js'
+
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
-  const [date, setDate] = useState(new Date());
+
+  const dispatch = useDispatch();
+  const date = useSelector((state) => state.app.calendarDate); 
+
+  const dispatchCalendarChange = (newDate) => {
+    dispatch(setCalendarDate(newDate))
+  } 
+
+  console.log(date)
 
   return (
     <Box sx={{minWidth:'700px'}}>
@@ -38,14 +49,14 @@ function App() {
           </Grid>
           <Grid item sx={{width:'100%'}}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <CalendarPicker disablePast date={date} onChange={(newDate)=>setDate(newDate)}/> 
+              <CalendarPicker disablePast date={date} onChange={dispatchCalendarChange}/> 
             </LocalizationProvider>
 
           </Grid>
           <Divider orientation="vertical"></Divider>
         </Grid>
         <Grid item xs>
-          <TaskList date={date}></TaskList>
+          <TaskList></TaskList>
         </Grid>
       </Grid>
     </Box>

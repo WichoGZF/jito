@@ -32,8 +32,11 @@ import { addTask, editTask } from '../features/tasksSlice.js'
 
 import { format } from 'date-fns'
 
+
 export default function TaskInput(props) {
     const tags = useSelector(state => state.tasks.tags)
+    const dateSelected = useSelector(state => state.app.calendarDate
+        )
     const dispatch = useDispatch()
 
     const [taskName, setTaskName] = useState(props.edit ? props.name : "")
@@ -89,15 +92,23 @@ export default function TaskInput(props) {
     }
 
     const handleSaveTask = () => {
-        const todayDate = format(new Date(), 'MM/dd/yyyy')
-
+        const todayDate = format(dateSelected, 'MM/dd/yyyy')
+        const numericalBlocks = parseInt(blocks)
+        let blocksToSend; 
+        if(taskType === 'block'){
+            !!numericalBlocks? blocksToSend = 1: blocksToSend = numericalBlocks
+        }
+        else{
+            blocksToSend = 0
+        }
         const taskToSend = {
             "name": taskName,
             "tag": tag,
             "description": taskDesc,
             "date": todayDate,
             "type": taskType,
-            "blocks": (blocks === '' || blocks === '0') ? '1' : blocks,
+            'defaultBlocks': blocksToSend,
+            "blocks": blocksToSend,
             "repeat": repeat,
             "repeatOn": repeatOn,
         }

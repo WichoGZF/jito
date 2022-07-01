@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import TimerCard from './TimerCard';
-import { useSelector } from 'react-redux/es/exports.js';
+import { useSelector,useDispatch } from 'react-redux/es/exports.js';
+
+import { addTimeEntry } from '../features/tasksSlice.js';
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -21,9 +23,15 @@ import notifications from '../sounds/tones.mp3'
 //ticking sounds
 import tickers from '../sounds/tickers.mp3'
 
+import {startRunning, stopRunning} from '../features/appSlice.js'
+
+
 export default function TimerControl(props) {
 
   const settings = useSelector(state => state.settings)
+  const actualTag = useSelector(state => state.app.tag)
+  const actualIndex = useSelector(state=> state.app.index)
+  const dispatch = useDispatch()
 
   const [timerSeconds, setTimerSeconds] = useState(0);
   const [timerMinuts, setTimerMinuts] = useState(settings.pomodoroDuration);
@@ -75,6 +83,9 @@ export default function TimerControl(props) {
     progress = timePassed * 100 / (settings.pomodoroDuration * 60)
   }
 
+  const dispatchPomodoro = () => {
+    dispatch(addTimeEntry(settings.pomodoroDuration*60, actualTag))
+  }
 
   const changeTimerState = () => {
     setTimerState(!timerState);
@@ -147,6 +158,7 @@ export default function TimerControl(props) {
               }
               setRest(true)
               setPomodoros(pomodoros + 1)
+              dispatchPomodoro()
             }
           }
           else {

@@ -22,6 +22,7 @@ const tasksSlice = createSlice({
                 state.tasks.push(
                     {
                         ...task,
+                        completed: false,
                         id: nextTodoId(state.tasks)
                     })
             },
@@ -75,29 +76,29 @@ const tasksSlice = createSlice({
 
         },
         reorderTask: {
-            reducer(state, action) { 
-                const {targetIndex, sourceIndex, position} = action.payload
+            reducer(state, action) {
+                const { targetIndex, sourceIndex, position } = action.payload
 
                 //Add task to desired position
-                if(position === 'above'){
+                if (position === 'above') {
                     state.tasks.splice(targetIndex, 0, state.tasks[sourceIndex])
                 }
-                else{//POSITION BELOW
-                    state.tasks.splice(targetIndex+1, 0, state.tasks[sourceIndex])
+                else {//POSITION BELOW
+                    state.tasks.splice(targetIndex + 1, 0, state.tasks[sourceIndex])
                 }
                 //Delete added task from original position
-                if(sourceIndex > targetIndex){
-                    state.tasks.splice(sourceIndex+1, 1)
+                if (sourceIndex > targetIndex) {
+                    state.tasks.splice(sourceIndex + 1, 1)
                 }
-                else if (targetIndex > sourceIndex){
+                else if (targetIndex > sourceIndex) {
                     state.tasks.splice(sourceIndex, 1)
                 }
 
             },
-            prepare(hoverIndex, dragIndex, position){
-                return{
-                    payload:{
-                        targetIndex: hoverIndex, 
+            prepare(hoverIndex, dragIndex, position) {
+                return {
+                    payload: {
+                        targetIndex: hoverIndex,
                         sourceIndex: dragIndex,
                         position: position
                     }
@@ -110,7 +111,7 @@ const tasksSlice = createSlice({
         },
         deleteTag: (state, action) => {
             const tagToDelete = action.payload
-            
+
             const tagToChangeIndex = state.tags.findIndex((tag) => {
                 return (tag.name === tagToDelete)
             })
@@ -169,29 +170,42 @@ const tasksSlice = createSlice({
             },
 
         },
-        updateBlocks:(state, action) => {
+        updateBlocks: (state, action) => {
             const index = action.payload;
-            if(state.tasks[index].type === 'block'){
-                if(state.tasks[index].blocks === 1){
-                    tasksSlice.caseReducers.deleteTask(index)
+            const blocks = state.tasks[index].blocks;
+            const repeat = state.tasks[index].repeat
+            if (state.tasks[index].type === 'block') {
+                if (state.tasks[index].blocks === 1) {
+                    if (repeat) {
+                        state.tasks[index].completed = true
+                        state.tasks[index].blocks = state.tasks[index].defaultBlocks
+                    }
+                    else {
+                        tasksSlice.caseReducers.deleteTask(index)
+                    }
                 }
-                else{
-                    state.tasks[index].blocks-=1
+                else {
+                    state.tasks[index].blocks -= 1
                 }
             }
-            else{ //Is normal
-                state.tasks[index].blocks+= 1
+            else { //Is normal
+                state.tasks[index].blocks += 1
             }
         },
-        completeTask: (state, action) => {
-            const {index, time} = action.payload
+        restartTask: (state,action) => {
+            const index = action.payload; 
+            state.tasks[index].completed = false;
+        },
+        completeTask: (state, action) => { //For normal task
+            const { index } = action.payload
 
-            const tag = state.tasks[index].tag;
-
-            tasksSlice.caseReducers.addTimeEntry(time, tag)
-
-            tasksSlice.caseReducers.deleteTask(index)
-        }
+            if(state.tasks[index].repeat === 'false'){
+                tasksSlice.caseReducers.deleteTask(index)
+            }
+            else{
+                state.tasks[index].completed = true;
+            }
+        },
     }
 })
 

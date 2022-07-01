@@ -1,8 +1,8 @@
 export const mockTasks =
 {
   tags: [
-    {name:'My tasks', color: '#FF6900'}, {name:'escuela', color: '#FCB900'}, {name:'programming', color:'#7BDCB5'}, {name:'casa', color:'#00D084'}
-],
+    { name: 'My tasks', color: '#FF6900' }, { name: 'escuela', color: '#FCB900' }, { name: 'programming', color: '#7BDCB5' }, { name: 'casa', color: '#00D084' }
+  ],
   tasks: [
     {
       "name": "Uno",
@@ -11,6 +11,8 @@ export const mockTasks =
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
       "date": "06/22/2022",
       "type": "normal",
+      'completed': false,
+      'defaultBlocks': 0,
       "blocks": null,
       "repeat": 'daily',
       "repeatOn": [1, 1, 1, 1, 1, 1, 1],
@@ -22,7 +24,9 @@ export const mockTasks =
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
       "date": "06/21/2022",
       "type": "block",
-      "blocks": 2, 
+      'completed': false,
+      'defaultBlocks': 2,
+      "blocks": 2,
       "repeat": false,
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
@@ -33,6 +37,8 @@ export const mockTasks =
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
       "date": "06/23/2022",
       "type": "block",
+      'completed': false,
+      'defaultBlocks': 3,
       "blocks": 3,
       "repeat": false,
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
@@ -44,6 +50,8 @@ export const mockTasks =
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
       "date": "06/21/2022",
       "type": "normal",
+      'completed': false,
+      'defaultBlocks': 0,
       "blocks": null,
       "repeat": false,
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
@@ -55,6 +63,8 @@ export const mockTasks =
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
       "date": "06/24/2022",
       "type": "normal",
+      'completed': false,
+      'defaultBlocks': 0,
       "blocks": null,
       "repeat": false,
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
@@ -66,6 +76,8 @@ export const mockTasks =
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
       "date": "06/25/2022",
       "type": "normal",
+      'completed': false,
+      'defaultBlocks': 0,
       "blocks": null,
       "repeat": false,
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
@@ -77,6 +89,8 @@ export const mockTasks =
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
       "date": "24/07/2022",
       "type": "normal",
+      'completed': false,
+      'defaultBlocks': 0,
       "blocks": null,
       "repeat": false,
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
@@ -88,6 +102,8 @@ export const mockTasks =
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
       "date": null,
       "type": "normal",
+      'completed': false,
+      'defaultBlocks': 0,
       "blocks": null,
       "repeat": 'daily',
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
@@ -99,6 +115,8 @@ export const mockTasks =
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
       "date": null,
       "type": "normal",
+      'completed': false,
+      'defaultBlocks': 0,
       "blocks": null,
       "repeat": 'daily',
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
@@ -110,6 +128,8 @@ export const mockTasks =
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
       "date": null,
       "type": "normal",
+      'completed': false,
+      'defaultBlocks': 0,
       "blocks": null,
       "repeat": 'weekly',
       "repeatOn": [0, 1, 0, 0, 0, 1, 0],
@@ -136,15 +156,15 @@ export const mockTasks =
     "completeDate": "04/10/2022",
     "time": 4500,
     "tag": "programming"
-  },{
+  }, {
     "completeDate": "06/23/2022",
     "time": 1250,
     "tag": "My tasks"
-  },{
+  }, {
     "completeDate": "06/19/2022",
     "time": 900,
     "tag": "casa"
-  },{
+  }, {
     "completeDate": "05/19/2022",
     "time": 900,
     "tag": "casa"
