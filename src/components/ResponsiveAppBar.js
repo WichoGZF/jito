@@ -472,7 +472,7 @@ const DialogLogIn = (props) => {
                                 <TextField placeholder="Password"></TextField>
                             </Grid>
                             <Grid item xs>
-                                <Button variant="contained" fullWidth="true">Log in</Button>
+                                <Button variant="contained" fullWidth={true}>Log in</Button>
                             </Grid>
                             <Grid item xs>
                                 <Button>Forgot your password?</Button>
@@ -483,13 +483,13 @@ const DialogLogIn = (props) => {
                     <Grid item xs>
                         <Grid container spacing={2} direction="column">
                             <Grid item>
-                                <Button variant="outlined" fullWidth="true" startIcon={<SvgIcon component={GoogleIcon}></SvgIcon>}>Sign in with Google</Button>
+                                <Button variant="outlined" fullWidth={true} startIcon={<SvgIcon component={GoogleIcon}></SvgIcon>}>Sign in with Google</Button>
                             </Grid>
                             <Grid item>
-                                <Button variant="outlined" fullWidth="true" startIcon={<SvgIcon component={FacebookIcon} viewBox="0 0 48 48"></SvgIcon>}>Continue with Facebook</Button>
+                                <Button variant="outlined" fullWidth={true} startIcon={<SvgIcon component={FacebookIcon} viewBox="0 0 48 48"></SvgIcon>}>Continue with Facebook</Button>
                             </Grid>
                             <Grid item>
-                                <Button fullWidth="true">Register with email</Button>
+                                <Button fullWidth={true}>Register with email</Button>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -847,7 +847,7 @@ const DialogStatistics = (props) => {
             open={props.open}
             onClose={props.handleClose}
             maxWidth={"sm"}
-            fullWidth={"true"}
+            fullWidth={{true}}
         >
             <DialogTitle>
 
