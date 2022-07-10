@@ -50,12 +50,17 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useDispatch } from 'react-redux';
-import { addTask, editTask, deleteTask, completeTask, reorderTask, addTag, deleteTag, changeTagName, changeTagColor } from '../features/tasksSlice.js'
-import {currentTag, currentIndex} from '../features/appSlice.js'
+import {
+  addTask, editTask, deleteTask, completeTask, reorderTask, addTag, deleteTag, changeTagName, changeTagColor,
+  updateBlocks, restartTask, 
+} from '../features/tasksSlice.js'
+import { currentTag, currentIndex, initialize } from '../features/appSlice.js'
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close'
 import { format } from 'date-fns';
+
+import OverdueTaskList from './OverdueTaskList.js';
 
 function NewTask(props) {
   const [addNewTask, setAddNewTask] = useState(false);
@@ -68,7 +73,7 @@ function NewTask(props) {
   return (
     <>
       <ListItem>
-        <Button icon={<AddTaskIcon></AddTaskIcon>} variant="outlined" clickable onClick={handleClickNewTask} sx={{ width: "100%" }}>Add new task</Button>
+        <Button icon={<AddTaskIcon></AddTaskIcon>} variant="outlined" onClick={handleClickNewTask} sx={{ width: "100%" }}>Add new task</Button>
       </ListItem>
       {addNewTask ? <TaskInput
         edit={false} handleTaskSelectClose={handleClickNewTask}></TaskInput> : <></>}
@@ -101,6 +106,10 @@ function ListEntry(props) {
   const handleEditTask = () => {
     setEditTask(!editTask);
     dropDownRef && handleCloseDropDown()
+  }
+
+  const dispatchCompleteTask = () => {
+    dispatch(completeTask(props.index))
   }
 
   const tagWhole = props.tags.find(tag => tag.name === props.tag)
@@ -280,6 +289,7 @@ function ListEntry(props) {
           <ListItemIcon
             onMouseEnter={(e) => setCompleteHover(true)}
             onMouseLeave={(e) => setCompleteHover(false)}
+            onClick={dispatchCompleteTask}
           >
             {
               props.type === "block" ? <Typography sx={{ margin: 1, pl: 1, pr: 1, border: "1px", borderStyle: "solid" }}>{props.blocks}</Typography>
@@ -319,12 +329,12 @@ function TagEntry(props) {
   const handleChangeColor = (color) => {
     console.log('Changing color into: ', color, color.hex)
     setColor(color.hex);
-    if (color !== props.color){
+    if (color !== props.color) {
       dispatch(changeTagColor(props.tag, color.hex))
     }
     setColorPick(!colorPick)
   }
-  
+
   const handleDeleteDialog = () => {
     setDeleteDialog(!deleteDialog)
   }
@@ -335,12 +345,12 @@ function TagEntry(props) {
   }
 
   const dispatchEdit = () => {
-    if(tagName !== props.tag){
+    if (tagName !== props.tag) {
       dispatch(changeTagName(props.tag, tagName))
     }
     handleEditName()
   }
-  
+
 
   const colorSelector = <Box sx={{ position: 'absolute', zIndex: '2' }}>
     <Box sx={{ position: 'fixed', top: `${colorY}px`, right: '0px', bottom: '0px', left: `${colorX}px`, }}>
@@ -456,21 +466,21 @@ function AddTag(props) {
   return (
     <Box>
       <Stack spacing={1}>
-          <Collapse in={alert}>
-      <Alert
-        action={
-        <IconButton color="inherit" size="small" onClick={handleAlert}>
-          <CloseIcon fontSize="inherit"></CloseIcon>
-        </IconButton>}
-        severity='error'>
-        Please use a unique name for the tag
-      </Alert>
-      </Collapse>
-      <Button onClick={handleAddNewTag} variant="outlined" startIcon={<AddCircleOutlineIcon></AddCircleOutlineIcon>} sx={{ width: '100%' }}>
-        Add new tag
-      </Button>
+        <Collapse in={alert}>
+          <Alert
+            action={
+              <IconButton color="inherit" size="small" onClick={handleAlert}>
+                <CloseIcon fontSize="inherit"></CloseIcon>
+              </IconButton>}
+            severity='error'>
+            Please use a unique name for the tag
+          </Alert>
+        </Collapse>
+        <Button onClick={handleAddNewTag} variant="outlined" startIcon={<AddCircleOutlineIcon></AddCircleOutlineIcon>} sx={{ width: '100%' }}>
+          Add new tag
+        </Button>
       </Stack>
-  
+
       {addNewTag
         ? <ListItem>
           <IconButton
@@ -496,7 +506,7 @@ export function TagDialog(props) {
   const [openTagEdit, setOpenTagEdit] = useState(false)
   const tagSelected = props.tagSelected
 
-  const handleTagSelected = (tagName, tagColor)=> {
+  const handleTagSelected = (tagName, tagColor) => {
     props.handleChangeTag(tagName)
     props.handleChangeColor(tagColor)
     props.handleOpenTagSelect()
@@ -511,8 +521,8 @@ export function TagDialog(props) {
   }
 
   if (!openTagEdit) {
-    return (<Dialog open={props.openTagSelect} 
-    onClose={handleDialogBackDrop}
+    return (<Dialog open={props.openTagSelect}
+      onClose={handleDialogBackDrop}
     >
       <Stack direction="row" justifyContent="space-between">
         <DialogTitle>Select a tag</DialogTitle>
@@ -532,7 +542,7 @@ export function TagDialog(props) {
               else {
                 return (
                   <Grid item xs='auto' key={tagObject.name}>
-                    <Chip clickable onClick={() => {handleTagSelected(tagObject.name, tagObject.color)}}
+                    <Chip clickable onClick={() => { handleTagSelected(tagObject.name, tagObject.color) }}
                       label={tagObject.name} sx={{ backgroundColor: tagObject.color }}>
                     </Chip>
                   </Grid>
@@ -549,10 +559,10 @@ export function TagDialog(props) {
   }
   else {
     return (<Dialog open={props.openTagSelect}
-        onClose={()=>{
-          handleDialogBackDrop()
-        }
-          }
+      onClose={() => {
+        handleDialogBackDrop()
+      }
+      }
     >
       <DialogTitle><IconButton onClick={handleOpenTagEdit} sx={{ mr: '5px' }}><ArrowBackIcon></ArrowBackIcon></IconButton>Edit tags</DialogTitle>
       <DialogContent>
@@ -581,8 +591,9 @@ export default function TaskList(props) {
 
   const tasks = useSelector(state => state.tasks)
   const calendarDate = useSelector(state => state.app.calendarDate)
+  const initializedDate = useSelector(state => state.app.initialized)
 
-  
+  const initialized = initializedDate === format(newDate, 'MM/dd/YYYY')
 
   function nextTodoId(todos) {
     const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1)
@@ -606,37 +617,52 @@ export default function TaskList(props) {
       ></ListEntry>
     )
   }
+  const todayDate = format(new Date, 'MM/dd/yyyy')
+  const splitCalendarDate = calendarDate.split('/')
+  const [month, calendarDay, year] = splitCalendarDate
+  const realCalendarDate = new Date(year, month, calendarDay)
+  const day = realCalendarDate.getDay();
 
-  const date = format(calendarDate, 'MM/dd/yyyy')
 
-  const day = calendarDate.getDay();
-
-
-
+  
   let allTagTasks = []
   /*Task filtering */
-  tasks.tasks.forEach((task, index) => {
-    if (task.repeat!=='false') {
-      if (task.repeat === 'daily') {
-        allTagTasks.push(taskToListEntry(task, index))
+  if(initialized === todayDate){
+    console.log('App initialized already')
+  }
+  else {
+    tasks.tasks.forEach((task, index)=>{
+      if(task.repeat !== 'false'){
+        if(task.completed)
+        dispatch(restartTask(index))
       }
-      else {
-        for (const dayOfTheWeek of task.repeatOn) {
-          if (task.repeatOn[day]) {
-            allTagTasks.push(taskToListEntry(task, index))
-            break;
+    })
+  }
+
+  tasks.tasks.forEach((task, index) => {
+    if (task.repeat !== 'false') {
+      if (!task.completed) {
+        if (task.repeat === 'daily') {
+          allTagTasks.push(taskToListEntry(task, index))
+        }
+        else {
+          for (const dayOfTheWeek of task.repeatOn) {
+            if (task.repeatOn[day]) {
+              allTagTasks.push(taskToListEntry(task, index))
+              break;
+            }
           }
         }
       }
     }
     else {
-      if (date === task.date) {
+      if (calendarDate === task.date) {
         allTagTasks.push(taskToListEntry(task, index))
       }
     }
-    if(allTagTasks.length){
+    if (allTagTasks.length) {
       dispatch(currentTag(task.tag));
-      dispatch(currentIndex(index))
+      dispatch(currentIndex(index));
     }
   })
 
@@ -647,6 +673,7 @@ export default function TaskList(props) {
         <Divider></Divider>
         <NewTask></NewTask>
         {allTagTasks}
+        <OverdueTaskList open ={!initialized}></OverdueTaskList>
       </List>
     </Box>
   )
