@@ -847,7 +847,7 @@ const DialogStatistics = (props) => {
             open={props.open}
             onClose={props.handleClose}
             maxWidth={"sm"}
-            fullWidth={{true}}
+            fullWidth={true}
         >
             <DialogTitle>
 

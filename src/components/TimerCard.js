@@ -30,12 +30,12 @@ export default function TimerCard(props) {
     console.log('for repeat timer card')
     if (props.pomodoros>i){
       pomodorosCompleted.push(
-        <Grid item xs><LinearProgress  variant='determinate' value={100}></LinearProgress></Grid>
+        <Grid key = {i} item xs><LinearProgress  variant='determinate' value={100}></LinearProgress></Grid>
       )
     }
     else {
       pomodorosCompleted.push(
-        <Grid item xs><LinearProgress  variant='determinate' value={0}></LinearProgress></Grid>
+        <Grid key = {i} item xs><LinearProgress  variant='determinate' value={0}></LinearProgress></Grid>
       )
     }
 

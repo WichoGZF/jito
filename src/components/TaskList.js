@@ -593,7 +593,7 @@ export default function TaskList(props) {
   const calendarDate = useSelector(state => state.app.calendarDate)
   const initializedDate = useSelector(state => state.app.initialized)
 
-  const initialized = initializedDate === format(newDate, 'MM/dd/YYYY')
+  const initialized = initializedDate === format(new Date, 'MM/dd/yyyy')
 
   function nextTodoId(todos) {
     const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1)

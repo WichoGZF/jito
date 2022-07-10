@@ -192,9 +192,11 @@ const tasksSlice = createSlice({
                 state.tasks[index].blocks += 1
             }
         },
-        restartTask: (state,action) => {
+        restartTask: (state, action) => {
             const index = action.payload; 
             state.tasks[index].completed = false;
+            state.tasks[index].blocks = state.tasks[index].defaultBlocks
+
         },
         completeTask: (state, action) => { //For normal task
             const { index } = action.payload
@@ -203,12 +205,19 @@ const tasksSlice = createSlice({
                 tasksSlice.caseReducers.deleteTask(index)
             }
             else{
-                state.tasks[index].completed = true;
+                state.tasks[index].completed = true
             }
         },
+        updateDates: (state, action) => { 
+            //where action.payload is an array of tasks to be updated to today's date.
+            const tasksToUpdate = action.payload
+            tasksToUpdate.forEach((taskIndex) => { 
+                state.tasks[taskIndex].date = format(new Date, 'MM/dd/yyyy')
+            }) 
+        }
     }
 })
 
 export const { addTask, editTask, deleteTask, addTimeEntry, reorderTask,
-    addTag, deleteTag, changeTagName, changeTagColor, updateBlocks, completeTask } = tasksSlice.actions
+    addTag, deleteTag, changeTagName, changeTagColor, updateBlocks, restartTask, completeTask, updateDates } = tasksSlice.actions
 export default tasksSlice.reducer

@@ -24,9 +24,11 @@ function App() {
   const date = useSelector((state) => state.app.calendarDate); 
 
   const dispatchCalendarChange = (newDate) => {
-    dispatch(setCalendarDate(newDate))
+    dispatch(setCalendarDate(format(newDate, 'MM/dd/yyyy')))
   } 
-
+  const dateDigits = date.split('/') //mm/dd/yyyy
+  const [month, day, year] = dateDigits
+  const dateInDateType = new Date(year, month-1, day)
   console.log(date)
 
   return (
@@ -49,7 +51,7 @@ function App() {
           </Grid>
           <Grid item sx={{width:'100%'}}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <CalendarPicker disablePast date={date} onChange={dispatchCalendarChange}/> 
+              <CalendarPicker disablePast date={dateInDateType} onChange={dispatchCalendarChange}/> 
             </LocalizationProvider>
 
           </Grid>
