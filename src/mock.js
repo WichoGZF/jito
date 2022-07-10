@@ -27,7 +27,7 @@ export const mockTasks =
       'completed': false,
       'defaultBlocks': 2,
       "blocks": 2,
-      "repeat": false,
+      "repeat": 'false',
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {
@@ -40,7 +40,7 @@ export const mockTasks =
       'completed': false,
       'defaultBlocks': 3,
       "blocks": 3,
-      "repeat": false,
+      "repeat": 'false',
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {
@@ -53,7 +53,7 @@ export const mockTasks =
       'completed': false,
       'defaultBlocks': 0,
       "blocks": null,
-      "repeat": false,
+      "repeat": 'false',
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {
@@ -66,7 +66,7 @@ export const mockTasks =
       'completed': false,
       'defaultBlocks': 0,
       "blocks": null,
-      "repeat": false,
+      "repeat": 'false',
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {
@@ -79,7 +79,7 @@ export const mockTasks =
       'completed': false,
       'defaultBlocks': 0,
       "blocks": null,
-      "repeat": false,
+      "repeat": 'false',
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {
@@ -92,7 +92,7 @@ export const mockTasks =
       'completed': false,
       'defaultBlocks': 0,
       "blocks": null,
-      "repeat": false,
+      "repeat": 'false',
       "repeatOn": [0, 0, 0, 0, 0, 0, 0],
     },
     {

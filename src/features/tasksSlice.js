@@ -210,6 +210,7 @@ const tasksSlice = createSlice({
         },
         updateDates: (state, action) => { 
             //where action.payload is an array of tasks to be updated to today's date.
+            console.log('updating dates:', action.payload)
             const tasksToUpdate = action.payload
             tasksToUpdate.forEach((taskIndex) => { 
                 state.tasks[taskIndex].date = format(new Date, 'MM/dd/yyyy')

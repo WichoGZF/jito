@@ -53,7 +53,7 @@ export default function OverdueTaskList(props) {
 
     let overdueTasks = []
     tasks.forEach( (task, index) => {
-        if (!task.repeat) {
+        if (task.repeat === 'false') {
             const dateArray = task.date.split('/')
             const [month, day, year] = dateArray
             const taskDate = new Date(year, month, day)
@@ -69,6 +69,13 @@ export default function OverdueTaskList(props) {
 
     const [tasksChecklist, setTaskChecklist] = useState(() => {
         return(overdueTasks.map((task)=> false))
+    })
+
+    let tasksToUpdate = []
+    tasksChecklist.forEach( (checked, index) => {
+        if(checked){
+            tasksToUpdate.push(overdueTasks[index])
+        }
     })
 
     const handleChecklist = (index) => {
@@ -111,9 +118,9 @@ export default function OverdueTaskList(props) {
             <DialogActions>
                 <Button onClick={updateInitialized}>Discard</Button>
                 <Button onClick={()=>{
-                    updateTasksDates(overdueTasks)
+                    updateTasksDates(tasksToUpdate)
                     updateInitialized()
-                    
+
                 }}>Import</Button>
             </DialogActions>
         </Dialog>

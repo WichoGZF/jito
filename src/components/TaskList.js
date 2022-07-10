@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 import List from '@mui/material/List';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -300,7 +300,7 @@ function ListEntry(props) {
           <ListItemText primary={props.text} secondary={props.description}>
           </ListItemText>
 
-          {props.repeat ? <RepeatIcon sx={{ marginRight: 1, color: "rgba(0, 0, 0, 0.6)" }}></RepeatIcon> : null}
+          {props.repeat!=='false' ? <RepeatIcon sx={{ marginRight: 1, color: "rgba(0, 0, 0, 0.6)" }}></RepeatIcon> : null}
           <Chip label={props.tag} sx={{ backgroundColor: tagColor }}></Chip>
         </ListItem>
       </>
@@ -589,7 +589,9 @@ export default function TaskList(props) {
 
   const dispatch = useDispatch()
 
-  const tasks = useSelector(state => state.tasks)
+  const tasks = useSelector(state => state.tasks.tasks)
+  console.log(tasks)
+  const tags = useSelector(state => state.tasks.tags)
   const calendarDate = useSelector(state => state.app.calendarDate)
   const initializedDate = useSelector(state => state.app.initialized)
 
@@ -613,7 +615,7 @@ export default function TaskList(props) {
         repeat={task.repeat}
         repeatOn={task.repeatOn}
         tag={task.tag}
-        tags={tasks.tags}
+        tags={tags}
       ></ListEntry>
     )
   }
@@ -631,15 +633,16 @@ export default function TaskList(props) {
     console.log('App initialized already')
   }
   else {
-    tasks.tasks.forEach((task, index)=>{
+    tasks.forEach((task, index)=>{
       if(task.repeat !== 'false'){
         if(task.completed)
         dispatch(restartTask(index))
       }
     })
   }
-
-  tasks.tasks.forEach((task, index) => {
+  let firstTaskIndex
+  let firstTaskTag
+  tasks.forEach((task, index) => {
     if (task.repeat !== 'false') {
       if (!task.completed) {
         if (task.repeat === 'daily') {
@@ -656,15 +659,27 @@ export default function TaskList(props) {
       }
     }
     else {
+      console.log('printing dates', calendarDate, task.date)
       if (calendarDate === task.date) {
         allTagTasks.push(taskToListEntry(task, index))
       }
     }
+    if (!!firstTaskIndex) {//if not initialized
+      if(!!allTagTasks.length){ //if task has been added
+        firstTaskIndex = index
+        firstTaskTag = task.tag
+      }
+    }
+
+  })
+
+  useEffect(()=> {
     if (allTagTasks.length) {
-      dispatch(currentTag(task.tag));
-      dispatch(currentIndex(index));
+      dispatch(currentTag(firstTaskTag));
+      dispatch(currentIndex(firstTaskIndex));
     }
   })
+
 
   return (
     <Box>
