@@ -6,7 +6,7 @@ import Chip from '@mui/material/Chip'
 import Button from '@mui/material/Button'
 import { TaskAltSharp } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
-import { updateDates } from "../features/tasksSlice.js";
+import { updateDates, deleteDue } from "../features/tasksSlice.js";
 import { initialize } from "../features/appSlice.js";
 import format from "date-fns/format";
 import isBefore from "date-fns/isBefore";
@@ -44,6 +44,11 @@ export default function OverdueTaskList(props) {
         dispatch(initialize())
     }
 
+    const deleteDueTasks = (array) => {
+        dispatch(deleteDue(array))
+
+    }
+
     const updateTasksDates = (array) => {
         dispatch(updateDates(array))
     }
@@ -72,9 +77,13 @@ export default function OverdueTaskList(props) {
     })
 
     let tasksToUpdate = []
+    let tasksToDelete = []
     tasksChecklist.forEach( (checked, index) => {
         if(checked){
             tasksToUpdate.push(overdueTasks[index])
+        }
+        else{
+            tasksToDelete.push(overdueTasks[index])
         }
     })
 
@@ -119,11 +128,11 @@ export default function OverdueTaskList(props) {
                 <Button onClick={updateInitialized}>Discard</Button>
                 <Button onClick={()=>{
                     updateTasksDates(tasksToUpdate)
+                    deleteDueTasks(tasksToDelete)
                     updateInitialized()
-
                 }}>Import</Button>
             </DialogActions>
         </Dialog>
-    )
+    )   
 }
 
