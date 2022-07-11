@@ -46,18 +46,10 @@ const tasksSlice = createSlice({
                 }
             }
         },
-        deleteTask: {
-            reducer(state, action) {
-                const { index } = action.payload
-                state.tasks.splice(index, 1)
-            },
-            prepare(index) {
-                return {
-                    payload: {
-                        index: index
-                    }
-                }
-            }
+        deleteTask: (state, action) => {
+            const index = action.payload
+            console.log('Deleting task, index: ', action.payload)
+            state.tasks.splice(index, 1)
         },
         addTimeEntry: {
             reducer(state, action) {
@@ -193,7 +185,7 @@ const tasksSlice = createSlice({
             }
         },
         restartTask: (state, action) => {
-            const index = action.payload; 
+            const index = action.payload;
             state.tasks[index].completed = false;
             state.tasks[index].blocks = state.tasks[index].defaultBlocks
 
@@ -201,24 +193,32 @@ const tasksSlice = createSlice({
         completeTask: (state, action) => { //For normal task
             const { index } = action.payload
 
-            if(state.tasks[index].repeat === 'false'){
-                tasksSlice.caseReducers.deleteTask(index)
+            if (state.tasks[index].repeat === 'false') {
+                tasksSlice.caseReducers.deleteTask(state, index)
             }
-            else{
+            else {
                 state.tasks[index].completed = true
             }
         },
-        updateDates: (state, action) => { 
+        updateDates: (state, action) => {
             //where action.payload is an array of tasks to be updated to today's date.
             console.log('updating dates:', action.payload)
             const tasksToUpdate = action.payload
-            tasksToUpdate.forEach((taskIndex) => { 
+            tasksToUpdate.forEach((taskIndex) => {
                 state.tasks[taskIndex].date = format(new Date, 'MM/dd/yyyy')
-            }) 
+            })
+        },
+        deleteDue: (state, action) => {
+            const tasksToDelete = action.payload
+            tasksToDelete.forEach((taskIndex) => {
+                console.log('deleting, current task index: ', taskIndex)
+                tasksSlice.caseReducers.deleteTask(state, taskIndex)
+            })
         }
     }
 })
 
 export const { addTask, editTask, deleteTask, addTimeEntry, reorderTask,
-    addTag, deleteTag, changeTagName, changeTagColor, updateBlocks, restartTask, completeTask, updateDates } = tasksSlice.actions
+    addTag, deleteTag, changeTagName, changeTagColor, updateBlocks,
+    restartTask, completeTask, updateDates, deleteDue } = tasksSlice.actions
 export default tasksSlice.reducer

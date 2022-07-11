@@ -1,9 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { format } from 'date-fns'
 
+const fullDate = new Date
+const todayDate = format(fullDate, 'MM/dd/yyyy')
+const hours = fullDate.getHours()
+const minutes = fullDate.getMinutes()
+const minutesPastMidnight = minutes + (hours*60)
+
 const initialState =  {
-    calendarDate: format(new Date, 'MM/dd/yyyy'),
-    initialized: format(new Date("2022", "05", "23"), 'MM/dd/yyyy'),
+    calendarDate: todayDate,
+    initialized: format(new Date("2022", "05", "23"), 'MM/dd/yyyy'), //move into tasks slice
+    todayDate: todayDate,
+    todayHour: minutesPastMidnight,
     tag: null,
     index: null,
     running: false,
