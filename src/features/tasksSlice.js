@@ -47,8 +47,7 @@ const tasksSlice = createSlice({
             }
         },
         deleteTask: (state, action) => {
-            const index = action.payload
-            console.log('Deleting task, index: ', action.payload)
+            const index = action
             state.tasks.splice(index, 1)
         },
         addTimeEntry: {
@@ -56,10 +55,10 @@ const tasksSlice = createSlice({
                 const completedEntry = action.payload
                 state.history.push(completedEntry)
             },
-            prepare(time, tag) {
+            prepare(date, time, tag) {
                 return {
                     payload: {
-                        completeDate: format(new Date(), 'MM/dd/yyyy'),
+                        completeDate: date,
                         time: time,
                         tag: tag,
                     }
@@ -185,13 +184,14 @@ const tasksSlice = createSlice({
             }
         },
         restartTask: (state, action) => {
-            const index = action.payload;
-            state.tasks[index].completed = false;
-            state.tasks[index].blocks = state.tasks[index].defaultBlocks
-
+            const indexes = action.payload;
+            indexes.forEach((taskIndex)=> {
+                state.tasks[taskIndex].completed = false;
+                state.tasks[taskIndex].blocks = state.tasks[taskIndex].defaultBlocks
+            })
         },
         completeTask: (state, action) => { //For normal task
-            const { index } = action.payload
+            const  index = action.payload
 
             if (state.tasks[index].repeat === 'false') {
                 tasksSlice.caseReducers.deleteTask(state, index)
@@ -208,10 +208,20 @@ const tasksSlice = createSlice({
                 state.tasks[taskIndex].date = format(new Date, 'MM/dd/yyyy')
             })
         },
+        //Delete due receives an array containing the indexes, then it makes another array with
+        //id values and uses it to find the indexes to delete. 
         deleteDue: (state, action) => {
             const tasksToDelete = action.payload
-            tasksToDelete.forEach((taskIndex) => {
-                console.log('deleting, current task index: ', taskIndex)
+
+            const idArray = tasksToDelete.map( (index) => {
+                return(state.tasks[index].id)
+            })
+
+            console.log(idArray)
+
+            idArray.forEach((taskId) => {
+                const taskIndex = state.tasks.findIndex( (task) => task.id === taskId)
+                console.log(taskIndex)
                 tasksSlice.caseReducers.deleteTask(state, taskIndex)
             })
         }

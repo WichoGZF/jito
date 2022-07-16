@@ -11,7 +11,6 @@ const initialState =  {
     calendarDate: todayDate,
     initialized: format(new Date("2022", "05", "23"), 'MM/dd/yyyy'), //move into tasks slice
     todayDate: todayDate,
-    todayHour: minutesPastMidnight,
     tag: null,
     index: null,
     running: false,
@@ -45,9 +44,14 @@ const appSlice = createSlice({
         initialize: (state) => {
             state.initialized = format(new Date, 'MM/dd/yyyy')
             console.log(state.intialized)
+        },
+        startNewDay: (state) => {
+            state.calendarDate = format(new Date, 'MM/dd/yyyy')
+            state.todayDate = format(new Date, 'MM/dd/yyyy')
         }
     }
 })
-export const {startRunning, stopRunning, setCalendarDate, currentTag, currentIndex, initialize} = appSlice.actions
+export const {startRunning, stopRunning, setCalendarDate, currentTag, currentIndex, initialize,
+startNewDay} = appSlice.actions
 export default appSlice.reducer 
 

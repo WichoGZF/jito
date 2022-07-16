@@ -15,7 +15,7 @@ import { CalendarPicker } from '@mui/x-date-pickers/CalendarPicker';
 import { Divider } from '@mui/material';
 
 import {useDispatch, useSelector} from 'react-redux'
-import {setCalendarDate} from './features/appSlice.js'
+import {setCalendarDate, startNewDay} from './features/appSlice.js'
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -26,10 +26,22 @@ function App() {
   const dispatchCalendarChange = (newDate) => {
     dispatch(setCalendarDate(format(newDate, 'MM/dd/yyyy')))
   } 
+  //Converting from
   const dateDigits = date.split('/') //mm/dd/yyyy
   const [month, day, year] = dateDigits
   const dateInDateType = new Date(year, month-1, day)
-  console.log(date)
+
+  useEffect(()=> {
+    const hours = dateInDateType.getHours()
+    const minutes = dateInDateType.getMinutes()
+
+    const actualMinutesInDay = hours*60 + minutes
+    const remainingMinutes = 24^60 - actualMinutesInDay
+    const remainingMiliseconds = remainingMinutes * 60 * 1000
+    setTimeout(()=>{
+      dispatch(startNewDay())
+    }, remainingMiliseconds)
+  }, [])
 
   return (
     <Box sx={{minWidth:'700px'}}>

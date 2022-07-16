@@ -451,7 +451,7 @@ const DialogLogIn = (props) => {
                 <Grid container direction="row" justifyContent="space-between" alignItems="center">
                     <Grid item xs="auto">
                         <Typography>
-                            Log in
+                            Log in (WIP)
                         </Typography>
                     </Grid>
                     <Grid item xs="auto">
@@ -854,7 +854,7 @@ const DialogStatistics = (props) => {
                 <Grid container direction="row" justifyContent="space-between" alignItems="center">
                     <Grid item>
                         <Typography color="grey.700" variant="h5">
-                            Statistics
+                            Statistics (WIP)
                         </Typography>
                     </Grid>
                     <Grid item xs="auto">

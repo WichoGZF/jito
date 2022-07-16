@@ -51,7 +51,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useDispatch } from 'react-redux';
 import {
-  addTask, editTask, deleteTask, completeTask, reorderTask, addTag, deleteTag, changeTagName, changeTagColor,
+  addTask, editTask, deleteTask, addTimeEntry, completeTask, reorderTask, addTag, deleteTag, changeTagName, changeTagColor,
   updateBlocks, restartTask,
 } from '../features/tasksSlice.js'
 import { currentTag, currentIndex, initialize } from '../features/appSlice.js'
@@ -61,6 +61,14 @@ import CloseIcon from '@mui/icons-material/Close'
 import { format } from 'date-fns';
 
 import OverdueTaskList from './OverdueTaskList.js';
+
+///Redux thunk for adding time entry
+
+const composeCompleteEntry = (tag) => (dispatch, getState) => {
+  const seconds = getState().app.time
+  const todayDate = getState().app.todayDate
+  dispatch(addTimeEntry(todayDate, seconds, tag))
+}
 
 function NewTask(props) {
   const [addNewTask, setAddNewTask] = useState(false);
@@ -85,6 +93,9 @@ function NewTask(props) {
 function ListEntry(props) {
 
   const dispatch = useDispatch()
+
+  const todayDate = useSelector((state) => state.app.todayDate)
+  const calendarDate = useSelector((state) => state.app.calendarDate)
 
   const [onHover, setOnHover] = useState({ display: 'none' })
   const [completeHover, setCompleteHover] = useState(false)
@@ -111,6 +122,11 @@ function ListEntry(props) {
   const dispatchCompleteTask = () => {
     dispatch(completeTask(props.index))
   }
+
+  const dispatchTimeEntry = () => {
+    dispatch(composeCompleteEntry(props.tag))
+  }
+
 
   const tagWhole = props.tags.find(tag => tag.name === props.tag)
   const tagColor = tagWhole.color
@@ -225,97 +241,103 @@ function ListEntry(props) {
     entryIcon = <Typography sx={{ margin: 1, pl: 1, pr: 1, border: "1px", borderStyle: "solid" }}>{props.blocks}</Typography>
   }
   else {
-    if(props.firstTask){
-      entryIcon = <IconButton>{completeHover ? <CheckOutlinedIcon></CheckOutlinedIcon> : <CircleOutlined></CircleOutlined>}</IconButton>
+    if (props.firstTask && calendarDate === todayDate) {
+      entryIcon = <IconButton onClick={
+        () => {
+          dispatchCompleteTask()
+          dispatchTimeEntry()
+        }
+
+      }>{completeHover ? <CheckOutlinedIcon></CheckOutlinedIcon> : <CircleOutlined></CircleOutlined>}</IconButton>
     }
-    else{
+    else {
       entryIcon = <IconButton disabled>{completeHover ? <CheckOutlinedIcon></CheckOutlinedIcon> : <CircleOutlined></CircleOutlined>}</IconButton>
     }
   }
 
-drag(drop(ref))
+  drag(drop(ref))
 
-if (editTask) {
-  return (
-    <>
-      <ListItem>
-        <TaskInput
-          edit={true}
-          name={props.text}
-          description={props.description}
-          tag={props.tag}
-          type={props.type}
-          blocks={props.blocks}
-          repeat={props.repeat}
-          repeatOn={props.repeatOn}
-          tagName={props.tag}
-          index={props.index}
-          tagColor={tagColor}
-          handleTaskSelectClose={handleEditTask}
-        >
-        </TaskInput>
-      </ListItem>
-    </>
-  )
-}
-else {
-  return (
-    <>
-      <ListItem
-        ref={ref}
-        key={'primary' + String(props.id)}
-        sx={{
-          '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
-          borderBottom: borderBottom,
-          borderTop: borderTop,
-          borderColor: "primary.main"
-        }}
-        onMouseEnter={(e) => setOnHover({ display: 'block' })}
-        onMouseLeave={(e) => setOnHover({ display: 'none' })}
-        secondaryAction={
-          <>
-            <IconButton
+  if (editTask) {
+    return (
+      <>
+        <ListItem>
+          <TaskInput
+            edit={true}
+            name={props.text}
+            description={props.description}
+            tag={props.tag}
+            type={props.type}
+            blocks={props.blocks}
+            repeat={props.repeat}
+            repeatOn={props.repeatOn}
+            tagName={props.tag}
+            index={props.index}
+            tagColor={tagColor}
+            handleTaskSelectClose={handleEditTask}
+          >
+          </TaskInput>
+        </ListItem>
+      </>
+    )
+  }
+  else {
+    return (
+      <>
+        <ListItem
+          ref={ref}
+          key={'primary' + String(props.id)}
+          sx={{
+            '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
+            borderBottom: borderBottom,
+            borderTop: borderTop,
+            borderColor: "primary.main"
+          }}
+          onMouseEnter={(e) => setOnHover({ display: 'block' })}
+          onMouseLeave={(e) => setOnHover({ display: 'none' })}
+          secondaryAction={
+            <>
+              <IconButton
 
-              edge="end"
-              aria-label="options"
-              onClick={handleDropDown}
-              sx={onHover}>
-              <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
+                edge="end"
+                aria-label="options"
+                onClick={handleDropDown}
+                sx={onHover}>
+                <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
 
-            </IconButton>
-            <Menu
-              id="task-entry-options"
-              anchorEl={dropDownRef}
-              open={openDropDown}
-              onClose={handleCloseDropDown}
-              MenuListProps={{
-                'aria-labelledby': 'options-button',
-              }}
-            >
-              <MenuItem onClick={handleEditTask}>Edit task</MenuItem>
-              <MenuItem onClick={handleCloseDropDown} >Delete task</MenuItem>
+              </IconButton>
+              <Menu
+                id="task-entry-options"
+                anchorEl={dropDownRef}
+                open={openDropDown}
+                onClose={handleCloseDropDown}
+                MenuListProps={{
+                  'aria-labelledby': 'options-button',
+                }}
+              >
+                <MenuItem onClick={handleEditTask}>Edit task</MenuItem>
+                <MenuItem onClick={handleCloseDropDown} >Delete task</MenuItem>
 
-            </Menu>
-          </>
+              </Menu>
+            </>
 
-        }>
-        <ListItemIcon
-          onMouseEnter={(e) => setCompleteHover(true)}
-          onMouseLeave={(e) => setCompleteHover(false)}
-          onClick={dispatchCompleteTask}
-        >
-          {entryIcon}
+          }>
+          <ListItemIcon
+            onMouseEnter={(e) => setCompleteHover(true)}
+            onMouseLeave={(e) => setCompleteHover(false)}
+            onClick={dispatchCompleteTask}
+          >
+            {entryIcon}
 
-        </ListItemIcon>
-        <ListItemText primary={props.text} secondary={props.description}>
-        </ListItemText>
+          </ListItemIcon>
+          <ListItemText primary={props.text} secondary={props.description}>
+          </ListItemText>
 
-        {props.repeat !== 'false' ? <RepeatIcon sx={{ marginRight: 1, color: "rgba(0, 0, 0, 0.6)" }}></RepeatIcon> : null}
-        <Chip label={props.tag} sx={{ backgroundColor: tagColor }}></Chip>
-      </ListItem>
-    </>
-  )
-}
+          {props.repeat !== 'false' ? <RepeatIcon sx={{ marginRight: 1, color: "rgba(0, 0, 0, 0.6)" }}></RepeatIcon> : null}
+          <Chip label={props.tag} sx={{ backgroundColor: tagColor }}></Chip>
+        </ListItem>
+      </>
+    )
+  }
 }
 
 function TagEntry(props) {
@@ -636,21 +658,8 @@ export default function TaskList(props) {
   const realCalendarDate = new Date(year, month, calendarDay)
   const day = realCalendarDate.getDay();
 
-
-
   let allTagTasks = []
-  /*Task filtering */
-  if (initialized === todayDate) {
-    console.log('App initialized already')
-  }
-  else {
-    tasks.forEach((task, index) => {
-      if (task.repeat !== 'false') {
-        if (task.completed)
-          dispatch(restartTask(index))
-      }
-    })
-  }
+
   let firstTaskIndex
   let firstTaskTag
   //irrelevant you could have used one of the abovce but w/e
@@ -658,9 +667,10 @@ export default function TaskList(props) {
   tasks.forEach((task, index) => {
     if (task.repeat !== 'false') {
       if (!task.completed) {
+        console.log('Tag not completed yet!, name: ',task.name, task.completed)
         if (task.repeat === 'daily') {
           allTagTasks.push(taskToListEntry(task, !firstTaskAdded, index))
-          if(!firstTaskAdded){
+          if (!firstTaskAdded) {
             firstTaskAdded = true
           }
         }
@@ -668,7 +678,7 @@ export default function TaskList(props) {
           for (const dayOfTheWeek of task.repeatOn) {
             if (task.repeatOn[day]) {
               allTagTasks.push(taskToListEntry(task, !firstTaskAdded, index))
-              if(!firstTaskAdded){
+              if (!firstTaskAdded) {
                 firstTaskAdded = true
               }
               break;
@@ -681,7 +691,7 @@ export default function TaskList(props) {
       console.log('printing dates', calendarDate, task.date)
       if (calendarDate === task.date) {
         allTagTasks.push(taskToListEntry(task, !firstTaskAdded, index))
-        if(!firstTaskAdded){
+        if (!firstTaskAdded) {
           firstTaskAdded = true
         }
       }
@@ -699,6 +709,20 @@ export default function TaskList(props) {
     if (allTagTasks.length) {
       dispatch(currentTag(firstTaskTag));
       dispatch(currentIndex(firstTaskIndex));
+    }
+    /*Task initiliazing */
+    if (initialized === todayDate) {
+      console.log('App initialized already')
+    }
+    else {
+      const nonInitialized = []
+      tasks.forEach((task, index) => {
+        if (task.repeat !== 'false') {
+          if (task.completed)
+            nonInitialized.push(index)
+        }
+      })
+      dispatch(restartTask(nonInitialized))
     }
   })
 
