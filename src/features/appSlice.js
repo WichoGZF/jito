@@ -7,6 +7,7 @@ const hours = fullDate.getHours()
 const minutes = fullDate.getMinutes()
 const minutesPastMidnight = minutes + (hours * 60)
 
+//Type property is not used, should be removed. 
 const initialState = {
     calendarDate: todayDate,
     initialized: format(new Date("2022", "05", "23"), 'MM/dd/yyyy'), //move into tasks slice

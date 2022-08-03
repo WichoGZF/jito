@@ -12,6 +12,11 @@ function nextTodoId(todos) {
     return maxId + 1
 }
 
+//Optimization
+/*
+Complete time s
+
+*/
 const tasksSlice = createSlice({
     name: 'tasks',
     initialState,
