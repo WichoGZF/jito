@@ -185,6 +185,14 @@ export default function TimerControl(props) {
     }
   }, [timerState, timerSeconds]);
 
+  //Debugging needed
+  //Initializing use effect, establishing starting value of pomodoro.
+  useEffect(() => {
+    if(timerMinuts === 0 && timerSeconds === 0){
+      dispatch(establishPomodoroTime(settings.pomodoroDuration, 0))
+    }
+  }, [1])
+
   console.log(settings.longBreakEvery)
   return (
     <>
