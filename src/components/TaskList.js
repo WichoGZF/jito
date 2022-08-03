@@ -65,9 +65,10 @@ import OverdueTaskList from './OverdueTaskList.js';
 ///Redux thunk for adding time entry
 
 const composeCompleteEntry = (tag) => (dispatch, getState) => {
-const seconds = (((getState().settings.pomodoroDuration - getState().app.minutes)*60) + (60 - getState().app.seconds))
+const secondsRemaining = getState().app.minutes*60 + getState().app.seconds
+const totalSeconds = getState().settings.pomodoroDuration*60
   const todayDate = getState().app.todayDate
-  dispatch(addTimeEntry(todayDate, seconds, tag))
+  dispatch(addTimeEntry(todayDate, totalSeconds-secondsRemaining, tag))
 }
 
 function NewTask(props) {
