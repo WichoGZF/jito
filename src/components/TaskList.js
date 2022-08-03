@@ -707,6 +707,8 @@ export default function TaskList(props) {
 
   })
 
+  //Debugging
+  //Does this only run once?
   useEffect(() => {
     if (allTagTasks.length) {
       dispatch(currentTag(firstTaskTag));

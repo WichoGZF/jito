@@ -24,13 +24,14 @@ import notifications from '../sounds/tones.mp3'
 import tickers from '../sounds/tickers.mp3'
 
 import { startRunning, stopRunning, establishPomodoroTime } from '../features/appSlice.js'
-
+import { updateBlocks } from '../features/tasksSlice.js';
 
 export default function TimerControl(props) {
   //Random settings
   const settings = useSelector(state => state.settings)
   const actualTag = useSelector(state => state.app.tag)
   const actualIndex = useSelector(state => state.app.index)
+  const actualType = useSelector(state => state.app.type)
   //Minutes && seconds
   const timerMinuts = useSelector(state => state.app.minutes)
   const timerSeconds = useSelector(state => state.app.seconds)
@@ -125,7 +126,7 @@ export default function TimerControl(props) {
       const interval = setInterval(() => {
         if (timerSeconds === 0) {
           if (timerMinuts === 0) {
-            if (rest) {
+            if (rest) { //On rest end
               if (settings.alarmOnBreakEnd) {
                 alarm({ id: settings.alarmSound })
               }
@@ -139,7 +140,7 @@ export default function TimerControl(props) {
                 setPomodoros(0)
               }
             }
-            else {
+            else { //On pomodoro end
               if (settings.alarmOnPomodoroEnd) {
                 alarm({ id: settings.alarmSound })
               }
@@ -158,6 +159,8 @@ export default function TimerControl(props) {
               setRest(true)
               setPomodoros(pomodoros + 1)
               dispatchPomodoro()
+              //"UpdateBlocks" reducer already handles the logic for how to update the specific task (only need index)
+              dispatch(updateBlocks(actualIndex))
             }
           }
           else {

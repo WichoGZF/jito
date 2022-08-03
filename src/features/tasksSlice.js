@@ -163,7 +163,6 @@ const tasksSlice = createSlice({
         },
         updateBlocks: (state, action) => {
             const index = action.payload;
-            const blocks = state.tasks[index].blocks;
             const repeat = state.tasks[index].repeat
             if (state.tasks[index].type === 'block') {
                 if (state.tasks[index].blocks === 1) {
