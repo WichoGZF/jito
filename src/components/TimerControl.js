@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import TimerCard from './TimerCard';
-import { useSelector,useDispatch } from 'react-redux/es/exports.js';
+import { useSelector, useDispatch } from 'react-redux/es/exports.js';
 
 import { addTimeEntry } from '../features/tasksSlice.js';
 
@@ -23,18 +23,20 @@ import notifications from '../sounds/tones.mp3'
 //ticking sounds
 import tickers from '../sounds/tickers.mp3'
 
-import {startRunning, stopRunning} from '../features/appSlice.js'
+import { startRunning, stopRunning, establishPomodoroTime } from '../features/appSlice.js'
 
 
 export default function TimerControl(props) {
-
+  //Random settings
   const settings = useSelector(state => state.settings)
   const actualTag = useSelector(state => state.app.tag)
-  const actualIndex = useSelector(state=> state.app.index)
+  const actualIndex = useSelector(state => state.app.index)
+  //Minutes && seconds
+  const timerMinuts = useSelector(state => state.app.minutes)
+  const timerSeconds = useSelector(state => state.app.seconds)
+  //Dispatch
   const dispatch = useDispatch()
 
-  const [timerSeconds, setTimerSeconds] = useState(0);
-  const [timerMinuts, setTimerMinuts] = useState(settings.pomodoroDuration);
   const [timerState, setTimerState] = useState(false);
   const [clockStarted, setClockStarted] = useState(false);
   const [rest, setRest] = useState(false);
@@ -84,26 +86,21 @@ export default function TimerControl(props) {
   }
 
   const dispatchPomodoro = () => {
-    dispatch(addTimeEntry(settings.pomodoroDuration*60, actualTag))
+    dispatch(addTimeEntry(settings.pomodoroDuration * 60, actualTag))
   }
 
   const changeTimerState = () => {
-    setTimerState(!timerState);
+     setTimerState(!timerState);
   }
 
   const turnOnClockState = () => {
     setClockStarted(true);
   }
 
-  function setTime(minutes, seconds) {
-    setTimerMinuts(minutes);
-    setTimerSeconds(seconds);
-  }
-
   /*Function for resetting the timer back to it's starting value. Acessed when skip is pressed or when a task is finished
   and the clock is non zero.*/
   function resetTimer() {
-    setTime(settings.pomodoroDuration, 0)
+    dispatch(establishPomodoroTime(settings.pomodoroDuration, 0))
     setClockStarted(false)
     setTimerState(false)
   }
@@ -129,28 +126,30 @@ export default function TimerControl(props) {
         if (timerSeconds === 0) {
           if (timerMinuts === 0) {
             if (rest) {
-              if(settings.alarmOnBreakEnd){
-                alarm({id: settings.alarmSound})
+              if (settings.alarmOnBreakEnd) {
+                alarm({ id: settings.alarmSound })
               }
               setRest(false)
               if (!settings.automaticPomodoroStart) {
                 changeTimerState();
                 setClockStarted(false)
               }
-              setTime(settings.pomodoroDuration)
+               (establishPomodoroTime(25, 0))
               if (pomodoros === settings.longBreakEvery) {
                 setPomodoros(0)
               }
             }
             else {
-              if(settings.alarmOnPomodoroEnd){
-                alarm({id:settings.alarmSound})
+              if (settings.alarmOnPomodoroEnd) {
+                alarm({ id: settings.alarmSound })
               }
               if (pomodoros + 1 === settings.longBreakEvery) {
-                setTime(settings.longBreakDuration, 0)
+                dispatch(establishPomodoroTime(settings.longBreakDuration, 0))
+
               }
               else {
-                setTime(settings.shortBreakDuration, 0)
+                dispatch(establishPomodoroTime(settings.shortBreakDuration, 0))
+
               }
               if (!settings.automaticBreakStart) {
                 changeTimerState();
@@ -162,7 +161,7 @@ export default function TimerControl(props) {
             }
           }
           else {
-            setTime(timerMinuts - 1, 59)
+            dispatch(establishPomodoroTime(timerMinuts -1, 59))
             if (rest && settings.tickingSoundOnBreak) {
               tick({ id: settings.tickingSound })
             }
@@ -172,7 +171,7 @@ export default function TimerControl(props) {
           }
         }
         else {
-          setTimerSeconds(timerSeconds - 1);
+          dispatch(establishPomodoroTime(timerMinuts, timerSeconds-1))
           if (rest && settings.tickingSoundOnBreak) {
             tick({ id: settings.tickingSound })
           }
