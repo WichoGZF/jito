@@ -54,7 +54,7 @@ import {
   addTask, editTask, deleteTask, addTimeEntry, completeTask, reorderTask, addTag, deleteTag, changeTagName, changeTagColor,
   updateBlocks, restartTask,
 } from '../features/tasksSlice.js'
-import { currentTag, currentIndex, initialize } from '../features/appSlice.js'
+import { currentTag, currentIndex, currentType, initialize } from '../features/appSlice.js'
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close'
@@ -662,6 +662,7 @@ export default function TaskList(props) {
 
   let firstTaskIndex
   let firstTaskTag
+  let firstTaskType
   //irrelevant you could have used one of the abovce but w/e
   let firstTaskAdded = false
   tasks.forEach((task, index) => {
@@ -700,6 +701,7 @@ export default function TaskList(props) {
       if (!!allTagTasks.length) { //if task has been added
         firstTaskIndex = index
         firstTaskTag = task.tag
+        firstTaskType = task.type
       }
     }
 
@@ -709,6 +711,7 @@ export default function TaskList(props) {
     if (allTagTasks.length) {
       dispatch(currentTag(firstTaskTag));
       dispatch(currentIndex(firstTaskIndex));
+      dispatch(currentType(firstTaskType));
     }
     /*Task initiliazing */
     if (initialized === todayDate) {

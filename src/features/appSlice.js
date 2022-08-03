@@ -13,10 +13,12 @@ const initialState = {
     todayDate: todayDate,
     tag: null,
     index: null,
+    type: null, 
     running: false,
     resting: false,
     minutes: 0,
     seconds: 0,
+
 }
 
 const appSlice = createSlice({
@@ -41,6 +43,10 @@ const appSlice = createSlice({
         currentIndex: (state, action) => {
             const index = action.payload;
             state.index = index
+        },
+        currentType: (state, action)  => {
+            const type = action.payload; 
+            state.type = type
         },
         initialize: (state) => {
             state.initialized = format(new Date, 'MM/dd/yyyy')
@@ -69,7 +75,8 @@ const appSlice = createSlice({
 
     }
 })
-export const { startRunning, stopRunning, setCalendarDate, currentTag, currentIndex, initialize,
+//Could wrap the three 'current' reducers into a single one
+export const { startRunning, stopRunning, setCalendarDate, currentTag, currentIndex, currentType, initialize,
     startNewDay, establishPomodoroTime } = appSlice.actions
 export default appSlice.reducer
 
