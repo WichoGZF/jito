@@ -26,6 +26,9 @@ import tickers from '../sounds/tickers.mp3'
 import { startRunning, stopRunning, establishPomodoroTime } from '../features/appSlice.js'
 import { updateBlocks } from '../features/tasksSlice.js';
 
+//Optimization 
+//Don't really need to trigger a re-render on every minute/second change. Can let the reducer handle it instead. 
+
 export default function TimerControl(props) {
   //Random settings
   const settings = useSelector(state => state.settings)
