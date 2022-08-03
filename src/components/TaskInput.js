@@ -35,8 +35,7 @@ import { format } from 'date-fns'
 
 export default function TaskInput(props) {
     const tags = useSelector(state => state.tasks.tags)
-    const dateSelected = useSelector(state => state.app.calendarDate
-        )
+    const dateSelected = useSelector(state => state.app.calendarDate)
     const dispatch = useDispatch()
 
     const [taskName, setTaskName] = useState(props.edit ? props.name : "")
@@ -92,7 +91,6 @@ export default function TaskInput(props) {
     }
 
     const handleSaveTask = () => {
-        const todayDate = format(dateSelected, 'MM/dd/yyyy')
         const numericalBlocks = parseInt(blocks)
         let blocksToSend; 
         if(taskType === 'block'){
@@ -105,7 +103,7 @@ export default function TaskInput(props) {
             "name": taskName,
             "tag": tag,
             "description": taskDesc,
-            "date": todayDate,
+            "date": dateSelected,
             "type": taskType,
             'defaultBlocks': blocksToSend,
             "blocks": blocksToSend,
