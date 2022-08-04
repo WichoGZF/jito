@@ -171,12 +171,12 @@ const tasksSlice = createSlice({
             const repeat = state.tasks[index].repeat
             if (state.tasks[index].type === 'block') {
                 if (state.tasks[index].blocks === 1) {
-                    if (repeat) {
+                    if (repeat !== "false") {
                         state.tasks[index].completed = true
                         state.tasks[index].blocks = state.tasks[index].defaultBlocks
                     }
                     else {
-                        tasksSlice.caseReducers.deleteTask(index)
+                        tasksSlice.caseReducers.deleteTask(state, index)
                     }
                 }
                 else {

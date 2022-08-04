@@ -669,7 +669,7 @@ export default function TaskList(props) {
         console.log('Tag not completed yet!, name: ', task.name, task.completed)
         if (task.repeat === 'daily') {
           allTagTasks.push(taskToListEntry(task, !firstTaskAdded, index))
-          if (!firstTaskAdded) {
+          if (allTagTasks.length === 1) {
             firstTaskAdded = true
           }
         }
@@ -677,7 +677,7 @@ export default function TaskList(props) {
           for (const dayOfTheWeek of task.repeatOn) {
             if (task.repeatOn[day]) {
               allTagTasks.push(taskToListEntry(task, !firstTaskAdded, index))
-              if (!firstTaskAdded) {
+              if (allTagTasks.length === 1) {
                 firstTaskAdded = true
               }
               break;
@@ -690,17 +690,18 @@ export default function TaskList(props) {
       console.log('printing dates', calendarDate, task.date)
       if (calendarDate === task.date) {
         allTagTasks.push(taskToListEntry(task, !firstTaskAdded, index))
-        if (!firstTaskAdded) {
+        if (allTagTasks.length === 1) {
           firstTaskAdded = true
         }
       }
     }
-    if (!!firstTaskIndex) {//if not initialized
-      if (!!allTagTasks.length) { //if task has been added
-        firstTaskIndex = index
-        firstTaskTag = task.tag
-        firstTaskType = task.type
-      }
+    if (firstTaskAdded) {//if this is the first task added
+      firstTaskIndex = index
+      firstTaskTag = task.tag
+      firstTaskType = task.type
+      //No longer the first task added
+      firstTaskAdded = false
+
     }
 
   })
