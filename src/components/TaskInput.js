@@ -94,7 +94,7 @@ export default function TaskInput(props) {
         const numericalBlocks = parseInt(blocks)
         let blocksToSend; 
         if(taskType === 'block'){
-            !!numericalBlocks? blocksToSend = 1: blocksToSend = numericalBlocks
+            !!numericalBlocks? blocksToSend = numericalBlocks: blocksToSend = 1
         }
         else{
             blocksToSend = 0

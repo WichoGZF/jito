@@ -160,8 +160,6 @@ function ListEntry(props) {
       // negative: the dragging target is above the middle of the task
       const hoverClientY = clientOffset.y - (hoverBoundingRect.top + hoverMiddleY)
 
-      console.log(hoverClientY)
-
       if (hoverClientY > 0) {
         setDragHover("below");
       }
