@@ -40,11 +40,9 @@ export default function TimerControl(props) {
   const timerSeconds = useSelector(state => state.app.seconds)
   const timerState = useSelector(state => state.app.timerState)
   const timerStarted = useSelector(state => state.app.timerStarted)
-  const rest = useSelector(state=> state.app.rest)
+  const rest = useSelector(state => state.app.rest)
 
-  //How to handle extra time 
-  const handleTime = useSelector(state => state.app.handleTime)
-  
+  const storedTime = useSelector(state => state.app.storedTime)
   //Dispatch
   const dispatch = useDispatch()
 
@@ -76,8 +74,12 @@ export default function TimerControl(props) {
       wallClockTick: [230, 350]
     },
     volume: settings.tickingVolume / 100,
-
   })
+
+  //TODO
+  //Proper rounding, plus add it into every other calculation 
+  const minutesStored = storedTime / 60
+  const secondsStored = storedTime % 60
 
   let progress;
   if (rest) {
@@ -98,12 +100,12 @@ export default function TimerControl(props) {
   }
 
   const changeTimerState = () => {
-     if(timerState){
+    if (timerState) {
       dispatch(stopRunning())
-     }
-     else{
+    }
+    else {
       dispatch(startRunning())
-     }
+    }
   }
 
   function resetTimer() {
@@ -126,8 +128,8 @@ export default function TimerControl(props) {
     if (timerState) {
       if (!timerStarted) {
         dispatch(timerHasStarted())
-      }        
-      
+      }
+
       const interval = setInterval(() => {
         if (timerSeconds === 0) {
           if (timerMinuts === 0) {
@@ -140,7 +142,7 @@ export default function TimerControl(props) {
                 changeTimerState();
                 dispatch(timerNotStarted())
               }
-               (establishPomodoroTime(25, 0))
+              (establishPomodoroTime(25, 0))
               if (pomodoros === settings.longBreakEvery) {
                 setPomodoros(0)
               }
@@ -169,7 +171,7 @@ export default function TimerControl(props) {
             }
           }
           else {
-            dispatch(establishPomodoroTime(timerMinuts -1, 59))
+            dispatch(establishPomodoroTime(timerMinuts - 1, 59))
             if (rest && settings.tickingSoundOnBreak) {
               tick({ id: settings.tickingSound })
             }
@@ -179,7 +181,7 @@ export default function TimerControl(props) {
           }
         }
         else {
-          dispatch(establishPomodoroTime(timerMinuts, timerSeconds-1))
+          dispatch(establishPomodoroTime(timerMinuts, timerSeconds - 1))
           if (rest && settings.tickingSoundOnBreak) {
             tick({ id: settings.tickingSound })
           }
@@ -196,7 +198,7 @@ export default function TimerControl(props) {
   //Debugging needed
   //Initializing use effect, establishing starting value of pomodoro.
   useEffect(() => {
-    if(timerMinuts === 0 && timerSeconds === 0){
+    if (timerMinuts === 0 && timerSeconds === 0) {
       dispatch(establishPomodoroTime(settings.pomodoroDuration, 0))
     }
   }, [1])
@@ -211,7 +213,7 @@ export default function TimerControl(props) {
       <TimerCard clockStarted={timerStarted}
         timerState={timerState}
         onClickStartStop={changeTimerState}
-        onClickSkip={showWarning ? openWarningDialog : resetTimer}
+        onClickSkip={ (showWarning && !rest)? openWarningDialog : resetTimer}
         minutes={timerMinuts}
         seconds={timerSeconds}
         pomodoros={pomodoros}
