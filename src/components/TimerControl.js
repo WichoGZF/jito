@@ -23,7 +23,10 @@ import notifications from '../sounds/tones.mp3'
 //ticking sounds
 import tickers from '../sounds/tickers.mp3'
 
-import { startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, establishPomodoroTime } from '../features/appSlice.js'
+import {
+  startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, establishPomodoroTime,
+  disableNormalTriggeredRest, setStoredTime
+} from '../features/appSlice.js'
 import { updateBlocks } from '../features/tasksSlice.js';
 
 //Optimization 
@@ -41,6 +44,7 @@ export default function TimerControl(props) {
   const timerState = useSelector(state => state.app.timerState)
   const timerStarted = useSelector(state => state.app.timerStarted)
   const rest = useSelector(state => state.app.rest)
+  const normalTriggeredRest = useSelector(state => state.app.normalTriggeredRest)
 
   const storedTime = useSelector(state => state.app.storedTime)
   //Dispatch
@@ -78,16 +82,21 @@ export default function TimerControl(props) {
 
   //TODO
   //Proper rounding, plus add it into every other calculation 
-  const minutesStored = storedTime / 60
+  const minutesStored = Math.round(storedTime / 60)
   const secondsStored = storedTime % 60
 
   let progress;
   if (rest) {
-    if (pomodoros === settings.longBreakEvery) {
-      progress = ((timerMinuts * 60 + timerSeconds) / (settings.longBreakDuration)) * 100
+    if (normalTriggeredRest) {
+      progress = ((timerMinuts * 60 + timerSeconds) / (storedTime)) * 100
     }
     else {
-      progress = ((timerMinuts * 60 + timerSeconds) / (settings.shortBreakDuration)) * 100
+      if (pomodoros === settings.longBreakEvery) {
+        progress = ((timerMinuts * 60 + timerSeconds) / (settings.longBreakDuration)) * 100
+      }
+      else {
+        progress = ((timerMinuts * 60 + timerSeconds) / (settings.shortBreakDuration)) * 100
+      }
     }
   }
   else {
@@ -145,6 +154,10 @@ export default function TimerControl(props) {
               (establishPomodoroTime(25, 0))
               if (pomodoros === settings.longBreakEvery) {
                 setPomodoros(0)
+              }
+              if(normalTriggeredRest){
+                dispatch(disableNormalTriggeredRest())
+                dispatch(setStoredTime(0))
               }
             }
             else { //On pomodoro end
@@ -213,7 +226,7 @@ export default function TimerControl(props) {
       <TimerCard clockStarted={timerStarted}
         timerState={timerState}
         onClickStartStop={changeTimerState}
-        onClickSkip={ (showWarning && !rest)? openWarningDialog : resetTimer}
+        onClickSkip={(showWarning && !rest) ? openWarningDialog : resetTimer}
         minutes={timerMinuts}
         seconds={timerSeconds}
         pomodoros={pomodoros}

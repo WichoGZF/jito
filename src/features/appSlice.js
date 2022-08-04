@@ -27,6 +27,7 @@ const initialState = {
     seconds: 0,
     //'Regular task' completion time
     completedRegular: false,  
+    normalTriggeredRest: false,
     storedTime: 0, //The time stored
 }
 
@@ -98,11 +99,17 @@ const appSlice = createSlice({
         },
         setStoredTime: (state, action) => {
             state.storedTime = action.payload //In seconds 
+        },
+        setNormalTriggeredRest: (state) => {
+            state.normalTriggeredRest = true
+        },
+        disableNormalTriggeredRest: (state) => {
+            state.normalTriggeredRest = false
         }
     }
 })
 //Could wrap the three 'current' reducers into a single one
 export const { startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, setCalendarDate, currentTag, currentIndex, currentType, initialize,
-    startNewDay, establishPomodoroTime, handleCompletedRegular, setStoredTime } = appSlice.actions
+    startNewDay, establishPomodoroTime, handleCompletedRegular, setStoredTime, setNormalTriggeredRest, disableNormalTriggeredRest} = appSlice.actions
 export default appSlice.reducer
 

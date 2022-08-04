@@ -51,10 +51,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 import { useDispatch } from 'react-redux';
 import {
-  addTask, editTask, deleteTask, addTimeEntry, completeTask, reorderTask, addTag, deleteTag, changeTagName, changeTagColor,
-  updateBlocks, restartTask,
+  addTask, editTask, deleteTask, addTimeEntry, completeTask, reorderTask, addTag, deleteTag, changeTagName,
+  changeTagColor, updateBlocks, restartTask,
 } from '../features/tasksSlice.js'
-import { currentTag, currentIndex, currentType, initialize, establishPomodoroTime, timerNotStarted } from '../features/appSlice.js'
+
+import {
+  currentTag, currentIndex, currentType, initialize, establishPomodoroTime, timerNotStarted
+} from '../features/appSlice.js'
+
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close'
@@ -63,8 +67,9 @@ import { Checkbox, FormControlLabel } from '@mui/material';
 
 import OverdueTaskList from './OverdueTaskList.js';
 
-import { handleCompletedRegular, setHandleTime, setStoredTime, stopRunning, startRest } from '../features/appSlice.js';
-///Redux thunk for adding time entry
+import {
+  handleCompletedRegular, setHandleTime, setStoredTime, stopRunning, startRest, setNormalTriggeredRest
+} from '../features/appSlice.js';
 
 //Dispatches the time entry for the statistics and also dispatches the 'rest' time accumulated. 
 const composeCompleteEntry = (tag) => (dispatch, getState) => {
@@ -82,21 +87,22 @@ const composeStoredTime = (action) => (dispatch, getState) => {
     dispatch(establishPomodoroTime(pomodoroDuration, 0))
   }
   else {
+    const storedTime = getState().app.storedTime
     const secondsRemaining = getState().app.minutes * 60 + getState().app.seconds
     const totalSeconds = pomodoroDuration * 60
     const restToWorkRatio = getState().settings.shortBreakDuration / pomodoroDuration
-    const restConversion = (totalSeconds - secondsRemaining) * restToWorkRatio
+    const restConversion = Math.round((totalSeconds - secondsRemaining) * restToWorkRatio)
     if (action === 'store') {
-      dispatch(setStoredTime(restConversion))
+      dispatch(setStoredTime(storedTime + restConversion))
       dispatch(establishPomodoroTime(pomodoroDuration, 0))
     }
     else if (action === 'use') {
-      //TODO
-      //Proper trunc function in here
-      const restMinutes = restConversion / 60
-      const restSeconds = restConversion % 60
+      const totalRestSeconds = restConversion + storedTime
+      const restMinutes = Math.round(totalRestSeconds / 60)
+      const restSeconds = totalRestSeconds % 60
       dispatch(establishPomodoroTime(restMinutes, restSeconds))
       dispatch(startRest())
+      dispatch(setNormalTriggeredRest())
     }
   }
   dispatch(timerNotStarted())
@@ -126,6 +132,8 @@ function CompletedDialog(props) {
   const completedRegular = useSelector((state) => state.app.completedRegular)
   const dispatch = useDispatch()
 
+  const [rememberSelection, setRememberSelection] = useState(false)
+
   const closeDialog = () => {
     dispatch(handleCompletedRegular())
   }
@@ -136,9 +144,12 @@ function CompletedDialog(props) {
         Task completed
       </DialogTitle>
       <DialogContent>
+        <DialogContentText>
+          What do you want to do with the XX:XX stored?
+        </DialogContentText>
         <FormControlLabel
           control={<Checkbox checked={false}
-            onChange={() => { }} />}
+            onChange={() => { setRememberSelection(!rememberSelection) }} />}
           label="Remember my decision"
         ></FormControlLabel>
       </DialogContent>
