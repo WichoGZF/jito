@@ -63,8 +63,9 @@ import { Checkbox, FormControlLabel } from '@mui/material';
 
 import OverdueTaskList from './OverdueTaskList.js';
 
-import { handleCompletedRegular } from '../features/appSlice.js';
+import { handleCompletedRegular, setHandleTime } from '../features/appSlice.js';
 ///Redux thunk for adding time entry
+
 
 const composeCompleteEntry = (tag) => (dispatch, getState) => {
   const secondsRemaining = getState().app.minutes * 60 + getState().app.seconds
@@ -95,8 +96,12 @@ function NewTask(props) {
 function CompletedDialog(props) {
   //True/false property activated when task is completed
   const completedRegular = useSelector((state) => state.app.completedRegular)
+  const dispatch = useDispatch()
 
-  const emptyFunction = () => { };
+  const handleTimeSelection = (selection) => {
+    dispatch(setHandleTime(selection))
+    dispatch(handleCompletedRegular())
+  }
 
   return (
     <Dialog open={completedRegular}>
@@ -112,9 +117,9 @@ function CompletedDialog(props) {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={emptyFunction}>Store Time</Button>
-        <Button onClick={emptyFunction}>Take a rest</Button>
-        <Button onClick={emptyFunction}>Discard Time</Button>
+        <Button onClick={()=> {handleTimeSelection('store')}}>Store Time</Button>
+        <Button onClick={()=> {handleTimeSelection('rest')}}>Take a rest</Button>
+        <Button onClick={()=> {handleTimeSelection(null)}}>Discard Time</Button>
       </DialogActions>
     </Dialog>
   )
