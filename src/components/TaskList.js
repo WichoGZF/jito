@@ -668,7 +668,7 @@ export default function TaskList(props) {
   let firstTaskAdded = false
   tasks.forEach((task, index) => {
     if (task.repeat !== 'false') {
-      if (!task.completed) {
+      if (!task.completed || todayDate !== calendarDate) {
         console.log('Tag not completed yet!, name: ', task.name, task.completed)
         if (task.repeat === 'daily') {
           allTagTasks.push(taskToListEntry(task, !firstTaskAdded, index))
