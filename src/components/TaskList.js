@@ -59,7 +59,7 @@ import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close'
 import { format } from 'date-fns';
-import Checkbox from '@mui/material';
+import { Checkbox, FormControlLabel } from '@mui/material';
 
 import OverdueTaskList from './OverdueTaskList.js';
 
@@ -95,7 +95,7 @@ function CompletedDialog(props) {
   //True/false property activated when task is completed
   const completedRegular = useSelector((state) => state.app.completedRegular)
 
-  const emptyFunction = () =>  {};
+  const emptyFunction = () => { };
 
   return (
     <Dialog open={completedRegular}>
@@ -103,16 +103,17 @@ function CompletedDialog(props) {
         Task completed
       </DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          What do you want to do with the time?
-          <Checkbox>Remember my decision</Checkbox>
-        </DialogContentText>
+        <FormControlLabel
+          control={<Checkbox checked={false}
+            onChange={() => { }} />}
+          label="Remember my decision"
+        ></FormControlLabel>
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={emptyFunction}>Store</Button>
+        <Button onClick={emptyFunction}>Store Time</Button>
         <Button onClick={emptyFunction}>Take a rest</Button>
-        <Button onClick={emptyFunction}>Discard</Button>
+        <Button onClick={emptyFunction}>Discard Time</Button>
       </DialogActions>
     </Dialog>
   )
@@ -768,6 +769,7 @@ export default function TaskList(props) {
         <NewTask></NewTask>
         {allTagTasks}
         <OverdueTaskList open={!initialized}></OverdueTaskList>
+        <CompletedDialog></CompletedDialog>
       </List>
     </Box>
   )
