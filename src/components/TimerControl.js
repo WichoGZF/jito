@@ -159,7 +159,7 @@ export default function TimerControl(props) {
                 changeTimerState();
                 dispatch(timerNotStarted())
               }
-              (establishPomodoroTime(25, 0))
+              dispatch(establishPomodoroTime(settings.pomodoroDuration, 0))
               if (pomodoros === settings.longBreakEvery) {
                 setPomodoros(0)
               }
