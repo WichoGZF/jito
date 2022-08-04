@@ -325,7 +325,6 @@ function ListEntry(props) {
           <ListItemIcon
             onMouseEnter={(e) => setCompleteHover(true)}
             onMouseLeave={(e) => setCompleteHover(false)}
-            onClick={dispatchCompleteTask}
           >
             {entryIcon}
 
