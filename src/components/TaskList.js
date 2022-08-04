@@ -63,15 +63,16 @@ import { Checkbox, FormControlLabel } from '@mui/material';
 
 import OverdueTaskList from './OverdueTaskList.js';
 
-import { handleCompletedRegular, setHandleTime } from '../features/appSlice.js';
+import { handleCompletedRegular, setHandleTime, setStoredTime } from '../features/appSlice.js';
 ///Redux thunk for adding time entry
 
-
+//Dispatches the time entry for the statistics and also dispatches the 'rest' time accumulated. 
 const composeCompleteEntry = (tag) => (dispatch, getState) => {
   const secondsRemaining = getState().app.minutes * 60 + getState().app.seconds
   const totalSeconds = getState().settings.pomodoroDuration * 60
   const todayDate = getState().app.todayDate
-  dispatch(addTimeEntry(todayDate, totalSeconds - secondsRemaining, tag))
+  const secondsElapsed = totalSeconds - secondsRemaining
+  dispatch(addTimeEntry(todayDate, secondsElapsed, tag))
 }
 
 function NewTask(props) {
@@ -117,9 +118,9 @@ function CompletedDialog(props) {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={()=> {handleTimeSelection('store')}}>Store Time</Button>
-        <Button onClick={()=> {handleTimeSelection('rest')}}>Take a rest</Button>
-        <Button onClick={()=> {handleTimeSelection(null)}}>Discard Time</Button>
+        <Button onClick={() => { handleTimeSelection('store') }}>Store Time</Button>
+        <Button onClick={() => { handleTimeSelection('rest') }}>Take a rest</Button>
+        <Button onClick={() => { handleTimeSelection(null) }}>Discard Time</Button>
       </DialogActions>
     </Dialog>
   )

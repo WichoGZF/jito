@@ -1,3 +1,4 @@
+import { start } from '@popperjs/core'
 import { createSlice } from '@reduxjs/toolkit'
 import { format } from 'date-fns'
 
@@ -18,8 +19,8 @@ const initialState = {
     index: null,
     type: null, 
     //Clock timer state
-    running: false,
-    resting: false,
+    timerState: false,
+    rest: false,
     //Clock timer time 
     minutes: 0,
     seconds: 0,
@@ -34,10 +35,16 @@ const appSlice = createSlice({
     initialState,
     reducers: {
         startRunning: (state) => {
-            state.running = true
+            state.timerState = true
         },
         stopRunning: (state) => {
-            state.running = false
+            state.timerState = false
+        },
+        startRest: (state) => {
+            state.rest = true
+        },
+        endRest: (state) => {
+            state.rest = false
         },
         setCalendarDate: (state, action) => {
             const date = action.payload
@@ -92,7 +99,7 @@ const appSlice = createSlice({
     }
 })
 //Could wrap the three 'current' reducers into a single one
-export const { startRunning, stopRunning, setCalendarDate, currentTag, currentIndex, currentType, initialize,
+export const { startRunning, stopRunning, startRest, endRest, setCalendarDate, currentTag, currentIndex, currentType, initialize,
     startNewDay, establishPomodoroTime, handleCompletedRegular, setHandleTime, setStoredTime } = appSlice.actions
 export default appSlice.reducer
 

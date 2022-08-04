@@ -23,7 +23,7 @@ import notifications from '../sounds/tones.mp3'
 //ticking sounds
 import tickers from '../sounds/tickers.mp3'
 
-import { startRunning, stopRunning, establishPomodoroTime } from '../features/appSlice.js'
+import { startRunning, stopRunning, startRest, endRest, establishPomodoroTime } from '../features/appSlice.js'
 import { updateBlocks } from '../features/tasksSlice.js';
 
 //Optimization 
@@ -35,18 +35,22 @@ export default function TimerControl(props) {
   const actualTag = useSelector(state => state.app.tag)
   const actualIndex = useSelector(state => state.app.index)
   const todayDate = useSelector(state => state.app.todayDate)
-  //Minutes && seconds
+  //TimerState
   const timerMinuts = useSelector(state => state.app.minutes)
   const timerSeconds = useSelector(state => state.app.seconds)
+  const timerState = useSelector(state => state.app.timerState)
+  const rest = useSelector(state=> state.app.rest)
+
+  //How to handle extra time 
+  const handleTime = useSelector(state => state.app.handleTime)
+  
   //Dispatch
   const dispatch = useDispatch()
 
-  const [timerState, setTimerState] = useState(false);
   const [clockStarted, setClockStarted] = useState(false);
-  const [rest, setRest] = useState(false);
   const [pomodoros, setPomodoros] = useState(0);
+  const [showWarning, setShowWarning] = useState(true)
   const [warningDialog, setWarningDialog] = useState(false);
-  const [showWarning, setShowWarning] = useState(true);
 
   console.log('Settings in timer control: ', settings)
 
@@ -94,19 +98,18 @@ export default function TimerControl(props) {
   }
 
   const changeTimerState = () => {
-     setTimerState(!timerState);
+     if(timerState){
+      dispatch(stopRunning())
+     }
+     else{
+      dispatch(startRunning())
+     }
   }
 
-  const turnOnClockState = () => {
-    setClockStarted(true);
-  }
-
-  /*Function for resetting the timer back to it's starting value. Acessed when skip is pressed or when a task is finished
-  and the clock is non zero.*/
   function resetTimer() {
     dispatch(establishPomodoroTime(settings.pomodoroDuration, 0))
     setClockStarted(false)
-    setTimerState(false)
+    dispatch(stopRunning)
   }
 
   const handleWarningDialog = () => {
@@ -119,13 +122,12 @@ export default function TimerControl(props) {
   }
 
   useEffect(() => {
-    console.log(timerMinuts, timerSeconds)
-
     //if the timer is on and the clock hasn't been set to started, start
     if (timerState) {
       if (!clockStarted) {
         setClockStarted(true);
-      }
+      }        
+      
       const interval = setInterval(() => {
         if (timerSeconds === 0) {
           if (timerMinuts === 0) {
@@ -133,7 +135,7 @@ export default function TimerControl(props) {
               if (settings.alarmOnBreakEnd) {
                 alarm({ id: settings.alarmSound })
               }
-              setRest(false)
+              dispatch(endRest())
               if (!settings.automaticPomodoroStart) {
                 changeTimerState();
                 setClockStarted(false)
@@ -159,7 +161,7 @@ export default function TimerControl(props) {
                 changeTimerState();
                 setClockStarted(false)
               }
-              setRest(true)
+              dispatch(startRest())
               setPomodoros(pomodoros + 1)
               dispatchPomodoro()
               //"UpdateBlocks" reducer already handles the logic for how to update the specific task (only need index)
