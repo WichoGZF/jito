@@ -54,7 +54,7 @@ import {
   addTask, editTask, deleteTask, addTimeEntry, completeTask, reorderTask, addTag, deleteTag, changeTagName, changeTagColor,
   updateBlocks, restartTask,
 } from '../features/tasksSlice.js'
-import { currentTag, currentIndex, currentType, initialize, establishPomodoroTime } from '../features/appSlice.js'
+import { currentTag, currentIndex, currentType, initialize, establishPomodoroTime, timerNotStarted } from '../features/appSlice.js'
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close'
@@ -75,31 +75,31 @@ const composeCompleteEntry = (tag) => (dispatch, getState) => {
   dispatch(addTimeEntry(todayDate, secondsElapsed, tag))
 }
 
-const composeStoredTime = (action) => (dispatch, getState) => {
-  if(action === 'discard'){
-    //Reset clock to settings and unstart it 
-  }
-  else{
-    const pomodoroDuration = getState().settings.pomodoroDuration
 
+const composeStoredTime = (action) => (dispatch, getState) => {
+  const pomodoroDuration = getState().settings.pomodoroDuration
+  if (action === 'discard') {
+    dispatch(establishPomodoroTime(pomodoroDuration, 0))
+  }
+  else {
     const secondsRemaining = getState().app.minutes * 60 + getState().app.seconds
     const totalSeconds = pomodoroDuration * 60
-    const restToWorkRatio = getState().settings.shortBreakDuration/ pomodoroDuration
+    const restToWorkRatio = getState().settings.shortBreakDuration / pomodoroDuration
     const restConversion = (totalSeconds - secondsRemaining) * restToWorkRatio
-    if(action === 'store'){
+    if (action === 'store') {
       dispatch(setStoredTime(restConversion))
       dispatch(establishPomodoroTime(pomodoroDuration, 0))
     }
-    else if (action === 'use'){
+    else if (action === 'use') {
       //TODO
       //Proper trunc function in here
-      const restMinutes = restConversion/60 
-      const restSeconds = restConversion%60
+      const restMinutes = restConversion / 60
+      const restSeconds = restConversion % 60
       dispatch(establishPomodoroTime(restMinutes, restSeconds))
       dispatch(startRest())
     }
   }
-
+  dispatch(timerNotStarted())
 }
 
 function NewTask(props) {
@@ -126,8 +126,7 @@ function CompletedDialog(props) {
   const completedRegular = useSelector((state) => state.app.completedRegular)
   const dispatch = useDispatch()
 
-  const handleTimeSelection = (selection) => {
-    dispatch(setHandleTime(selection))
+  const closeDialog = () => {
     dispatch(handleCompletedRegular())
   }
 
@@ -145,9 +144,22 @@ function CompletedDialog(props) {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={() => { handleTimeSelection('store') }}>Store Time</Button>
-        <Button onClick={() => { handleTimeSelection('rest') }}>Take a rest</Button>
-        <Button onClick={() => { handleTimeSelection(null) }}>Discard Time</Button>
+        <Button onClick={() => {
+          console.log('Debugging, entering button click')
+          dispatch(composeStoredTime('store'))
+          closeDialog()
+          console.log('Debugging, leaving button click')
+        }}>Store Time</Button>
+        <Button onClick={() => {
+          console.log('Debugging, entering button click')
+          dispatch(composeStoredTime('use'))
+          closeDialog()
+          console.log('Debugging, leaving button click')
+        }}>Take a rest</Button>
+        <Button onClick={() => {
+          dispatch(composeStoredTime('discard'))
+          closeDialog()
+        }}>Discard Time</Button>
       </DialogActions>
     </Dialog>
   )
