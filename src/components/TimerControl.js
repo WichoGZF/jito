@@ -129,7 +129,7 @@ export default function TimerControl(props) {
 
   const openWarningDialog = () => {
     setWarningDialog(true);
-    changeTimerState()
+    dispatch(stopRunning())
   }
 
   useEffect(() => {
