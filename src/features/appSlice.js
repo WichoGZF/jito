@@ -21,6 +21,7 @@ const initialState = {
     //Clock timer state
     timerState: false,
     rest: false,
+    timerStarted: false,
     //Clock timer time 
     minutes: 0,
     seconds: 0,
@@ -45,6 +46,12 @@ const appSlice = createSlice({
         },
         endRest: (state) => {
             state.rest = false
+        },
+        timerHasStarted: (state) => {
+            state.timerStarted = true
+        },
+        timerNotStarted: (state) => {
+            state.timerStarted = false
         },
         setCalendarDate: (state, action) => {
             const date = action.payload
@@ -71,7 +78,7 @@ const appSlice = createSlice({
             state.calendarDate = format(new Date, 'MM/dd/yyyy')
             state.todayDate = format(new Date, 'MM/dd/yyyy')
         },
-        establishPomodoroTime: {
+        establishPomodoroTime: { //QoL Misleading name, not only it encompasses pomodoros but also rests
             reducer(state, action) {
                 const { minutes, seconds } = action.payload
                 state.minutes = minutes
@@ -99,7 +106,7 @@ const appSlice = createSlice({
     }
 })
 //Could wrap the three 'current' reducers into a single one
-export const { startRunning, stopRunning, startRest, endRest, setCalendarDate, currentTag, currentIndex, currentType, initialize,
+export const { startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, setCalendarDate, currentTag, currentIndex, currentType, initialize,
     startNewDay, establishPomodoroTime, handleCompletedRegular, setHandleTime, setStoredTime } = appSlice.actions
 export default appSlice.reducer
 

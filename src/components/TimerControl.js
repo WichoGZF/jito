@@ -23,7 +23,7 @@ import notifications from '../sounds/tones.mp3'
 //ticking sounds
 import tickers from '../sounds/tickers.mp3'
 
-import { startRunning, stopRunning, startRest, endRest, establishPomodoroTime } from '../features/appSlice.js'
+import { startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, establishPomodoroTime } from '../features/appSlice.js'
 import { updateBlocks } from '../features/tasksSlice.js';
 
 //Optimization 
@@ -39,6 +39,7 @@ export default function TimerControl(props) {
   const timerMinuts = useSelector(state => state.app.minutes)
   const timerSeconds = useSelector(state => state.app.seconds)
   const timerState = useSelector(state => state.app.timerState)
+  const timerStarted = useSelector(state => state.app.timerStarted)
   const rest = useSelector(state=> state.app.rest)
 
   //How to handle extra time 
@@ -47,7 +48,6 @@ export default function TimerControl(props) {
   //Dispatch
   const dispatch = useDispatch()
 
-  const [clockStarted, setClockStarted] = useState(false);
   const [pomodoros, setPomodoros] = useState(0);
   const [showWarning, setShowWarning] = useState(true)
   const [warningDialog, setWarningDialog] = useState(false);
@@ -108,7 +108,7 @@ export default function TimerControl(props) {
 
   function resetTimer() {
     dispatch(establishPomodoroTime(settings.pomodoroDuration, 0))
-    setClockStarted(false)
+    dispatch(timerNotStarted())
     dispatch(stopRunning)
   }
 
@@ -124,8 +124,8 @@ export default function TimerControl(props) {
   useEffect(() => {
     //if the timer is on and the clock hasn't been set to started, start
     if (timerState) {
-      if (!clockStarted) {
-        setClockStarted(true);
+      if (!timerStarted) {
+        dispatch(timerHasStarted())
       }        
       
       const interval = setInterval(() => {
@@ -138,7 +138,7 @@ export default function TimerControl(props) {
               dispatch(endRest())
               if (!settings.automaticPomodoroStart) {
                 changeTimerState();
-                setClockStarted(false)
+                dispatch(timerNotStarted())
               }
                (establishPomodoroTime(25, 0))
               if (pomodoros === settings.longBreakEvery) {
@@ -159,7 +159,7 @@ export default function TimerControl(props) {
               }
               if (!settings.automaticBreakStart) {
                 changeTimerState();
-                setClockStarted(false)
+                dispatch(timerNotStarted())
               }
               dispatch(startRest())
               setPomodoros(pomodoros + 1)
@@ -202,9 +202,13 @@ export default function TimerControl(props) {
   }, [1])
 
   console.log(settings.longBreakEvery)
+  /*
+  qol
+  Can move many of the props inside the TimerCard component since they're directly handled by redux.
+  */
   return (
     <>
-      <TimerCard clockStarted={clockStarted}
+      <TimerCard clockStarted={timerStarted}
         timerState={timerState}
         onClickStartStop={changeTimerState}
         onClickSkip={showWarning ? openWarningDialog : resetTimer}

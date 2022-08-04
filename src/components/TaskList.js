@@ -54,7 +54,7 @@ import {
   addTask, editTask, deleteTask, addTimeEntry, completeTask, reorderTask, addTag, deleteTag, changeTagName, changeTagColor,
   updateBlocks, restartTask,
 } from '../features/tasksSlice.js'
-import { currentTag, currentIndex, currentType, initialize } from '../features/appSlice.js'
+import { currentTag, currentIndex, currentType, initialize, establishPomodoroTime } from '../features/appSlice.js'
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
 import CloseIcon from '@mui/icons-material/Close'
@@ -63,7 +63,7 @@ import { Checkbox, FormControlLabel } from '@mui/material';
 
 import OverdueTaskList from './OverdueTaskList.js';
 
-import { handleCompletedRegular, setHandleTime, setStoredTime } from '../features/appSlice.js';
+import { handleCompletedRegular, setHandleTime, setStoredTime, stopRunning, startRest } from '../features/appSlice.js';
 ///Redux thunk for adding time entry
 
 //Dispatches the time entry for the statistics and also dispatches the 'rest' time accumulated. 
@@ -73,6 +73,33 @@ const composeCompleteEntry = (tag) => (dispatch, getState) => {
   const todayDate = getState().app.todayDate
   const secondsElapsed = totalSeconds - secondsRemaining
   dispatch(addTimeEntry(todayDate, secondsElapsed, tag))
+}
+
+const composeStoredTime = (action) => (dispatch, getState) => {
+  if(action === 'discard'){
+    //Reset clock to settings and unstart it 
+  }
+  else{
+    const pomodoroDuration = getState().settings.pomodoroDuration
+
+    const secondsRemaining = getState().app.minutes * 60 + getState().app.seconds
+    const totalSeconds = pomodoroDuration * 60
+    const restToWorkRatio = getState().settings.shortBreakDuration/ pomodoroDuration
+    const restConversion = (totalSeconds - secondsRemaining) * restToWorkRatio
+    if(action === 'store'){
+      dispatch(setStoredTime(restConversion))
+      dispatch(establishPomodoroTime(pomodoroDuration, 0))
+    }
+    else if (action === 'use'){
+      //TODO
+      //Proper trunc function in here
+      const restMinutes = restConversion/60 
+      const restSeconds = restConversion%60
+      dispatch(establishPomodoroTime(restMinutes, restSeconds))
+      dispatch(startRest())
+    }
+  }
+
 }
 
 function NewTask(props) {
@@ -282,6 +309,7 @@ function ListEntry(props) {
           dispatchCompleteTask()
           dispatchTimeEntry()
           dispatch(handleCompletedRegular())
+          dispatch(stopRunning())
         }
 
       }>{completeHover ? <CheckOutlinedIcon></CheckOutlinedIcon> : <CircleOutlined></CircleOutlined>}</IconButton>
