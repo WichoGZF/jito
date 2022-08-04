@@ -80,11 +80,19 @@ const appSlice = createSlice({
             }
 
         },
-
+        handleCompletedRegular: (state) => {
+            state.completedRegular = !state.completedRegular
+        },
+        setHandleTime: (state, action) => {
+            state.handleTime = action.payload
+        },
+        setStoredTime: (state, action) => {
+            state.storedTime = action.payload //In seconds 
+        }
     }
 })
 //Could wrap the three 'current' reducers into a single one
 export const { startRunning, stopRunning, setCalendarDate, currentTag, currentIndex, currentType, initialize,
-    startNewDay, establishPomodoroTime } = appSlice.actions
+    startNewDay, establishPomodoroTime, handleCompletedRegular, setHandleTime, setStoredTime } = appSlice.actions
 export default appSlice.reducer
 
