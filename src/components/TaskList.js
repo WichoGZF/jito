@@ -65,10 +65,10 @@ import OverdueTaskList from './OverdueTaskList.js';
 ///Redux thunk for adding time entry
 
 const composeCompleteEntry = (tag) => (dispatch, getState) => {
-const secondsRemaining = getState().app.minutes*60 + getState().app.seconds
-const totalSeconds = getState().settings.pomodoroDuration*60
+  const secondsRemaining = getState().app.minutes * 60 + getState().app.seconds
+  const totalSeconds = getState().settings.pomodoroDuration * 60
   const todayDate = getState().app.todayDate
-  dispatch(addTimeEntry(todayDate, totalSeconds-secondsRemaining, tag))
+  dispatch(addTimeEntry(todayDate, totalSeconds - secondsRemaining, tag))
 }
 
 function NewTask(props) {
@@ -627,8 +627,9 @@ export default function TaskList(props) {
   const tags = useSelector(state => state.tasks.tags)
   const calendarDate = useSelector(state => state.app.calendarDate)
   const initializedDate = useSelector(state => state.app.initialized)
+  const todayDate = useSelector(state => state.app.todayDate)
 
-  const initialized = initializedDate === format(new Date, 'MM/dd/yyyy')
+  const initialized = initializedDate === todayDate
 
   function nextTodoId(todos) {
     const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1)
@@ -653,7 +654,6 @@ export default function TaskList(props) {
       ></ListEntry>
     )
   }
-  const todayDate = format(new Date, 'MM/dd/yyyy')
   const splitCalendarDate = calendarDate.split('/')
   const [month, calendarDay, year] = splitCalendarDate
   const realCalendarDate = new Date(year, month, calendarDay)
@@ -669,7 +669,7 @@ export default function TaskList(props) {
   tasks.forEach((task, index) => {
     if (task.repeat !== 'false') {
       if (!task.completed) {
-        console.log('Tag not completed yet!, name: ',task.name, task.completed)
+        console.log('Tag not completed yet!, name: ', task.name, task.completed)
         if (task.repeat === 'daily') {
           allTagTasks.push(taskToListEntry(task, !firstTaskAdded, index))
           if (!firstTaskAdded) {
@@ -717,7 +717,8 @@ export default function TaskList(props) {
       dispatch(currentType(firstTaskType));
     }
     /*Task initiliazing */
-    if (initialized === todayDate) {
+    console.log('Initialized: ', initialized)
+    if (initialized) {
       console.log('App initialized already')
     }
     else {
