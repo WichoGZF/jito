@@ -9,17 +9,24 @@ const minutesPastMidnight = minutes + (hours * 60)
 
 //Type property is not used, should be removed. 
 const initialState = {
+    //Dates
     calendarDate: todayDate,
     initialized: format(new Date("2022", "05", "23"), 'MM/dd/yyyy'), //move into tasks slice
     todayDate: todayDate,
+    //First task properties
     tag: null,
     index: null,
     type: null, 
+    //Clock timer state
     running: false,
     resting: false,
+    //Clock timer time 
     minutes: 0,
     seconds: 0,
-
+    //'Regular task' completion time
+    completedRegular: false,  
+    handleTime: null,  //How to handle the time stored 'null' - 'store' -'use'
+    storedTime: 0, //The time stored
 }
 
 const appSlice = createSlice({
