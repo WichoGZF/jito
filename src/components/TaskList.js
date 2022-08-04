@@ -183,6 +183,9 @@ function ListEntry(props) {
 
   const todayDate = useSelector((state) => state.app.todayDate)
   const calendarDate = useSelector((state) => state.app.calendarDate)
+  
+  const timerState = useSelector((state) => state.app.timerState)
+  const timerStarted = useSelector((state) => state.app.timerStarted)
 
   const [onHover, setOnHover] = useState({ display: 'none' })
   const [completeHover, setCompleteHover] = useState(false)
@@ -257,6 +260,10 @@ function ListEntry(props) {
     },
     drop(item, monitor) {
       if (!ref.current) {
+        return;
+      }
+      
+      if (timerState || timerStarted){
         return;
       }
 
@@ -377,7 +384,7 @@ function ListEntry(props) {
             '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
             borderBottom: borderBottom,
             borderTop: borderTop,
-            borderColor: "primary.main"
+            borderColor: (timerStarted || timerState) ? "gray": "primary.main"
           }}
           onMouseEnter={(e) => setOnHover({ display: 'block' })}
           onMouseLeave={(e) => setOnHover({ display: 'none' })}
