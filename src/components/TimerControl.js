@@ -25,7 +25,7 @@ import tickers from '../sounds/tickers.mp3'
 
 import {
   startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, establishPomodoroTime,
-  disableNormalTriggeredRest, setStoredTime
+  disableNormalTriggeredRest, setStoredTime, setCalendarDate
 } from '../features/appSlice.js'
 import { updateBlocks } from '../features/tasksSlice.js';
 
@@ -38,6 +38,7 @@ export default function TimerControl(props) {
   const actualTag = useSelector(state => state.app.tag)
   const actualIndex = useSelector(state => state.app.index)
   const todayDate = useSelector(state => state.app.todayDate)
+  const calendarDate = useSelector(state => state.app.calendarDate)
   //TimerState
   const timerMinuts = useSelector(state => state.app.minutes)
   const timerSeconds = useSelector(state => state.app.seconds)
@@ -109,6 +110,13 @@ export default function TimerControl(props) {
   }
 
   const changeTimerState = () => {
+    if(!rest){
+      if(!timerStarted){
+        if(todayDate !== calendarDate){
+          dispatch(setCalendarDate(todayDate))
+        }
+      }
+    }
     if (timerState) {
       dispatch(stopRunning())
     }
