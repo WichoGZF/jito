@@ -63,6 +63,7 @@ import { Checkbox, FormControlLabel } from '@mui/material';
 
 import OverdueTaskList from './OverdueTaskList.js';
 
+import { handleCompletedRegular } from '../features/appSlice.js';
 ///Redux thunk for adding time entry
 
 const composeCompleteEntry = (tag) => (dispatch, getState) => {
@@ -274,6 +275,7 @@ function ListEntry(props) {
         () => {
           dispatchCompleteTask()
           dispatchTimeEntry()
+          dispatch(handleCompletedRegular())
         }
 
       }>{completeHover ? <CheckOutlinedIcon></CheckOutlinedIcon> : <CircleOutlined></CircleOutlined>}</IconButton>
