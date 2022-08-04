@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const mockSettings = {
-    pomodoroDuration: 25,
+    pomodoroDuration: 1,
     shortBreakDuration: 5,
     longBreakDuration: 15,
     longBreakEvery: 4, //pomodoros

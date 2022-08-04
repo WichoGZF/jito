@@ -34,7 +34,7 @@ export default function TimerControl(props) {
   const settings = useSelector(state => state.settings)
   const actualTag = useSelector(state => state.app.tag)
   const actualIndex = useSelector(state => state.app.index)
-  const actualType = useSelector(state => state.app.type)
+  const todayDate = useSelector(state => state.app.todayDate)
   //Minutes && seconds
   const timerMinuts = useSelector(state => state.app.minutes)
   const timerSeconds = useSelector(state => state.app.seconds)
@@ -90,7 +90,7 @@ export default function TimerControl(props) {
   }
 
   const dispatchPomodoro = () => {
-    dispatch(addTimeEntry(settings.pomodoroDuration * 60, actualTag))
+    dispatch(addTimeEntry(todayDate, settings.pomodoroDuration * 60, actualTag))
   }
 
   const changeTimerState = () => {
