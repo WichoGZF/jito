@@ -39,7 +39,7 @@ function App() {
     const minutes = dateInDateType.getMinutes()
 
     const actualMinutesInDay = hours * 60 + minutes
-    const remainingMinutes = 24 ^ 60 - actualMinutesInDay
+    const remainingMinutes = 24 * 60 - actualMinutesInDay
     const remainingMiliseconds = remainingMinutes * 60 * 1000
     setTimeout(() => {
       dispatch(startNewDay())
