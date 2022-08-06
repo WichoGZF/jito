@@ -98,7 +98,8 @@ function a11yProps(index) {
         'aria-controls': `simple-tabpanel-${index}`,
     };
 }
-
+//Optimiziation:
+//Add a reducer for each of the settings... 
 
 const DialogSettings = (props) => {
     const settings = useSelector(state => state.settings)
@@ -126,7 +127,9 @@ const DialogSettings = (props) => {
     const [hoursPastMidnight, setHoursPastMidnight] = useState(settings.hoursPastMidnight)
     const [language, setLanguage] = useState(settings.language)
 
-    console.log('Settings in navbar dialog:', settings)
+    console.log("tickingSoundOnBreak: ", tickingSoundOnBreak)
+    console.log("tickingSoundOnPomodoro: ", tickingSoundOnPomodoro)
+
 
     const handleChangeTabSelected = (event, newValue) => {
         setTabSelected(newValue)
@@ -228,7 +231,7 @@ const DialogSettings = (props) => {
                                     <Typography>Automatic pomodoro start:</Typography>
                                 </Grid>
                                 <Grid item xs="auto">
-                                    <Switch value={automaticPomodoroStart}
+                                    <Switch checked={automaticPomodoroStart}
                                         onChange={() => setAutomaticPomodoroStart(!automaticPomodoroStart)}></Switch>
                                 </Grid>
                             </Grid>
@@ -240,7 +243,7 @@ const DialogSettings = (props) => {
                                 </Grid>
                                 <Grid item xs="auto">
                                     <Switch
-                                        value={automaticBreakStart}
+                                        checked={automaticBreakStart}
                                         onChange={() => setAutomaticBreakStart(!automaticBreakStart)}></Switch>
                                 </Grid>
                             </Grid>
@@ -336,7 +339,7 @@ const DialogSettings = (props) => {
                                     <Typography>Alarm on pomodoro end</Typography>
                                 </Grid>
                                 <Grid item xs='auto'>
-                                    <Switch value={alarmOnPomodoroEnd}
+                                    <Switch checked={alarmOnPomodoroEnd}
                                         onChange={() => { setAlarmOnPomodoroEnd(!alarmOnPomodoroEnd) }}></Switch>
                                 </Grid>
                             </Grid>
@@ -347,7 +350,7 @@ const DialogSettings = (props) => {
                                     <Typography>Alarm on break end</Typography>
                                 </Grid>
                                 <Grid item xs='auto'>
-                                    <Switch value={alarmOnBreakEnd}
+                                    <Switch checked={alarmOnBreakEnd}
                                         onChange={() => { setAlarmOnBreakEnd(!alarmOnBreakEnd) }}></Switch>
                                 </Grid>
                             </Grid>
@@ -369,7 +372,7 @@ const DialogSettings = (props) => {
                                     <Typography>Ticking sound on pomodoro</Typography>
                                 </Grid>
                                 <Grid item xs='auto'>
-                                    <Switch value={tickingSoundOnPomodoro}
+                                    <Switch checked={tickingSoundOnPomodoro}
                                         onChange={() => { setTickingSoundOnPomodoro(!tickingSoundOnPomodoro) }}></Switch>
                                 </Grid>
                             </Grid>
