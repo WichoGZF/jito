@@ -183,7 +183,7 @@ function ListEntry(props) {
 
   const todayDate = useSelector((state) => state.app.todayDate)
   const calendarDate = useSelector((state) => state.app.calendarDate)
-  
+
   const timerState = useSelector((state) => state.app.timerState)
   const timerStarted = useSelector((state) => state.app.timerStarted)
 
@@ -262,8 +262,8 @@ function ListEntry(props) {
       if (!ref.current) {
         return;
       }
-      
-      if (timerState || timerStarted){
+
+      if (timerState || timerStarted) {
         return;
       }
 
@@ -384,7 +384,7 @@ function ListEntry(props) {
             '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
             borderBottom: borderBottom,
             borderTop: borderTop,
-            borderColor: (timerStarted || timerState) ? "gray": "primary.main"
+            borderColor: (timerStarted || timerState) ? "gray" : "primary.main"
           }}
           onMouseEnter={(e) => setOnHover({ display: 'block' })}
           onMouseLeave={(e) => setOnHover({ display: 'none' })}
@@ -422,10 +422,13 @@ function ListEntry(props) {
             {entryIcon}
 
           </ListItemIcon>
-          <ListItemText primary={props.text} secondary={props.description}>
+          <ListItemText
+            primaryTypographyProps={{ color: "text.primary" }}
+            primary={props.text}
+            secondary={props.description} >
           </ListItemText>
 
-          {props.repeat !== 'false' ? <RepeatIcon sx={{ marginRight: 1, color: "rgba(0, 0, 0, 0.6)" }}></RepeatIcon> : null}
+          {props.repeat !== 'false' ? <RepeatIcon sx={{ marginRight: 1, color: "text.secondary" }}></RepeatIcon> : null}
           <Chip label={props.tag} sx={{ backgroundColor: tagColor }}></Chip>
         </ListItem>
       </>
@@ -829,7 +832,7 @@ export default function TaskList(props) {
 
   return (
     <Box>
-      <Typography variant="overline" sx={{ pl: 1 }}>Scheduled tasks</Typography>
+      <Typography variant="overline" color="text.primary" sx={{ pl: 1 }}>Scheduled tasks</Typography>
       <List>
         <Divider></Divider>
         <NewTask></NewTask>

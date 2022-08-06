@@ -16,6 +16,7 @@ import { Divider } from '@mui/material';
 
 import { useDispatch, useSelector } from 'react-redux'
 import { setCalendarDate, startNewDay } from './features/appSlice.js'
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const composeResetDay = (tag) => (dispatch, getState) => {
   dispatch(startNewDay(getState().setting.pomodoroDuration))
@@ -30,6 +31,8 @@ function App() {
   const date = useSelector((state) => state.app.calendarDate);
   const timerStarted = useSelector((state) => state.app.timerStarted);
   const timerState = useSelector((state) => state.app.timerState);
+
+  const colorTheme = useSelector((state) => state.settings.colorTheme)
 
   const dispatchCalendarChange = (newDate) => {
     dispatch(setCalendarDate(format(newDate, 'MM/dd/yyyy')))
@@ -51,38 +54,66 @@ function App() {
     }, remainingMiliseconds)
   }, [])
 
+  let theme
+  if (colorTheme === "dark") {
+    theme = createTheme({
+      palette: {
+        mode: 'dark',
+        primary: {
+          main: 'rgb(217, 85, 80)'
+        }
+      },
+    });
+  }
+  else {
+    theme = createTheme({
+      palette: {
+        text: {
+          primary: "#616161",
+        },
+        primary: {
+          main: 'rgb(217, 85, 80)'
+        }
+
+      },
+    });
+  }
+
+
   return (
-    <Box sx={{ minWidth: '700px' }}>
-      <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
-      <Grid container spacing={4} sx={{ marginTop: '5px' }}>
-        <Grid container item
-          xs="auto"
-          spacing={3}
-          direction='column'
-          justifyContent="flex-start"
-          alignItems="stretch"
-          sx={{ pl: 0, pt: 0, position: 'sticky' }}>
+    <ThemeProvider theme={theme}>
+      <Box sx={{ minWidth: '700px', backgroundColor: 'background.default' }}>
+        <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
+        <Grid container spacing={4} sx={{ marginTop: '5px' }}>
+          <Grid container item
+            xs="auto"
+            spacing={3}
+            direction='column'
+            justifyContent="flex-start"
+            alignItems="stretch"
+            sx={{ pl: 0, pt: 0, position: 'sticky' }}>
 
-          <Grid item sx={{ width: '100%' }}>
-            <TimerControl></TimerControl>
-          </Grid>
-          <Grid item>
-            <Divider></Divider>
-          </Grid>
-          <Grid item sx={{ width: '100%' }}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <CalendarPicker disablePast date={dateInDateType} onChange={dispatchCalendarChange}
-                disabled={timerState || timerStarted} />  
-            </LocalizationProvider>
+            <Grid item sx={{ width: '100%' }}>
+              <TimerControl></TimerControl>
+            </Grid>
+            <Grid item>
+              <Divider></Divider>
+            </Grid>
+            <Grid item sx={{ width: '100%' }}>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <CalendarPicker disablePast date={dateInDateType} onChange={dispatchCalendarChange}
+                  disabled={timerState || timerStarted} />
+              </LocalizationProvider>
 
+            </Grid>
+            <Divider orientation="vertical"></Divider>
           </Grid>
-          <Divider orientation="vertical"></Divider>
+          <Grid item xs>
+            <TaskList></TaskList>
+          </Grid>
         </Grid>
-        <Grid item xs>
-          <TaskList></TaskList>
-        </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </ThemeProvider>
   );
 }
 

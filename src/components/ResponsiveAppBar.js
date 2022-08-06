@@ -144,9 +144,9 @@ const DialogSettings = (props) => {
                 longBreakEvery: parseInt(longBreakEvery), //pomodoros
                 automaticPomodoroStart: automaticPomodoroStart,
                 automaticBreakStart: automaticBreakStart,
-        
+
                 // notification
-        
+
                 alarmVolume: alarmVolume,
                 alarmSound: alarmSound,
                 tickingVolume: tickingVolume,
@@ -156,7 +156,7 @@ const DialogSettings = (props) => {
                 tickingSoundOnBreak: tickingSoundOnBreak,
                 tickingSoundOnPomodoro: tickingSoundOnPomodoro,
                 //app
-        
+
                 colorTheme: colorTheme,
                 hoursPastMidnight: parseInt(hoursPastMidnight),
                 language: language
@@ -219,7 +219,7 @@ const DialogSettings = (props) => {
 
                         </Grid>
                         <Grid item>
-                            <TextField  label="Long break every" helperText="Pomodoros"
+                            <TextField label="Long break every" helperText="Pomodoros"
                                 value={longBreakEvery}
                                 onChange={(event) => setLongBreakEvery(event.target.value)}
                                 sx={{ width: "100%" }}
@@ -382,11 +382,42 @@ const DialogSettings = (props) => {
                 <TabPanel value={tabSelected} index={2}>
                     <Grid container spacing={2} direction="column" >
                         <Grid item>
-                            <TextField label="Start new day at" helperText="Hours past midnight"
-                                value={hoursPastMidnight}
-                                onChange={(event) => setHoursPastMidnight(event.target.value)}
-                                sx={{ width: "100%" }}
-                            ></TextField>
+                            <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
+                                <Grid item xs='auto'>
+                                    <Typography>Start new day at</Typography>
+                                </Grid>
+                                <Grid item xs='6'>
+                                    <Select
+                                        sx={{ width: "100%" }}
+                                        value={hoursPastMidnight}
+                                        onChange={(event) => { setHoursPastMidnight(event.target.value) }}>
+                                        <MenuItem value="0">0 hours past midnight</MenuItem>
+                                        <MenuItem value="1">1 hours past midnight</MenuItem>
+                                        <MenuItem value="2">2 hours past midnight</MenuItem>
+                                        <MenuItem value="3">3 hours past midnight</MenuItem>
+                                        <MenuItem value="4">4 hours past midnight</MenuItem>
+                                        <MenuItem value="5">5 hours past midnight</MenuItem>
+                                        <MenuItem value="6">6 hours past midnight</MenuItem>
+                                        <MenuItem value="7">7 hours past midnight</MenuItem>
+                                        <MenuItem value="8">8 hours past midnight</MenuItem>
+                                        <MenuItem value="9">9 hours past midnight</MenuItem>
+                                        <MenuItem value="10">10 hours past midnight</MenuItem>
+                                        <MenuItem value="11">11 hours past midnight</MenuItem>
+                                        <MenuItem value="12">12 hours past midnight</MenuItem>
+                                        <MenuItem value="13">13 hours past midnight</MenuItem>
+                                        <MenuItem value="14">14 hours past midnight</MenuItem>
+                                        <MenuItem value="15">15 hours past midnight</MenuItem>
+                                        <MenuItem value="16">16 hours past midnight</MenuItem>
+                                        <MenuItem value="17">17 hours past midnight</MenuItem>
+                                        <MenuItem value="18">18 hours past midnight</MenuItem>
+                                        <MenuItem value="19">19 hours past midnight</MenuItem>
+                                        <MenuItem value="20">20 hours past midnight</MenuItem>
+                                        <MenuItem value="21">21 hours past midnight</MenuItem>
+                                        <MenuItem value="22">22 hours past midnight</MenuItem>
+                                        <MenuItem value="23">23 hours past midnight</MenuItem>
+                                    </Select>
+                                </Grid>
+                            </Grid>
                         </Grid>
                         <Grid item>
                             <Grid container direction='row' justifyContent='space-between' alignItems='center'>
@@ -433,10 +464,10 @@ const DialogSettings = (props) => {
             </DialogContent>
             <DialogActions >
                 <Button onClick={
-                    ()=>{ 
-                    props.handleClose()
-                    saveSettings()
-                }}
+                    () => {
+                        props.handleClose()
+                        saveSettings()
+                    }}
                 > Save </Button>
             </DialogActions>
 
@@ -832,7 +863,7 @@ const DialogStatistics = (props) => {
 
 
     const dataDoughnut = {
-        labels: tags.map((tag)=>{return(tag.name)}),
+        labels: tags.map((tag) => { return (tag.name) }),
         datasets: [
             {
                 label: 'Minutes',
@@ -869,7 +900,7 @@ const DialogStatistics = (props) => {
             </DialogTitle>
             <DialogContent>
                 <Grid container direction='column' spacing={2}>
-                    <Stack spacing={4} sx={{ paddingLeft: '16px', paddingTop: '16px', marginBottom: '16px'}}>
+                    <Stack spacing={4} sx={{ paddingLeft: '16px', paddingTop: '16px', marginBottom: '16px' }}>
                         <Typography >Total stats</Typography>
                         <Grid container item>
                             <Grid item xs>
@@ -899,7 +930,7 @@ const DialogStatistics = (props) => {
                         </Grid>
                     </Stack>
                     <Divider></Divider>
-                    <Grid container item direction={'column'} spacing={2} sx={{marginBottom:'32px'}}>
+                    <Grid container item direction={'column'} spacing={2} sx={{ marginBottom: '32px' }}>
                         <Grid container item justifyContent='space-between' alignItems='center'>
                             <Grid item><Typography>History</Typography></Grid>
                             <Grid item>
@@ -915,7 +946,7 @@ const DialogStatistics = (props) => {
                         </Grid>
                     </Grid>
                     <Divider></Divider>
-                    <Grid container item spacing={2} sx={{marginBottom:'32px'}}>
+                    <Grid container item spacing={2} sx={{ marginBottom: '32px' }}>
                         <Grid container item justifyContent='space-between' alignItems='center'>
                             <Grid item>
                                 <Typography >Productive time</Typography>
@@ -932,12 +963,12 @@ const DialogStatistics = (props) => {
                         </Grid>
                     </Grid>
                     <Divider></Divider>
-                    <Grid container item spacing={2} sx={{marginBottom:'32px'}}>
+                    <Grid container item spacing={2} sx={{ marginBottom: '32px' }}>
                         <Grid container item justifyContent='space-between' alignItems='center'>
                             <Grid item>
-                            <Stack>
-                            <Typography >Time distribution (hours)</Typography>
-                            </Stack>
+                                <Stack>
+                                    <Typography >Time distribution (hours)</Typography>
+                                </Stack>
 
                             </Grid>
                             <Grid item>

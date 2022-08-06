@@ -42,7 +42,7 @@ export default function TimerCard(props) {
   }
   return (
     <Stack alignItems='center' spacing={2}>
-      <Typography component="div" variant="h2" color="grey.900">
+      <Typography component="div" variant="h2" color="text.primary">
         {String(props.minutes).padStart(2, '0')}:{String(props.seconds).padStart(2, '0')}
       </Typography>
       <LinearProgress sx={{ width: '80%' }} variant='determinate' value={props.progress}></LinearProgress>
