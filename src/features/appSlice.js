@@ -74,9 +74,21 @@ const appSlice = createSlice({
             state.initialized = format(new Date, 'MM/dd/yyyy')
             console.log(state.intialized)
         },
-        startNewDay: (state) => {
+        startNewDay: (state, action) => {
+            //Calendar time
             state.calendarDate = format(new Date, 'MM/dd/yyyy')
             state.todayDate = format(new Date, 'MM/dd/yyyy')
+            //Other settings reset
+            state.timerState = false
+            state.rest = false
+            state.timerStarted = false
+            //Clock timer time 
+            state.minutes = action.payload
+            state.seconds = 0
+            //'Regular task' completion time
+            state.completedRegular = false  
+            state.normalTriggeredRest = false
+            state.storedTime = 0 //The time stored
         },
         establishPomodoroTime: { //QoL Misleading name, not only it encompasses pomodoros but also rests
             reducer(state, action) {

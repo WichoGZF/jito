@@ -17,6 +17,11 @@ import { Divider } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux'
 import { setCalendarDate, startNewDay } from './features/appSlice.js'
 
+const composeResetDay = (tag) => (dispatch, getState) => {
+  dispatch(startNewDay(getState().setting.pomodoroDuration))
+}
+
+
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -42,7 +47,7 @@ function App() {
     const remainingMinutes = 24 * 60 - actualMinutesInDay
     const remainingMiliseconds = remainingMinutes * 60 * 1000
     setTimeout(() => {
-      dispatch(startNewDay())
+      dispatch(composeResetDay())
     }, remainingMiliseconds)
   }, [])
 
