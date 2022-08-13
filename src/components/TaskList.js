@@ -202,12 +202,20 @@ function ListEntry(props) {
 
   const openDropDown = Boolean(dropDownRef)
 
-  const handleCloseDropDown = () => setDropDownRef(false);
+  const handleCloseDropDown = () => {
+    setDropDownRef(false);
+  }
 
   const handleEditTask = () => {
     setEditTask(!editTask);
     dropDownRef && handleCloseDropDown()
   }
+
+  const handleDeleteTask = () => {
+    dispatch(deleteTask(props.index));
+    handleCloseDropDown();
+  }
+
 
   const dispatchCompleteTask = () => {
     dispatch(completeTask(props.index))
@@ -409,7 +417,7 @@ function ListEntry(props) {
                 }}
               >
                 <MenuItem onClick={handleEditTask}>Edit task</MenuItem>
-                <MenuItem onClick={handleCloseDropDown} >Delete task</MenuItem>
+                <MenuItem onClick={handleDeleteTask} >Delete task</MenuItem>
 
               </Menu>
             </>
