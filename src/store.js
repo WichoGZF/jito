@@ -21,19 +21,14 @@ import {
 const rootPersistConfig = {
     key: 'root',
     storage,
-    blacklist: ['auth']
-}
-
-const appPersistConfig = {
-    key: 'app', 
-    storage: storageSession,
+    blacklist: ['auth', 'app']
 }
 
 const rootReducer = combineReducers({
     auth: authReducer,
     settings: settingsReducer,
     tasks: tasksReducer,
-    app: persistReducer(appPersistConfig, appReducer)
+    app: appReducer,
 })
 
 const persistedReducer = (persistReducer(rootPersistConfig, rootReducer))
