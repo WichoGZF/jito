@@ -65,6 +65,8 @@ import { differenceInCalendarDays, differenceInCalendarMonths } from "date-fns";
 import getDay from 'date-fns/getDay'
 import subDays from 'date-fns/subDays'
 import subMonths from "date-fns/subMonths";
+import { establishPomodoroTime } from "../features/appSlice";
+
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -136,6 +138,9 @@ const DialogSettings = (props) => {
     };
 
     const saveSettings = () => {
+        if(settings.pomodoroDuration !== pomodoroDuration){
+            dispatch(establishPomodoroTime(pomodoroDuration, 0))
+        }
         dispatch(updateSettings(
             {
                 pomodoroDuration: parseInt(pomodoroDuration),
@@ -995,6 +1000,8 @@ const ResponsiveAppBar = (props) => {
     const [dialogOpen, setDialogOpen] = useState(null)
     const [loggedIn, setLoggedIn] = useState(true)
 
+    const timerStarted = useSelector((state) => state.app.timerStarted);
+
     console.log(dialogOpen);
 
     let loggedInLabel
@@ -1026,7 +1033,7 @@ const ResponsiveAppBar = (props) => {
         setAnchorElUser(null);
     }
 
-
+    console.log('Timer started', timerStarted)
 
     return (
         <AppBar position="sticky">
@@ -1053,10 +1060,14 @@ const ResponsiveAppBar = (props) => {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open menu">
                             {loggedIn
-                                ? <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                                ? <IconButton onClick={handleOpenUserMenu}
+                                disabled={timerStarted}
+                                sx={{ p: 0 }}>
                                     <Avatar alt="?" src="/static/images/avatar/2.jpg" />
                                 </IconButton>
-                                : <Button onClick={handleOpenUserMenu}>user</Button>
+                                : <Button onClick={handleOpenUserMenu}
+                                disabled={timerStarted}
+                                >user</Button>
                             }
                         </Tooltip>
                         <Menu

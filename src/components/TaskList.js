@@ -73,6 +73,8 @@ import {
 
 //Dispatches the time entry for the statistics and also dispatches the 'rest' time accumulated. 
 const composeCompleteEntry = (tag) => (dispatch, getState) => {
+  const rest = getState().app.rest
+
   const secondsRemaining = getState().app.minutes * 60 + getState().app.seconds
   const totalSeconds = getState().settings.pomodoroDuration * 60
   const todayDate = getState().app.todayDate
@@ -91,14 +93,14 @@ const composeStoredTime = (action) => (dispatch, getState) => {
     const secondsRemaining = getState().app.minutes * 60 + getState().app.seconds
     const totalSeconds = pomodoroDuration * 60
     const restToWorkRatio = getState().settings.shortBreakDuration / pomodoroDuration
-    const restConversion = Math.round((totalSeconds - secondsRemaining) * restToWorkRatio)
+    const restConversion = Math.floor((totalSeconds - secondsRemaining) * restToWorkRatio)
     if (action === 'store') {
       dispatch(setStoredTime(storedTime + restConversion))
       dispatch(establishPomodoroTime(pomodoroDuration, 0))
     }
     else if (action === 'use') {
       const totalRestSeconds = restConversion + storedTime
-      const restMinutes = Math.round(totalRestSeconds / 60)
+      const restMinutes = Math.floor(totalRestSeconds / 60)
       const restSeconds = totalRestSeconds % 60
       dispatch(establishPomodoroTime(restMinutes, restSeconds))
       dispatch(startRest())
@@ -138,37 +140,52 @@ function CompletedDialog(props) {
     dispatch(handleCompletedRegular())
   }
 
+  const clockMinutes = useSelector((state) => state.app.minutes);
+  const clockSeconds = useSelector((state) => state.app.seconds);
+  const pomodoroDuration = useSelector((state) => state.settings.pomodoroDuration)
+  const shortBreakDuration = useSelector((state) => state.settings.shortBreakDuration)
+
+  const pomodoroSeconds = pomodoroDuration * 60
+  const totalClock = (pomodoroSeconds) - (clockMinutes * 60 + clockSeconds)
+  const shortBreakDurationSeconds = shortBreakDuration * 60;
+
+  const restRatio = shortBreakDurationSeconds/pomodoroSeconds
+  const secondsOfRest = restRatio*totalClock
+
+  console.log(clockMinutes, clockSeconds, pomodoroDuration, totalClock, pomodoroSeconds, secondsOfRest)
   return (
     <Dialog open={completedRegular}>
       <DialogTitle>
-        Task completed
+        <Grid container direction="row" justifyContent="space-between" alignItems="center">
+          <Grid item xs="auto">
+            Task completed
+          </Grid>
+          <Grid item xs="auto">
+            <IconButton onClick={closeDialog}><CloseIcon></CloseIcon></IconButton>
+         </Grid>
+        </Grid>
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          What do you want to do with the XX:XX stored?
+          What do you want to do with the {Math.floor(secondsOfRest / 60)}:{Math.floor(secondsOfRest % 60).toString().padStart(2, '0')} stored?
         </DialogContentText>
         <FormControlLabel
-          control={<Checkbox checked={false}
+          control={<Checkbox checked={rememberSelection}
             onChange={() => { setRememberSelection(!rememberSelection) }} />}
-          label="Remember my decision"
+          label={<Typography sx={{color: 'gray', fontSize: '1rem'}}>Remember my decision </Typography>}
         ></FormControlLabel>
       </DialogContent>
 
       <DialogActions>
         <Button onClick={() => {
-          console.log('Debugging, entering button click')
           dispatch(composeStoredTime('store'))
           closeDialog()
-          console.log('Debugging, leaving button click')
         }}>Store Time</Button>
         <Button onClick={() => {
-          console.log('Debugging, entering button click')
           dispatch(composeStoredTime('use'))
           closeDialog()
-          console.log('Debugging, leaving button click')
         }}>Take a rest</Button>
         <Button onClick={() => {
-          dispatch(composeStoredTime('discard'))
           closeDialog()
         }}>Discard Time</Button>
       </DialogActions>
@@ -181,6 +198,7 @@ function ListEntry(props) {
 
   const dispatch = useDispatch()
 
+  const rest = useSelector((state) => state.app.rest)
   const todayDate = useSelector((state) => state.app.todayDate)
   const calendarDate = useSelector((state) => state.app.calendarDate)
 
@@ -344,9 +362,11 @@ function ListEntry(props) {
     if (props.firstTask && calendarDate === todayDate) {
       entryIcon = <IconButton onClick={
         () => {
+          if (!rest) {
+            dispatchTimeEntry()
+            dispatch(handleCompletedRegular())
+          }
           dispatchCompleteTask()
-          dispatchTimeEntry()
-          dispatch(handleCompletedRegular())
           dispatch(stopRunning())
         }
 
@@ -731,6 +751,7 @@ export default function TaskList(props) {
   const calendarDate = useSelector(state => state.app.calendarDate)
   const initializedDate = useSelector(state => state.app.initialized)
   const todayDate = useSelector(state => state.app.todayDate)
+  const hoursPastMidnight = useSelector(state => state.settings.hoursPastMidnight)
 
   const initialized = initializedDate === todayDate
 

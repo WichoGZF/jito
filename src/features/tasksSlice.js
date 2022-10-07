@@ -51,9 +51,18 @@ const tasksSlice = createSlice({
                 }
             }
         },
-        deleteTask: (state, action) => {
-            const index = action.payload
-            state.tasks.splice(index, 1)
+        deleteTask: {
+            reducer(state, action){
+                const index = action.payload
+                console.log('Deleting tag number: ', index, action.payload, action)
+                state.tasks.splice(index, 1)
+            },
+            prepare(index){
+                return {
+                    payload: index
+                }
+            }
+  
         },
         addTimeEntry: {
             reducer(state, action) {
@@ -208,25 +217,23 @@ const tasksSlice = createSlice({
             //where action.payload is an array of tasks to be updated to today's date.
             console.log('updating dates:', action.payload)
             const tasksToUpdate = action.payload
-            tasksToUpdate.forEach((taskIndex) => {
+
+            tasksToUpdate.forEach((taskId) => {
+                const taskIndex = state.tasks.findIndex( (task) => task.id === taskId)
+                console.log(taskIndex)
                 state.tasks[taskIndex].date = format(new Date, 'MM/dd/yyyy')
+                console.log('updating dates TaskId: ', taskId, 'TaskIndex', taskIndex);
             })
         },
         //Delete due receives an array containing the indexes, then it makes another array with
         //id values and uses it to find the indexes to delete. 
         deleteDue: (state, action) => {
             const tasksToDelete = action.payload
-
-            const idArray = tasksToDelete.map( (index) => {
-                return(state.tasks[index].id)
-            })
-
-            console.log(idArray)
-
-            idArray.forEach((taskId) => {
+            console.log('deleting dates', tasksToDelete)
+            tasksToDelete.forEach((taskId) => {
                 const taskIndex = state.tasks.findIndex( (task) => task.id === taskId)
-                console.log(taskIndex)
-                tasksSlice.caseReducers.deleteTask(state, taskIndex)
+                console.log('deleting dates TaskId: ', taskId, 'TaskIndex', taskIndex);
+                state.tasks.splice(taskIndex, 1)
             })
         }
     }

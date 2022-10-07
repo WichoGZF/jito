@@ -29,6 +29,8 @@ import {
 } from '../features/appSlice.js'
 import { updateBlocks } from '../features/tasksSlice.js';
 
+//Todo
+//After finishing a break 
 //Optimization 
 //Don't really need to trigger a re-render on every minute/second change. Can let the reducer handle it instead. 
 
@@ -89,14 +91,17 @@ export default function TimerControl(props) {
   let progress;
   if (rest) {
     if (normalTriggeredRest) {
+      console.log('Normal triggered rest')
       progress = ((timerMinuts * 60 + timerSeconds) / (storedTime)) * 100
     }
     else {
       if (pomodoros === settings.longBreakEvery) {
-        progress = ((timerMinuts * 60 + timerSeconds) / (settings.longBreakDuration)) * 100
+        progress = ((timerMinuts * 60 + timerSeconds) / (settings.longBreakDuration*60) * 100)
+        console.log('Long break')
       }
       else {
-        progress = ((timerMinuts * 60 + timerSeconds) / (settings.shortBreakDuration)) * 100
+        progress = ((timerMinuts * 60 + timerSeconds) / (settings.shortBreakDuration*60) * 100)
+        console.log('Short break')
       }
     }
   }
@@ -104,6 +109,8 @@ export default function TimerControl(props) {
     const timePassed = (settings.pomodoroDuration * 60) - (timerMinuts * 60 + timerSeconds)
     progress = timePassed * 100 / (settings.pomodoroDuration * 60)
   }
+
+  console.log('progress:', progress)
 
   const dispatchPomodoro = () => {
     dispatch(addTimeEntry(todayDate, settings.pomodoroDuration * 60, actualTag))
@@ -128,7 +135,13 @@ export default function TimerControl(props) {
   function resetTimer() {
     dispatch(establishPomodoroTime(settings.pomodoroDuration, 0))
     dispatch(timerNotStarted())
-    dispatch(stopRunning)
+    dispatch(stopRunning())
+    if(rest){
+      dispatch(endRest())
+      if(pomodoros===settings.longBreakEvery){
+        setPomodoros(0)
+      }
+    }
   }
 
   const handleWarningDialog = () => {
@@ -142,6 +155,7 @@ export default function TimerControl(props) {
 
   useEffect(() => {
     //if the timer is on and the clock hasn't been set to started, start
+    console.log("Debugging shit app: ", timerState, timerStarted, timerSeconds, timerMinuts, rest)
     if (timerState) {
       if (!timerStarted) {
         dispatch(timerHasStarted())
@@ -149,8 +163,11 @@ export default function TimerControl(props) {
 
       const interval = setInterval(() => {
         if (timerSeconds === 0) {
+          console.log("Debugging timer seconds is", timerSeconds)
           if (timerMinuts === 0) {
+            console.log("Debugging timer minuts is", timerMinuts)
             if (rest) { //On rest end
+              console.log("Debugging is rest")
               if (settings.alarmOnBreakEnd) {
                 alarm({ id: settings.alarmSound })
               }
@@ -160,15 +177,14 @@ export default function TimerControl(props) {
                 dispatch(timerNotStarted())
               }
               dispatch(establishPomodoroTime(settings.pomodoroDuration, 0))
-              if (pomodoros === settings.longBreakEvery) {
-                setPomodoros(0)
-              }
+
               if(normalTriggeredRest){
                 dispatch(disableNormalTriggeredRest())
                 dispatch(setStoredTime(0))
               }
             }
             else { //On pomodoro end
+              console.log("Debugging is not rest")
               if (settings.alarmOnPomodoroEnd) {
                 alarm({ id: settings.alarmSound })
               }
@@ -189,6 +205,7 @@ export default function TimerControl(props) {
               dispatchPomodoro()
               //"UpdateBlocks" reducer already handles the logic for how to update the specific task (only need index)
               dispatch(updateBlocks(actualIndex))
+              console.log('Debugging  Leaving first else')
             }
           }
           else {
@@ -214,7 +231,7 @@ export default function TimerControl(props) {
       }, 1000);
       return () => clearInterval(interval);
     }
-  }, [timerState, timerSeconds]);
+  }, [timerState, timerSeconds, timerMinuts]);
 
   //Debugging needed
   //Initializing use effect, establishing starting value of pomodoro.
@@ -240,6 +257,7 @@ export default function TimerControl(props) {
         pomodoros={pomodoros}
         longBreakEvery={settings.longBreakEvery} //Every long break
         progress={progress}
+        rest={rest}
       ></TimerCard>
       <Dialog
         open={warningDialog}

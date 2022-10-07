@@ -19,7 +19,7 @@ import { setCalendarDate, startNewDay } from './features/appSlice.js'
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const composeResetDay = (tag) => (dispatch, getState) => {
-  dispatch(startNewDay(getState().setting.pomodoroDuration))
+  dispatch(startNewDay(getState().settings.pomodoroDuration))
 }
 
 
@@ -31,6 +31,7 @@ function App() {
   const date = useSelector((state) => state.app.calendarDate);
   const timerStarted = useSelector((state) => state.app.timerStarted);
   const timerState = useSelector((state) => state.app.timerState);
+  const hoursAfterMidnight = useSelector((state) => state.settings.hoursAfterMidnight)
 
   const colorTheme = useSelector((state) => state.settings.colorTheme)
 
@@ -45,14 +46,19 @@ function App() {
   useEffect(() => {
     const hours = dateInDateType.getHours()
     const minutes = dateInDateType.getMinutes()
-
+    const extraMiliseconds = hoursAfterMidnight*60*60*1000 
     const actualMinutesInDay = hours * 60 + minutes
     const remainingMinutes = 24 * 60 - actualMinutesInDay
     const remainingMiliseconds = remainingMinutes * 60 * 1000
-    setTimeout(() => {
+    let resetDay = setTimeout(() => {
       dispatch(composeResetDay())
-    }, remainingMiliseconds)
-  }, [])
+    }, remainingMiliseconds+extraMiliseconds)
+
+    return () => {
+      clearTimeout(resetDay);
+    };
+
+  }, [hoursAfterMidnight, date])
 
   let theme
   if (colorTheme === "dark") {

@@ -10,6 +10,8 @@ import { updateDates, deleteDue } from "../features/tasksSlice.js";
 import { initialize } from "../features/appSlice.js";
 import format from "date-fns/format";
 import isBefore from "date-fns/isBefore";
+import isSameDay from 'date-fns/isSameDay'
+import add from 'date-fns/add'
 
 const DueTaskEntry = (props) => {
 
@@ -17,7 +19,7 @@ const DueTaskEntry = (props) => {
         <ListItem
             key={props.id}
             disablePadding>
-            <ListItemButton onClick={()=> props.onClick(props.index)} sx={{ marginRight: '1' }}>
+            <ListItemButton onClick={() => props.onClick(props.index)} sx={{ marginRight: '1' }}>
                 <ListItemIcon>
                     <Checkbox
                         edge="start"
@@ -37,7 +39,7 @@ const DueTaskEntry = (props) => {
 export default function OverdueTaskList(props) {
     const tags = useSelector((state) => state.tasks.tags)
     const tasks = useSelector((state) => state.tasks.tasks)
-
+    const hoursPastMidnight = useSelector((state) => state.settings.hoursPastMidnight)
     const dispatch = useDispatch()
 
     const updateInitialized = () => {
@@ -53,18 +55,42 @@ export default function OverdueTaskList(props) {
         dispatch(updateDates(array))
     }
 
+    const indexToIdArray = (indexArray) => {
+        console.log("Index to id array:,", indexArray)
+        let idArray = [];
+        indexArray.forEach(index => {
+            idArray.push(tasks[index].id)
+        })
+        return idArray;
+    }
 
     const todayDate = new Date
+    todayDate.setHours(0, 0, 0, 0)
 
     let overdueTasks = []
-    tasks.forEach( (task, index) => {
+    tasks.forEach((task, index) => {
         if (task.repeat === 'false') {
+            console.log('Task date', task.date)
             const dateArray = task.date.split('/')
             const [month, day, year] = dateArray
-            const taskDate = new Date(year, month, day)
+            const taskDate = new Date(year, month-1, day)
+            console.log('Date array', dateArray)
+            let dayIsBefore;
+            if (!!hoursPastMidnight) {
+                add(todayDate, {
+                    years: 0,
+                    months: 0,
+                    weeks: 0,
+                    days: 1,
+                    hours: hoursPastMidnight,
+                    minutes: 0,
+                    seconds: 0,
+                })
+            }
+            dayIsBefore = isBefore(taskDate, todayDate)
 
-            const isTaskBefore = isBefore(todayDate, taskDate)
-            if (isTaskBefore) {
+            console.log('Initializer debug', isBefore(taskDate, todayDate), taskDate, '\n', todayDate)
+            if (dayIsBefore) {
                 overdueTasks.push(index)
             }
         }
@@ -73,16 +99,16 @@ export default function OverdueTaskList(props) {
     console.log(overdueTasks)
 
     const [tasksChecklist, setTaskChecklist] = useState(() => {
-        return(overdueTasks.map((task)=> false))
+        return (overdueTasks.map((task) => false))
     })
 
     let tasksToUpdate = []
     let tasksToDelete = []
-    tasksChecklist.forEach( (checked, index) => {
-        if(checked){
+    tasksChecklist.forEach((checked, index) => {
+        if (checked) {
             tasksToUpdate.push(overdueTasks[index])
         }
-        else{
+        else {
             tasksToDelete.push(overdueTasks[index])
         }
     })
@@ -95,18 +121,18 @@ export default function OverdueTaskList(props) {
         })
     }
 
-    
+
     const getColor = (tagName) => {
         const tag = tags.find(tag => tag.name === tagName)
         return tag.color
     }
 
-    const overdueTaskList = overdueTasks.map( (index, arrayIndex) => {
+    const overdueTaskList = overdueTasks.map((index, arrayIndex) => {
         return (
             <DueTaskEntry
                 key={tasks[index].id}
                 index={arrayIndex}
-                checked = {tasksChecklist[arrayIndex]}
+                checked={tasksChecklist[arrayIndex]}
                 id={tasks[index].id}
                 taskName={tasks[index].name}
                 tagName={tasks[index].tag}
@@ -116,23 +142,29 @@ export default function OverdueTaskList(props) {
         )
     })
 
-    return (
-        <Dialog open={props.open}>
-            <DialogTitle>Import overdue tasks?</DialogTitle>
-            <DialogContent>
-                <List>
-                    {overdueTaskList}
-                </List>
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={updateInitialized}>Discard</Button>
-                <Button onClick={()=>{
-                    updateTasksDates(tasksToUpdate)
-                    deleteDueTasks(tasksToDelete)
-                    updateInitialized()
-                }}>Import</Button>
-            </DialogActions>
-        </Dialog>
-    )   
+    if (!!overdueTaskList.length) {
+        return (
+            <Dialog open={props.open}>
+                <DialogTitle>Import overdue tasks?</DialogTitle>
+                <DialogContent>
+                    <List>
+                        {overdueTaskList}
+                    </List>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => {
+                        updateTasksDates(indexToIdArray(tasksToUpdate))
+                        updateInitialized()
+                        deleteDueTasks(indexToIdArray(tasksToDelete))
+                    }}>Import</Button>
+                </DialogActions>
+            </Dialog>
+        )
+    }
+    else {
+        updateInitialized();
+        return (<></>);
+    }
+
 }
 

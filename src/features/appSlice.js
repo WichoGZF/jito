@@ -107,7 +107,9 @@ const appSlice = createSlice({
 
         },
         handleCompletedRegular: (state) => {
+            if(state.timerStarted){
             state.completedRegular = !state.completedRegular
+        }
         },
         setStoredTime: (state, action) => {
             state.storedTime = action.payload //In seconds 

@@ -54,7 +54,7 @@ export default function TimerCard(props) {
         <IconButton onClick={props.onClickStartStop} aria-label="play/pause">
           {!props.timerState ? <PlayArrowIcon sx={{ height: 38, width: 38 }} /> : <PauseIcon sx={{ height: 38, width: 38 }} />}
         </IconButton>
-        <IconButton onClick={props.onClickSkip} aria-label="next" sx={{ visibility: props.clockStarted ? 'visible' : 'hidden' }}>
+        <IconButton onClick={props.onClickSkip} aria-label="next" sx={{ visibility: (props.clockStarted | props.rest)? 'visible' : 'hidden' }}>
           <SkipNextIcon sx={{ height: 38, width: 38 }} />
         </IconButton>
       </Stack>
