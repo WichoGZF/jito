@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText } from '@mui/material'
 import Checkbox from '@mui/material/Checkbox';
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
@@ -130,7 +130,7 @@ export default function OverdueTaskList(props) {
     const overdueTaskList = overdueTasks.map((index, arrayIndex) => {
         return (
             <DueTaskEntry
-                key={tasks[index].id}
+                key={'due' + tasks[index].id}
                 index={arrayIndex}
                 checked={tasksChecklist[arrayIndex]}
                 id={tasks[index].id}
@@ -141,6 +141,13 @@ export default function OverdueTaskList(props) {
             </DueTaskEntry>
         )
     })
+
+    useEffect(() => {
+        if(!!overdueTaskList.length){
+            updateInitialized()
+        }
+    
+      })
 
     if (!!overdueTaskList.length) {
         return (
@@ -154,7 +161,6 @@ export default function OverdueTaskList(props) {
                 <DialogActions>
                     <Button onClick={() => {
                         updateTasksDates(indexToIdArray(tasksToUpdate))
-                        updateInitialized()
                         deleteDueTasks(indexToIdArray(tasksToDelete))
                     }}>Import</Button>
                 </DialogActions>
@@ -162,7 +168,6 @@ export default function OverdueTaskList(props) {
         )
     }
     else {
-        updateInitialized();
         return (<></>);
     }
 

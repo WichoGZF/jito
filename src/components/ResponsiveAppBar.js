@@ -391,7 +391,7 @@ const DialogSettings = (props) => {
                                 <Grid item xs='auto'>
                                     <Typography>Start new day at</Typography>
                                 </Grid>
-                                <Grid item xs='6'>
+                                <Grid item xs={6}>
                                     <Select
                                         sx={{ width: "100%" }}
                                         value={hoursPastMidnight}

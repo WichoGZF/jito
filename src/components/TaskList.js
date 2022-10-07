@@ -860,15 +860,15 @@ export default function TaskList(props) {
 
 
   return (
-    <Box>
+    <Box key={'tasklist-box'}>
       <Typography variant="overline" color="text.primary" sx={{ pl: 1 }}>Scheduled tasks</Typography>
-      <List>
-        <Divider></Divider>
-        <NewTask></NewTask>
+      <Grid >
+        <Divider key="divider"></Divider>
+        <NewTask key="newTask"></NewTask>
         {allTagTasks}
-        <OverdueTaskList open={!initialized}></OverdueTaskList>
-        <CompletedDialog></CompletedDialog>
-      </List>
+        <OverdueTaskList key="overdues" open={!initialized}></OverdueTaskList>
+        <CompletedDialog key="completed"></CompletedDialog>
+      </Grid>
     </Box>
   )
 }
