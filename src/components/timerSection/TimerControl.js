@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TimerCard from './TimerCard';
 import { useSelector, useDispatch } from 'react-redux/es/exports.js';
 
-import { addTimeEntry } from '../features/tasksSlice.js';
+import { addTimeEntry } from '../../features/tasksSlice.js';
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -19,15 +19,15 @@ import { ElevatorSharp } from '@mui/icons-material';
 import useSound from 'use-sound';
 
 //notification sounds
-import notifications from '../sounds/tones.mp3'
+import notifications from '../../sounds/tones.mp3'
 //ticking sounds
-import tickers from '../sounds/tickers.mp3'
+import tickers from '../../sounds/tickers.mp3'
 
 import {
   startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, establishPomodoroTime,
   disableNormalTriggeredRest, setStoredTime, setCalendarDate
-} from '../features/appSlice.js'
-import { updateBlocks } from '../features/tasksSlice.js';
+} from '../../features/appSlice.js'
+import { updateBlocks } from '../../features/tasksSlice.js';
 
 //Todo
 //After finishing a break 
