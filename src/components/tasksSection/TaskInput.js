@@ -28,7 +28,7 @@ import Checkbox from '@mui/material/Checkbox'
 import { TagDialog } from "./TaskList.js";
 
 import { useDispatch, useSelector } from "react-redux";
-import { addTask, editTask } from '../features/tasksSlice.js'
+import { addTask, editTask } from 'features/tasksSlice'
 
 import { format } from 'date-fns'
 

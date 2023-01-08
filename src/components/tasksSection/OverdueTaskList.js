@@ -4,13 +4,10 @@ import Checkbox from '@mui/material/Checkbox';
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import Chip from '@mui/material/Chip'
 import Button from '@mui/material/Button'
-import { TaskAltSharp } from "@mui/icons-material";
 import { useSelector, useDispatch } from "react-redux";
-import { updateDates, deleteDue } from "../features/tasksSlice.js";
-import { initialize } from "../features/appSlice.js";
-import format from "date-fns/format";
+import { updateDates, deleteDue } from "features/tasksSlice.js";
+import { initialize } from "features/appSlice.js";
 import isBefore from "date-fns/isBefore";
-import isSameDay from 'date-fns/isSameDay'
 import add from 'date-fns/add'
 
 const DueTaskEntry = (props) => {
