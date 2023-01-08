@@ -15,7 +15,7 @@ import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 
 import { useDrag, useDrop } from 'react-dnd';
 
-import { ItemTypes } from './ItemTypes.js'
+import { ItemTypes } from '../ItemTypes.js'
 
 
 import Chip from '@mui/material/Chip';
@@ -53,11 +53,11 @@ import { useDispatch } from 'react-redux';
 import {
   addTask, editTask, deleteTask, addTimeEntry, completeTask, reorderTask, addTag, deleteTag, changeTagName,
   changeTagColor, updateBlocks, restartTask,
-} from '../features/tasksSlice.js'
+} from '../../features/tasksSlice.js'
 
 import {
   currentTag, currentIndex, currentType, initialize, establishPomodoroTime, timerNotStarted
-} from '../features/appSlice.js'
+} from '../../features/appSlice.js'
 
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
@@ -69,7 +69,7 @@ import OverdueTaskList from './OverdueTaskList.js';
 
 import {
   handleCompletedRegular, setHandleTime, setStoredTime, stopRunning, startRest, setNormalTriggeredRest
-} from '../features/appSlice.js';
+} from '../../features/appSlice.js';
 
 //Dispatches the time entry for the statistics and also dispatches the 'rest' time accumulated. 
 const composeCompleteEntry = (tag) => (dispatch, getState) => {
