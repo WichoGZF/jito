@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import ResponsiveAppBar from "./components/navbar/ResponsiveAppBar";
-import TaskList from './components/TaskList';
+import TaskList from './components/tasksSection/TaskList';
 
 import Box from "@mui/material/Box";
 import Grid from '@mui/material/Grid'
