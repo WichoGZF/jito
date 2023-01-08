@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import ResponsiveAppBar from "./components/ResponsiveAppBar";
+import ResponsiveAppBar from "./components/navbar/ResponsiveAppBar";
 import TimerControl from './components/TimerControl';
 import TaskList from './components/TaskList';
 
