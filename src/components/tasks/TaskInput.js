@@ -1,15 +1,9 @@
 import { Button } from "@mui/material"
-import EditIcon from "@mui/icons-material/Edit"
 import * as React from "react";
 import { useState } from "react"
 import Box from "@mui/material/Box";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
-import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import IconButton from "@mui/material/IconButton";
 import Grid from '@mui/material/Grid';
 import Input from '@mui/material/Input';
@@ -21,17 +15,14 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 
-import { DialogContent, DialogTitle, DialogActions, Dialog } from "@mui/material";
+import { DialogContent, DialogActions, Dialog } from "@mui/material";
 import FormGroup from '@mui/material/FormGroup'
 import Checkbox from '@mui/material/Checkbox'
 
-import { TagDialog } from "./TaskList.js";
+import TagDialog from "./tags/TagDialog";
 
 import { useDispatch, useSelector } from "react-redux";
 import { addTask, editTask } from 'features/tasksSlice'
-
-import { format } from 'date-fns'
-
 
 export default function TaskInput(props) {
     const tags = useSelector(state => state.tasks.tags)

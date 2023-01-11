@@ -1,8 +1,6 @@
 import { mockTasks } from '../mock.js'
 
 import { createSlice } from '@reduxjs/toolkit'
-import { NestCamWiredStandTwoTone, Splitscreen } from '@mui/icons-material';
-import { sliderClasses } from '@mui/material';
 import { format } from 'date-fns'
 
 const initialState = mockTasks;

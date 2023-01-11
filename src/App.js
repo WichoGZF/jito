@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 import ResponsiveAppBar from "./components/navbar/ResponsiveAppBar";
-import TaskList from './components/tasksSection/TaskList';
+import TaskList from './components/tasks/TaskList';
 
 import Box from "@mui/material/Box";
 import Grid from '@mui/material/Grid'
@@ -11,8 +11,6 @@ import { startNewDay } from '../src/features/appSlice'
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import Calendar from './components/timerSection/Calendar';
-
-
 
 const composeResetDay = (tag) => (dispatch, getState) => {
   dispatch(startNewDay(getState().settings.pomodoroDuration))
