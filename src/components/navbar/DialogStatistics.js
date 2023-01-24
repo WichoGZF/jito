@@ -44,7 +44,6 @@ export default function DialogStatistics(props) {
     const dayTime = () => {
         let totalTimeSpent = 0;
         for (const completedTask of history) {
-            console.log(completedTask)
             const { completeDate, time } = completedTask
             if (completeDate === todayStringDate) {
                 totalTimeSpent += time
@@ -74,9 +73,7 @@ export default function DialogStatistics(props) {
         let totalMonthTime = 0;
         for (const completedTask of history) {
             const { completeDate, time } = completedTask
-            console.log(completeDate)
             const [completedMonth, completedDay, completedYear] = completeDate.split('/')
-            console.log(todayYear, completedYear, todayMonth, completedMonth)
             if (todayYear === completedYear && todayMonth === completedMonth) {
                 totalMonthTime += time
             }
@@ -157,10 +154,8 @@ export default function DialogStatistics(props) {
 
 
     const tagsTime = (time) => {
-        console.log("Entering tags time")
         let tagTime = {}
         for (const tag of tags) {
-            console.log(tag)
             tagTime[tag.name] = 0
         }
         switch (time) {
@@ -209,7 +204,6 @@ export default function DialogStatistics(props) {
 
         let array = []
         Object.values(tagTime).forEach((value, index) => array.push(value))
-        console.log("Tags time:", tagTime, array)
         return (array)
     }
 
@@ -293,8 +287,6 @@ export default function DialogStatistics(props) {
         case "months":
             dataLineData = secondsArrayToHoursArray(monthsTime());
     }
-
-    console.log("Data line data:", dataLineData)
 
     const dataLineChart = {
         labels: labelsLineChart,

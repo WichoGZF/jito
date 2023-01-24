@@ -55,7 +55,6 @@ const composeStoredTime = (action) => (dispatch, getState) => {
     const restRatio = shortBreakDurationSeconds/pomodoroSeconds
     const secondsOfRest = restRatio*totalClock
   
-    console.log(clockMinutes, clockSeconds, pomodoroDuration, totalClock, pomodoroSeconds, secondsOfRest)
     return (
       <Dialog open={completedRegular}>
         <DialogTitle>

@@ -53,7 +53,6 @@ export default function OverdueTaskList(props) {
     }
 
     const indexToIdArray = (indexArray) => {
-        console.log("Index to id array:,", indexArray)
         let idArray = [];
         indexArray.forEach(index => {
             idArray.push(tasks[index].id)
@@ -67,11 +66,9 @@ export default function OverdueTaskList(props) {
     let overdueTasks = []
     tasks.forEach((task, index) => {
         if (task.repeat === 'false') {
-            console.log('Task date', task.date)
             const dateArray = task.date.split('/')
             const [month, day, year] = dateArray
             const taskDate = new Date(year, month-1, day)
-            console.log('Date array', dateArray)
             let dayIsBefore;
             if (!!hoursPastMidnight) {
                 add(todayDate, {
@@ -86,14 +83,11 @@ export default function OverdueTaskList(props) {
             }
             dayIsBefore = isBefore(taskDate, todayDate)
 
-            console.log('Initializer debug', isBefore(taskDate, todayDate), taskDate, '\n', todayDate)
             if (dayIsBefore) {
                 overdueTasks.push(index)
             }
         }
     })
-
-    console.log(overdueTasks)
 
     const [tasksChecklist, setTaskChecklist] = useState(() => {
         return (overdueTasks.map((task) => false))

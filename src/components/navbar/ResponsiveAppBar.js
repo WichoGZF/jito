@@ -57,8 +57,6 @@ const ResponsiveAppBar = (props) => {
 
     const timerStarted = useSelector((state) => state.app.timerStarted);
 
-    console.log(dialogOpen);
-
     let loggedInLabel
     if (props.loggedIn) {
         loggedInLabel = "Logout"
@@ -71,13 +69,11 @@ const ResponsiveAppBar = (props) => {
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
-        console.log(anchorElUser)
     };
 
     const handleSelectUserMenu = (selection) => {
         setDialogOpen(selection);
         setAnchorElUser(null);
-        console.log(dialogOpen)
     };
 
     const handleCloseDialog = () => {
@@ -87,8 +83,6 @@ const ResponsiveAppBar = (props) => {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     }
-
-    console.log('Timer started', timerStarted)
 
     return (
         <AppBar position="sticky">

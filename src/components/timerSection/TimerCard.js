@@ -27,7 +27,6 @@ function ProgressBox(props) {
 export default function TimerCard(props) {
   let pomodorosCompleted = [];
   for(let i=0; i<props.longBreakEvery; i++){
-    console.log('for repeat timer card')
     if (props.pomodoros>i){
       pomodorosCompleted.push(
         <Grid key = {i} item xs><LinearProgress  variant='determinate' value={100}></LinearProgress></Grid>

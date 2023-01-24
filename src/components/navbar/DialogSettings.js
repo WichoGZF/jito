@@ -43,10 +43,6 @@ export default function DialogSettings(props) {
     const [hoursPastMidnight, setHoursPastMidnight] = useState(settings.hoursPastMidnight)
     const [language, setLanguage] = useState(settings.language)
 
-    console.log("tickingSoundOnBreak: ", tickingSoundOnBreak)
-    console.log("tickingSoundOnPomodoro: ", tickingSoundOnPomodoro)
-
-
     const handleChangeTabSelected = (event, newValue) => {
         setTabSelected(newValue)
     };

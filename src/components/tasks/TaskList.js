@@ -24,7 +24,6 @@ export default function TaskList(props) {
   const dispatch = useDispatch()
 
   const tasks = useSelector(state => state.tasks.tasks)
-  console.log(tasks)
   const tags = useSelector(state => state.tasks.tags)
   const calendarDate = useSelector(state => state.app.calendarDate)
   const initializedDate = useSelector(state => state.app.initialized)
@@ -71,7 +70,6 @@ export default function TaskList(props) {
   tasks.forEach((task, index) => {
     if (task.repeat !== 'false') {
       if (!task.completed || todayDate !== calendarDate) {
-        console.log('Tag not completed yet!, name: ', task.name, task.completed)
         if (task.repeat === 'daily') {
           if (!allTagTasks.length) {
             firstTaskAdded = true
@@ -92,7 +90,6 @@ export default function TaskList(props) {
       }
     }
     else {
-      console.log('printing dates', calendarDate, task.date)
       if (calendarDate === task.date) {
         if (!allTagTasks.length) {
           firstTaskAdded = true
@@ -120,9 +117,7 @@ export default function TaskList(props) {
       dispatch(currentType(firstTaskType));
     }
     /*Task initiliazing */
-    console.log('Initialized: ', initialized)
     if (initialized) {
-      console.log('App initialized already')
     }
     else {
       const nonInitialized = []

@@ -57,8 +57,6 @@ export default function TimerControl(props) {
   const [showWarning, setShowWarning] = useState(true)
   const [warningDialog, setWarningDialog] = useState(false);
 
-  console.log('Settings in timer control: ', settings)
-
   const alarmSound = settings.alarmSound
   const [alarm] = useSound(notifications, {
     sprite: {
@@ -91,17 +89,14 @@ export default function TimerControl(props) {
   let progress;
   if (rest) {
     if (normalTriggeredRest) {
-      console.log('Normal triggered rest')
       progress = ((timerMinuts * 60 + timerSeconds) / (storedTime)) * 100
     }
     else {
       if (pomodoros === settings.longBreakEvery) {
         progress = ((timerMinuts * 60 + timerSeconds) / (settings.longBreakDuration*60) * 100)
-        console.log('Long break')
       }
       else {
         progress = ((timerMinuts * 60 + timerSeconds) / (settings.shortBreakDuration*60) * 100)
-        console.log('Short break')
       }
     }
   }
@@ -109,8 +104,6 @@ export default function TimerControl(props) {
     const timePassed = (settings.pomodoroDuration * 60) - (timerMinuts * 60 + timerSeconds)
     progress = timePassed * 100 / (settings.pomodoroDuration * 60)
   }
-
-  console.log('progress:', progress)
 
   const dispatchPomodoro = () => {
     dispatch(addTimeEntry(todayDate, settings.pomodoroDuration * 60, actualTag))
@@ -155,7 +148,6 @@ export default function TimerControl(props) {
 
   useEffect(() => {
     //if the timer is on and the clock hasn't been set to started, start
-    console.log("Debugging shit app: ", timerState, timerStarted, timerSeconds, timerMinuts, rest)
     if (timerState) {
       if (!timerStarted) {
         dispatch(timerHasStarted())
@@ -163,11 +155,8 @@ export default function TimerControl(props) {
 
       const interval = setInterval(() => {
         if (timerSeconds === 0) {
-          console.log("Debugging timer seconds is", timerSeconds)
           if (timerMinuts === 0) {
-            console.log("Debugging timer minuts is", timerMinuts)
             if (rest) { //On rest end
-              console.log("Debugging is rest")
               if (settings.alarmOnBreakEnd) {
                 alarm({ id: settings.alarmSound })
               }
@@ -184,7 +173,6 @@ export default function TimerControl(props) {
               }
             }
             else { //On pomodoro end
-              console.log("Debugging is not rest")
               if (settings.alarmOnPomodoroEnd) {
                 alarm({ id: settings.alarmSound })
               }
@@ -205,7 +193,6 @@ export default function TimerControl(props) {
               dispatchPomodoro()
               //"UpdateBlocks" reducer already handles the logic for how to update the specific task (only need index)
               dispatch(updateBlocks(actualIndex))
-              console.log('Debugging  Leaving first else')
             }
           }
           else {
@@ -241,7 +228,6 @@ export default function TimerControl(props) {
     }
   }, [1])
 
-  console.log(settings.longBreakEvery)
   /*
   qol
   Can move many of the props inside the TimerCard component since they're directly handled by redux.

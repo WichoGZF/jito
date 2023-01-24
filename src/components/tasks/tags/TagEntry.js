@@ -26,7 +26,6 @@ export default function TagEntry(props) {
       setEditName(!editName)
     }
     const handleChangeColor = (color) => {
-      console.log('Changing color into: ', color, color.hex)
       setColor(color.hex);
       if (color !== props.color) {
         dispatch(changeTagColor(props.tag, color.hex))

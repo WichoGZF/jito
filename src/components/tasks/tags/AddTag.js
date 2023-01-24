@@ -24,7 +24,6 @@ export default function AddTag(props) {
     const colorY = colorRef.current ? colorBounding.y + 24 + 12 : 0
   
     const handleChangeColor = (color) => {
-      console.log('Changing color into: ', color, color.hex)
       setColor(color.hex);
       setColorPick(!colorPick)
     }
@@ -48,7 +47,6 @@ export default function AddTag(props) {
       if (uniqueName) {
         dispatch(addTag({ name: tagName, color: color }))
         handleAddNewTag()
-        console.log('Saved tag,', addNewTag)
       }
       else {
         handleAlert()

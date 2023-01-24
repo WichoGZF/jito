@@ -40,6 +40,8 @@ function App() {
     const actualMinutesInDay = hours * 60 + minutes
     const remainingMinutes = 24 * 60 - actualMinutesInDay
     const remainingMiliseconds = remainingMinutes * 60 * 1000
+
+    console.log(remainingMiliseconds, extraMiliseconds)
     let resetDay = setTimeout(() => {
       dispatch(composeResetDay())
     }, remainingMiliseconds+extraMiliseconds)
@@ -70,7 +72,7 @@ function App() {
         primary: {
           main: 'rgb(217, 85, 80)'
         }
-
+ 
       },
     });
   }
