@@ -41,7 +41,8 @@ export default function Calendar(props) {
             <Grid item sx={{ width: '100%' }}>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <CalendarPicker disablePast date={dateInDateType} onChange={dispatchCalendarChange}
-                        disabled={timerState || timerStarted} />
+                        disabled={timerState || timerStarted} 
+                        views={['month', 'day']}/>
                 </LocalizationProvider>
 
             </Grid>
