@@ -27,7 +27,7 @@ function App() {
 
   const colorTheme = useSelector((state) => state.settings.colorTheme)
 
- 
+
   //Converting from
   const dateDigits = date.split('/') //mm/dd/yyyy
   const [month, day, year] = dateDigits
@@ -36,14 +36,14 @@ function App() {
   useEffect(() => {
     const hours = dateInDateType.getHours()
     const minutes = dateInDateType.getMinutes()
-    const extraMiliseconds = hoursAfterMidnight*60*60*1000 
+    const extraMiliseconds = hoursAfterMidnight * 60 * 60 * 1000
     const actualMinutesInDay = hours * 60 + minutes
     const remainingMinutes = 24 * 60 - actualMinutesInDay
     const remainingMiliseconds = remainingMinutes * 60 * 1000
 
     let resetDay = setTimeout(() => {
       dispatch(composeResetDay())
-    }, remainingMiliseconds+extraMiliseconds)
+    }, remainingMiliseconds + extraMiliseconds)
 
     return () => {
       clearTimeout(resetDay);
@@ -60,6 +60,16 @@ function App() {
           main: 'rgb(217, 85, 80)'
         }
       },
+      components: {
+        // @ts-ignore
+        MuiCalendarPicker: {
+          styleOverrides: {
+            root: {
+              color: "white"
+            }
+          }
+        },
+      }
     });
   }
   else {
@@ -71,7 +81,7 @@ function App() {
         primary: {
           main: 'rgb(217, 85, 80)'
         }
- 
+
       },
     });
   }
@@ -79,7 +89,7 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ minWidth: '700px', backgroundColor: 'background.default' }}>
+      <Box sx={{ minWidth: '700px', minHeight: '100vh', backgroundColor: 'background.default' }}>
         <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
         <Grid container spacing={4} sx={{ marginTop: '5px' }}>
           <Calendar date={date}></Calendar>
