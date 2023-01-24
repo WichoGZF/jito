@@ -13,41 +13,11 @@ import MenuItem from "@mui/material/MenuItem";
 import AvTimerIcon from "@mui/icons-material/AvTimer";
 import Button from '@mui/material/Button';
 
-import PropTypes from 'prop-types';
-
 import { useSelector, useDispatch } from 'react-redux'
 
 import DialogSettings from './DialogSettings'
 import DialogLogIn from './DialogLogIn'
 import DialogStatistics from "./DialogStatistics";
-
-
-function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
-}
-
-TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.number.isRequired,
-    value: PropTypes.number.isRequired,
-};
-
 
 
 const ResponsiveAppBar = (props) => {
