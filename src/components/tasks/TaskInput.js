@@ -42,7 +42,6 @@ export default function TaskInput(props) {
     const [openTagSelect, setOpenTagSelect] = useState(false)
 
     const handleOpenTagSelect = () => {
-        console.log("Opened tag select")
         setOpenTagSelect(!openTagSelect)
     }
     const handleRepeatSelect = () => {
@@ -51,7 +50,6 @@ export default function TaskInput(props) {
 
     const handleChangeRepeat = (event) => {
         setRepeat(event.target.value)
-        console.log("Repeat:", repeat)
     }
 
     const handleChangeTaskType = (event) => {
@@ -110,9 +108,6 @@ export default function TaskInput(props) {
         }
         props.handleTaskSelectClose()
     }
-
-
-    console.log(openTagSelect)
 
     const isWeekly = repeat === 'weekly'
 
