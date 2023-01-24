@@ -11,6 +11,7 @@ import { startNewDay } from '../src/features/appSlice'
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 import Calendar from './components/timerSection/Calendar';
+import { Stack } from '@mui/material';
 
 const composeResetDay = (tag) => (dispatch, getState) => {
   dispatch(startNewDay(getState().settings.pomodoroDuration))
@@ -24,9 +25,7 @@ function App() {
 
   const date = useSelector((state) => state.app.calendarDate);
   const hoursAfterMidnight = useSelector((state) => state.settings.hoursPastMidnight)
-
   const colorTheme = useSelector((state) => state.settings.colorTheme)
-
 
   //Converting from
   const dateDigits = date.split('/') //mm/dd/yyyy
@@ -87,17 +86,23 @@ function App() {
   }
 
 
+
   return (
     <ThemeProvider theme={theme}>
-      <Box sx={{ minWidth: '700px', minHeight: '100vh', backgroundColor: 'background.default' }}>
-        <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
-        <Grid container spacing={4} sx={{ marginTop: '5px' }}>
-          <Calendar date={date}></Calendar>
-          <Grid item xs>
-            <TaskList></TaskList>
+      <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
+      <Stack direction="row"
+        justifyContent="center"
+        alignItems="center"
+        sx={{ width: '100%', backgroundColor: 'background.default' }}>
+        <Box sx={{width: '100%', minWidth: '700px', maxWidth: '1200px',minHeight: '100vh', backgroundColor: 'background.default',borderTop: 0, borderBottom: 0, borderLeft: '1px', borderRight: '1px', borderColor:'rgba(255, 255, 255, 0.12)', borderStyle:'solid' }}>
+          <Grid container spacing={4} sx={{ marginTop: '5px', width: '100%' }}>
+            <Calendar date={date}></Calendar>
+            <Grid item xs>
+              <TaskList></TaskList>
+            </Grid>
           </Grid>
-        </Grid>
-      </Box>
+        </Box>
+      </Stack>
     </ThemeProvider>
   );
 }
