@@ -23,7 +23,7 @@ function App() {
   const dispatch = useDispatch();
 
   const date = useSelector((state) => state.app.calendarDate);
-  const hoursAfterMidnight = useSelector((state) => state.settings.hoursAfterMidnight)
+  const hoursAfterMidnight = useSelector((state) => state.settings.hoursPastMidnight)
 
   const colorTheme = useSelector((state) => state.settings.colorTheme)
 
@@ -41,7 +41,6 @@ function App() {
     const remainingMinutes = 24 * 60 - actualMinutesInDay
     const remainingMiliseconds = remainingMinutes * 60 * 1000
 
-    console.log(remainingMiliseconds, extraMiliseconds)
     let resetDay = setTimeout(() => {
       dispatch(composeResetDay())
     }, remainingMiliseconds+extraMiliseconds)
