@@ -1,11 +1,38 @@
 import { VolumeDown, VolumeUp } from "@mui/icons-material";
-import { TabPanel } from "@mui/lab";
 import { Dialog, DialogTitle, Grid, Tabs, Tab, IconButton, DialogContent, TextField, Typography, Switch, Slider, Select, MenuItem, ToggleButtonGroup, ToggleButton, Button, DialogActions } from "@mui/material";
 import { establishPomodoroTime } from "../../features/appSlice";
 import { updateSettings } from '../../features/settingsSlice.js'
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import CloseIcon from '@mui/icons-material/Close';
+import PropTypes from 'prop-types';
+import { Box } from "@mui/system";
+
+function TabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+        <div
+            role="tabpanel"
+            hidden={value !== index}
+            id={`simple-tabpanel-${index}`}
+            aria-labelledby={`simple-tab-${index}`}
+            {...other}
+        >
+            {value === index && (
+                <Box sx={{ p: 3 }}>
+                    <Typography>{children}</Typography>
+                </Box>
+            )}
+        </div>
+    );
+}
+
+TabPanel.propTypes = {
+    children: PropTypes.node,
+    index: PropTypes.number.isRequired,
+    value: PropTypes.number.isRequired,
+};
 
 function a11yProps(index) {
     return {
@@ -13,9 +40,6 @@ function a11yProps(index) {
         'aria-controls': `simple-tabpanel-${index}`,
     };
 }
-//Optimiziation:
-//Add a reducer for each of the settings... 
-
 
 export default function DialogSettings(props) {
     const settings = useSelector(state => state.settings)
