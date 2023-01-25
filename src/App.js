@@ -3,15 +3,16 @@ import React, { useState, useEffect } from 'react';
 import ResponsiveAppBar from "./components/navbar/ResponsiveAppBar";
 import TaskList from './components/tasks/TaskList';
 
-import Box from "@mui/material/Box";
 import Grid from '@mui/material/Grid'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { startNewDay } from '../src/features/appSlice'
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { createTheme, ThemeProvider, responsiveFontSizes } from "@mui/material/styles";
 
 import Calendar from './components/timerSection/Calendar';
-import { Stack } from '@mui/material';
+import { Container, Divider, Stack } from '@mui/material';
+import Footer from 'components/bottom/Footer';
+import PaginationPanel from 'components/bottom/PaginationPanel';
 
 const composeResetDay = (tag) => (dispatch, getState) => {
   dispatch(startNewDay(getState().settings.pomodoroDuration))
@@ -85,24 +86,30 @@ function App() {
     });
   }
 
-
+  theme = responsiveFontSizes(theme);
 
   return (
     <ThemeProvider theme={theme}>
       <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
-      <Stack direction="row"
-        justifyContent="center"
-        alignItems="center"
-        sx={{ width: '100%', backgroundColor: 'background.default' }}>
-        <Box sx={{width: '100%', minWidth: '700px', maxWidth: '1200px',minHeight: '100vh', backgroundColor: 'background.default',borderTop: 0, borderBottom: 0, borderLeft: '1px', borderRight: '1px', borderColor:'rgba(255, 255, 255, 0.12)', borderStyle:'solid' }}>
+      <Container>
+        <Stack
+          justifyContent="flex-start"
+          alignItems="center"
+          sx={{ width: '100%', minHeight: '100vh', backgroundColor: 'background.default', minWidth: '700px', maxWidth: '1200px', }}
+          gap={4}
+        >
           <Grid container spacing={4} sx={{ marginTop: '5px', width: '100%' }}>
             <Calendar date={date}></Calendar>
             <Grid item xs>
               <TaskList></TaskList>
             </Grid>
           </Grid>
-        </Box>
-      </Stack>
+          <Divider style={{ width: '100%' }}></Divider>
+          <PaginationPanel></PaginationPanel>
+          <Divider style={{ width: '100%' }}></Divider>
+          <Footer></Footer>
+        </Stack>
+      </Container>
     </ThemeProvider>
   );
 }
