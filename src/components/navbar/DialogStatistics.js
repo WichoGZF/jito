@@ -27,8 +27,7 @@ export default function DialogStatistics(props) {
 
     //Component state
     const [historySelect, setHistorySelect] = useState("days")
-    const [productiveTimeSelect, setProductiveTimeSelect] = useState("minutes")
-    const [timeDistribuitionSelect, setTimeDistribuitionSelect] = useState("today")
+    const [timeDistribuitionSelect, setTimeDistribuitionSelect] = useState("all")
 
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -218,6 +217,16 @@ export default function DialogStatistics(props) {
         }
     }
 
+    const hoursToHoursMins = (hours) => {
+        const minutes = Math.trunc(hours * 60)
+        if (hours >= 1) {
+            return (`${Math.trunc(hours)}h ${minutes % 60}m`)
+        }
+        else {
+            return (`${minutes}m`)
+        }
+    }
+
 
     const secondsArrayToMinutesArray = (secondsArray) => {
         secondsArray.forEach((seconds, index) => secondsArray[index] = Math.floor(seconds / 60))
@@ -245,13 +254,35 @@ export default function DialogStatistics(props) {
         responsive: true,
         plugins: {
             legend: {
+                display: false,
                 position: 'top',
             },
             title: {
                 display: false,
                 text: 'Chart.js Line Chart',
             },
+            tooltip: {
+                callbacks: {
+                    title: (item, date) => {
+                        return ''
+                    },
+                    label: (item, data) => {
+                        return `${item.label} - ${hoursToHoursMins(item.raw)}`
+                    }
+                }
+            }
         },
+        scales: {
+            y: {
+                ticks: {
+                    callback: function (value, index, ticks) {
+
+                        return hoursToHoursMins(value)
+                    }
+                },
+                min: 0,
+            }
+        }
     };
     let labelsLineChart = []
     switch (historySelect) {
@@ -307,17 +338,40 @@ export default function DialogStatistics(props) {
         responsive: true,
         plugins: {
             legend: {
+                display: false,
                 position: 'top',
             },
+            tooltip: {
+                callbacks: {
+                    title: (item, date) => {
+                        return ''
+                    },
+                    label: (item, data) => {
+                        return `${item.label} - ${hoursToHoursMins(item.raw)}`
+                    }
+                }
+            }
         },
+        scales: {
+            y: {
+                ticks: {
+                    callback: function (value, index, ticks) {
+
+                        return hoursToHoursMins(value)
+                    }
+                },
+                min: 0,
+            }
+        }
     };
+
 
     const dataBarChart = {
         labels: labelsBarChart,
         datasets: [
             {
-                label: productiveTimeSelect === 'minutes' ? "Minutes" : "Hours",
-                data: productiveTimeSelect === 'minutes' ? secondsArrayToMinutesArray(daysOfTheWeekTime()) : secondsArrayToHoursArray(daysOfTheWeekTime()),
+                label: "Hours",
+                data: secondsArrayToHoursArray(daysOfTheWeekTime()),
                 backgroundColor: 'rgb(255 142 138)',
             },
         ],
@@ -352,7 +406,18 @@ export default function DialogStatistics(props) {
         ],
     };
 
-
+   const optionsDoughnut = {
+        responsive: true,
+        plugins:{
+            tooltip: {
+                callbacks: {
+                    label: (item, data) => {
+                        return `${item.label} - ${hoursToHoursMins(item.raw)}`
+                    }
+                }
+            }
+        }
+    };
     return (
         <Dialog
             open={props.open}
@@ -365,7 +430,7 @@ export default function DialogStatistics(props) {
                 <Grid container direction="row" justifyContent="space-between" alignItems="center">
                     <Grid item>
                         <Typography color="grey.700" variant="h5">
-                            Statistics (WIP)
+                            Statistics
                         </Typography>
                     </Grid>
                     <Grid item xs="auto">
@@ -423,16 +488,10 @@ export default function DialogStatistics(props) {
                         </Grid>
                     </Grid>
                     <Divider></Divider>
-                    <Grid container item spacing={2} sx={{ marginBottom: '32px' }}>
+                    <Grid container item spacing={5} sx={{ marginBottom: '32px' }}>
                         <Grid container item justifyContent='space-between' alignItems='center'>
                             <Grid item>
-                                <Typography >Productive time</Typography>
-                            </Grid>
-                            <Grid item>
-                                <Select value={productiveTimeSelect} onChange={(event) => { setProductiveTimeSelect(event.target.value) }}>
-                                    <MenuItem value={'minutes'}>Minutes</MenuItem>
-                                    <MenuItem value={'hours'}>Hours</MenuItem>
-                                </Select>
+                                <Typography >Average productive time by day of the week</Typography>
                             </Grid>
                         </Grid>
                         <Grid item xs>
@@ -444,21 +503,21 @@ export default function DialogStatistics(props) {
                         <Grid container item justifyContent='space-between' alignItems='center'>
                             <Grid item>
                                 <Stack>
-                                    <Typography >Time distribution (hours)</Typography>
+                                    <Typography >Time distribution by tag</Typography>
                                 </Stack>
 
                             </Grid>
                             <Grid item>
                                 <Select value={timeDistribuitionSelect} onChange={(event) => { setTimeDistribuitionSelect(event.target.value) }}>
-                                    <MenuItem value={'today'}>Today</MenuItem>
-                                    <MenuItem value={'week'}>This week</MenuItem>
-                                    <MenuItem value={'month'}>This month</MenuItem>
                                     <MenuItem value={'all'}>Total</MenuItem>
+                                    <MenuItem value={'month'}>This month</MenuItem>
+                                    <MenuItem value={'week'}>This week</MenuItem>
+                                    <MenuItem value={'today'}>Today</MenuItem>
                                 </Select>
                             </Grid>
                         </Grid>
                         <Grid item xs>
-                            <Doughnut data={dataDoughnut}></Doughnut>
+                            <Doughnut options={optionsDoughnut} data={dataDoughnut}></Doughnut>
                         </Grid>
                     </Grid>
                 </Grid>
