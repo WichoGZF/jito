@@ -56,8 +56,8 @@ export default function TaskList(props) {
   }
   const splitCalendarDate = calendarDate.split('/')
   const [month, calendarDay, year] = splitCalendarDate
-  const realCalendarDate = new Date(year, month, calendarDay)
-  const day = realCalendarDate.getDay();
+  const realCalendarDate = new Date(year, month-1, calendarDay)
+  const dayOfTheWeek = realCalendarDate.getDay();
 
   let allTagTasks = []
 
@@ -80,7 +80,7 @@ export default function TaskList(props) {
       if (!task.completed || todayDate !== calendarDate) { //In order to filter completed yet not discard future tasks
         switch (task.repeat) {
           case 'weekly':
-            if (task.repeatOn[day]) {
+            if (task.repeatOn[dayOfTheWeek]) {
               if (!allTagTasks.length) {
                 firstTaskAdded = true
               }
