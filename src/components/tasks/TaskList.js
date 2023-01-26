@@ -28,7 +28,6 @@ export default function TaskList(props) {
   const calendarDate = useSelector(state => state.app.calendarDate)
   const initializedDate = useSelector(state => state.app.initialized)
   const todayDate = useSelector(state => state.app.todayDate)
-  const hoursPastMidnight = useSelector(state => state.settings.hoursPastMidnight)
 
   const initialized = initializedDate === todayDate
 
@@ -68,35 +67,36 @@ export default function TaskList(props) {
   //irrelevant you could have used one of the abovce but w/e
   let firstTaskAdded = false
   tasks.forEach((task, index) => {
-    if (task.repeat !== 'false') {
-      if (!task.completed || todayDate !== calendarDate) {
-        if (task.repeat === 'daily') {
-          if (!allTagTasks.length) {
-            firstTaskAdded = true
-          }
-          allTagTasks.push(taskToListEntry(task, firstTaskAdded, index))
+
+    if (task.repeat === 'false') {
+      if (task.date === calendarDate) {
+        if (!allTagTasks.length) {
+          firstTaskAdded = true
         }
-        else {
-          for (const dayOfTheWeek of task.repeatOn) {
+        allTagTasks.push(taskToListEntry(task, firstTaskAdded, index))
+      };
+    }
+    else {
+      if (!task.completed || todayDate !== calendarDate) { //In order to filter completed yet not discard future tasks
+        switch (task.repeat) {
+          case 'weekly':
             if (task.repeatOn[day]) {
               if (!allTagTasks.length) {
                 firstTaskAdded = true
               }
               allTagTasks.push(taskToListEntry(task, firstTaskAdded, index))
-              break;
             }
-          }
+            break;
+          case 'daily':
+            if (!allTagTasks.length) {
+              firstTaskAdded = true
+            }
+            allTagTasks.push(taskToListEntry(task, firstTaskAdded, index));
+            break;
         }
       }
     }
-    else {
-      if (calendarDate === task.date) {
-        if (!allTagTasks.length) {
-          firstTaskAdded = true
-        }
-        allTagTasks.push(taskToListEntry(task, firstTaskAdded, index))
-      }
-    }
+
     if (firstTaskAdded) {//if this is the first task added
       firstTaskIndex = index
       firstTaskTag = task.tag
@@ -105,7 +105,6 @@ export default function TaskList(props) {
       firstTaskAdded = false
 
     }
-
   })
 
   //Debugging
