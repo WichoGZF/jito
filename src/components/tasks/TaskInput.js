@@ -1,4 +1,4 @@
-import { Button } from "@mui/material"
+import { Button, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
 import * as React from "react";
 import { useState } from "react"
 import Box from "@mui/material/Box";
@@ -23,6 +23,8 @@ import TagDialog from "./tags/TagDialog";
 
 import { useDispatch, useSelector } from "react-redux";
 import { addTask, editTask } from 'features/tasksSlice'
+
+import WeekPicker from './WeekPicker'
 
 export default function TaskInput(props) {
     const tags = useSelector(state => state.tasks.tags)
@@ -81,11 +83,11 @@ export default function TaskInput(props) {
 
     const handleSaveTask = () => {
         const numericalBlocks = parseInt(blocks)
-        let blocksToSend; 
-        if(taskType === 'block'){
-            !!numericalBlocks? blocksToSend = numericalBlocks: blocksToSend = 1
+        let blocksToSend;
+        if (taskType === 'block') {
+            !!numericalBlocks ? blocksToSend = numericalBlocks : blocksToSend = 1
         }
-        else{
+        else {
             blocksToSend = 0
         }
         const taskToSend = {
@@ -112,27 +114,32 @@ export default function TaskInput(props) {
     const isWeekly = repeat === 'weekly'
 
     return (
-        <Box sx={{ width: '95%' }}>
-            <Grid container direction='column' gap={0.5} sx={{ padding: "15px", border: '1px', borderStyle: 'solid', borderColor: "#e2e2e2", borderRadius: '25px' }}>
+        <Box sx={{width: '100%'}}>
+            <Grid container direction='column' gap={1.5} sx={{ padding: "15px", border: '1px', borderStyle: 'solid', borderColor: "#e2e2e2", borderRadius: '25px' }}>
 
-                <Input id="task-name"
+                <TextField id="task-name"
                     value={taskName}
                     onChange={(e) => setTaskName(e.target.value)}
-                    sx={{ flexGrow: 9, gridRow: '1', gridColumn: '2' }}
-                    multiline
+                    sx={{ flexGrow: 1, gridRow: '1', gridColumn: '2' }}
                     autoFocus={true}
-                    placeholder="Title"
+                    label={<Typography variant='button'>Name</Typography>}
+                    required
+                    size='small'
                 />
-                <Input id="task-description"
+                <TextField id="task-description"
                     value={taskDesc}
                     onChange={(e) => setTaskDesc(e.target.value)}
-                    sx={{ fontSize: 14, gridColumn: '2', gridRow: '2', color: "GrayText" }}
-                    placeholder="Details"
+                    label={<Typography variant='button'>Details</Typography>}
                     multiline
+                    size='small'
                 />
                 <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '10px' }}>
                     <FormControl>
-                        <FormLabel>Task type</FormLabel>
+                        <FormLabel >
+                            <Typography variant='button'>
+                                Task type
+                            </Typography>
+                        </FormLabel>
                         <RadioGroup
                             aria-labelledby="demo-controlled-radio-buttons-group"
                             name="controlled-radio-buttons-group"
@@ -140,98 +147,67 @@ export default function TaskInput(props) {
                             onChange={handleChangeTaskType}
                             row
                         >
-                            <FormControlLabel value="normal" control={<Radio></Radio>} label="Normal" sx={{ color: 'text.primary' }} />
-                            <FormControlLabel value="block" control={<Radio />} label="Block" sx={{ color: 'text.primary' }} />
+                            <FormControlLabel value="normal" control={<Radio></Radio>} label="Normal" sx={{ color: 'text.secondary' }} />
+                            <FormControlLabel value="block" control={<Radio />} label="Block" sx={{ color: 'text.secondary' }} />
                         </RadioGroup>
                     </FormControl>
                     <Stack>
-                        <FormLabel>Number of blocks</FormLabel>
-                        <Input disabled={taskType === 'normal'} value={blocks} onChange={handleBlocks}></Input>
+                        <FormLabel>
+                            <Typography variant='button'>
+                                {taskType === 'normal' ? 'Number of expected pomodoros' : 'Number of blocks'}
+                            </Typography>
+                        </FormLabel>
+                        <Input value={blocks} onChange={handleBlocks}></Input>
                     </Stack>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
-                    <FormLabel>Tag</FormLabel>
+                    <FormLabel>
+                        <Typography variant='button'>Tag</Typography>
+                    </FormLabel>
                     <Chip clickable onClick={handleOpenTagSelect} label={tag} sx={{ backgroundColor: color }}></Chip>
                 </Stack>
                 <Stack direction="row" justifyContent={"space-between"}>
-                    <FormLabel>Repeat</FormLabel>
-                    <IconButton onClick={handleRepeatSelect}><RepeatIcon color={repeat !== 'false' ? 'primary' : 'disabled'}></RepeatIcon></IconButton>
+                    <Grid
+                        container
+                        alignItems="center"
+                        gap={1}
+
+                    >
+                        <FormLabel>
+                            <Typography variant='button'>Repeat</Typography>
+                        </FormLabel>
+                        <RepeatIcon color={repeat? 'primary' : 'disabled'}></RepeatIcon>
+                    </Grid>
+                    <Select labelId="select"
+                        value={repeat}
+                        label="Repeat"
+                        onChange={handleChangeRepeat}
+                        size='small'
+                    >
+                        <MenuItem value={false}>No repeat</MenuItem>
+                        <MenuItem value="daily">Daily</MenuItem>
+                        <MenuItem value="weekly">Weekly</MenuItem>
+                    </Select>
                 </Stack>
+                {repeat === 'weekly' ?
+                    <Stack direction="row" justifyContent={"space-between"}>
+                        <Box></Box>
+                        <WeekPicker handleChangeRepeatOn={handleChangeRepeatOn} repeatOn={repeatOn}></WeekPicker>
+                    </Stack>
+                    : <></>
+                }
 
             </Grid>
             <Grid container direction="row" justifyContent='flex-end' alignItems={'center'} sx={{ marginTop: 2 }}>
                 <Button onClick={props.handleTaskSelectClose}>Cancel</Button>
                 <Button onClick={handleSaveTask}>Save</Button>
             </Grid>
-
-            <Dialog
-                open={toggleRepeat}
-                onClose={handleRepeatSelect}>
-                <DialogContent>
-                    <FormControl>
-                        <FormLabel id="select-repeat">Repeat</FormLabel>
-                        <RadioGroup
-                            name="select-repeat-buttons-group"
-                            value={repeat}
-                            onChange={handleChangeRepeat}
-                            row
-                        >
-                            <FormControlLabel value={false} control={<Radio />} label="No repeat" />
-                            <FormControlLabel value="daily" control={<Radio />} label="Daily" />
-                            <FormControlLabel value="weekly" control={<Radio></Radio>} label="Weekly" />
-                        </RadioGroup>
-                    </FormControl>
-                    <FormLabel component="legend">Select days</FormLabel>
-                    <FormGroup>
-                        <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={repeatOn[0]}
-                                onChange={() => handleChangeRepeatOn(0)} />}
-                            label="Sunday"
-                        ></FormControlLabel>
-                        <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={repeatOn[1]}
-                                onChange={() => handleChangeRepeatOn(1)} />}
-                            label="Monday"
-                        ></FormControlLabel>
-                        <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={repeatOn[2]}
-                                onChange={() => handleChangeRepeatOn(2)} />}
-                            label="Tuesday"
-                        ></FormControlLabel>
-                        <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={repeatOn[3]}
-                                onChange={() => handleChangeRepeatOn(3)} />}
-                            label="Wednesday"
-                        ></FormControlLabel>
-                        <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={repeatOn[4]}
-                                onChange={() => handleChangeRepeatOn(4)} />}
-                            label="Thursday"
-                        ></FormControlLabel>
-                        <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={repeatOn[5]}
-                                onChange={() => handleChangeRepeatOn(5)} />}
-                            label="Friday"
-                        ></FormControlLabel>
-                        <FormControlLabel disabled={!isWeekly}
-                            control={<Checkbox checked={repeatOn[6]}
-                                onChange={() => handleChangeRepeatOn(6)} />}
-                            label="Saturday"
-                        ></FormControlLabel>
-                    </FormGroup>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleRepeatSelect}>Cancel</Button>
-                    <Button onClick={handleRepeatSelect}>OK</Button>
-                </DialogActions>
-            </Dialog>
             <TagDialog openTagSelect={openTagSelect}
                 handleOpenTagSelect={handleOpenTagSelect}
                 tagSelected={tag}
                 handleChangeTag={handleChangeTag}
                 handleChangeColor={handleChangeColor}
             ></TagDialog>
-
         </Box>
     )
 }
