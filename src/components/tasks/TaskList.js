@@ -56,7 +56,7 @@ export default function TaskList(props) {
   }
   const splitCalendarDate = calendarDate.split('/')
   const [month, calendarDay, year] = splitCalendarDate
-  const realCalendarDate = new Date(year, month-1, calendarDay)
+  const realCalendarDate = new Date(year, month - 1, calendarDay)
   const dayOfTheWeek = realCalendarDate.getDay();
 
   let allTagTasks = []
@@ -110,24 +110,27 @@ export default function TaskList(props) {
   //Debugging
   //Does this only run once?
   useEffect(() => {
+    console.log('Re-render tasklist');
+
     if (allTagTasks.length) {
       dispatch(currentTag(firstTaskTag));
       dispatch(currentIndex(firstTaskIndex));
       dispatch(currentType(firstTaskType));
     }
     /*Task initiliazing */
-    if (initialized) {
-    }
-    else {
+    console.log('Initialized: ', initialized)
+    if (!initialized) {
       const nonInitialized = []
       tasks.forEach((task, index) => {
         if (task.repeat !== 'false') {
-          if (task.completed)
+          if (task.completed || task.defaultBlocks > task.blocks){
             nonInitialized.push(index)
+          }
         }
       })
       dispatch(restartTask(nonInitialized))
     }
+
   })
 
 
