@@ -39,7 +39,7 @@ export default function TaskList(props) {
   function taskToListEntry(task, firstTask, index) {
     return (
       <ListEntry
-        key={task.id}
+        key={task.tag + task.id}
         text={task.name}
         description={task.description}
         index={index}
