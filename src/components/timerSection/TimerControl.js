@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import TimerCard from './TimerCard';
 import { useSelector, useDispatch } from 'react-redux/es/exports.js';
 
@@ -28,6 +28,8 @@ import {
   disableNormalTriggeredRest, setStoredTime, setCalendarDate
 } from '../../features/appSlice.js'
 import { updateBlocks } from '../../features/tasksSlice.js';
+
+import workerTimer from "./worker"
 
 //Todo
 //After finishing a break 
@@ -93,10 +95,10 @@ export default function TimerControl(props) {
     }
     else {
       if (pomodoros === settings.longBreakEvery) {
-        progress = ((timerMinuts * 60 + timerSeconds) / (settings.longBreakDuration*60) * 100)
+        progress = ((timerMinuts * 60 + timerSeconds) / (settings.longBreakDuration * 60) * 100)
       }
       else {
-        progress = ((timerMinuts * 60 + timerSeconds) / (settings.shortBreakDuration*60) * 100)
+        progress = ((timerMinuts * 60 + timerSeconds) / (settings.shortBreakDuration * 60) * 100)
       }
     }
   }
@@ -110,18 +112,21 @@ export default function TimerControl(props) {
   }
 
   const changeTimerState = () => {
-    if(!rest){
-      if(!timerStarted){
-        if(todayDate !== calendarDate){
+    if (!rest) {
+      if (!timerStarted) {
+        if (todayDate !== calendarDate) {
           dispatch(setCalendarDate(todayDate))
         }
       }
     }
     if (timerState) {
       dispatch(stopRunning())
+      worker.current.postMessage('stop')
     }
     else {
       dispatch(startRunning())
+      worker.current.postMessage('start')
+
     }
   }
 
@@ -129,9 +134,9 @@ export default function TimerControl(props) {
     dispatch(establishPomodoroTime(settings.pomodoroDuration, 0))
     dispatch(timerNotStarted())
     dispatch(stopRunning())
-    if(rest){
+    if (rest) {
       dispatch(endRest())
-      if(pomodoros===settings.longBreakEvery){
+      if (pomodoros === settings.longBreakEvery) {
         setPomodoros(0)
       }
     }
@@ -146,14 +151,34 @@ export default function TimerControl(props) {
     dispatch(stopRunning())
   }
 
-  useEffect(() => {
-    //if the timer is on and the clock hasn't been set to started, start
-    if (timerState) {
-      if (!timerStarted) {
-        dispatch(timerHasStarted())
-      }
+  const worker = useRef()
 
-      const interval = setInterval(() => {
+  //Debugging needed
+  //Initializing use effect, establishing starting value of pomodoro.
+  useEffect(() => {
+    if (timerMinuts === 0 && timerSeconds === 0) {
+      dispatch(establishPomodoroTime(settings.pomodoroDuration, 0))
+    }
+  }, [1])
+
+  useEffect(() => {
+    worker.current = new Worker(workerTimer)
+    return () => {
+      worker.current.terminate();
+    }
+  }, [])
+
+  useEffect(() => {
+    const eventHandler = (e) => {
+      console.log('Message from worker: ', e.data);
+
+      if (timerState) {
+        console.log('TimerState: ', timerState)
+
+        if (!timerStarted) {
+          dispatch(timerHasStarted())
+        }
+
         if (timerSeconds === 0) {
           if (timerMinuts === 0) {
             if (rest) { //On rest end
@@ -167,7 +192,7 @@ export default function TimerControl(props) {
               }
               dispatch(establishPomodoroTime(settings.pomodoroDuration, 0))
 
-              if(normalTriggeredRest){
+              if (normalTriggeredRest) {
                 dispatch(disableNormalTriggeredRest())
                 dispatch(setStoredTime(0))
               }
@@ -196,6 +221,7 @@ export default function TimerControl(props) {
             }
           }
           else {
+            console.log("One minute less")
             dispatch(establishPomodoroTime(timerMinuts - 1, 59))
             if (rest && settings.tickingSoundOnBreak) {
               tick({ id: settings.tickingSound })
@@ -206,6 +232,7 @@ export default function TimerControl(props) {
           }
         }
         else {
+          console.log('One second less')
           dispatch(establishPomodoroTime(timerMinuts, timerSeconds - 1))
           if (rest && settings.tickingSoundOnBreak) {
             tick({ id: settings.tickingSound })
@@ -215,18 +242,14 @@ export default function TimerControl(props) {
           }
 
         }
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [timerState, timerSeconds, timerMinuts]);
+      }
+    };
 
-  //Debugging needed
-  //Initializing use effect, establishing starting value of pomodoro.
-  useEffect(() => {
-    if (timerMinuts === 0 && timerSeconds === 0) {
-      dispatch(establishPomodoroTime(settings.pomodoroDuration, 0))
+    worker.current.addEventListener('message', eventHandler);
+    return () => {
+      worker.current.removeEventListener('message', eventHandler)
     }
-  }, [1])
+  }, [timerState, timerMinuts, timerSeconds])
 
   /*
   qol
