@@ -5,27 +5,20 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
 import Container from "@mui/material/Container";
-import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip";
-import MenuItem from "@mui/material/MenuItem";
 import AvTimerIcon from "@mui/icons-material/AvTimer";
 import Button from '@mui/material/Button';
 
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import DialogSettings from './DialogSettings'
 import DialogLogIn from './DialogLogIn'
 import DialogStatistics from "./DialogStatistics";
+import ButtonGroup from "@mui/material/ButtonGroup";
 
 
 const ResponsiveAppBar = (props) => {
-    const [anchorElUser, setAnchorElUser] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(null)
-    const [loggedIn, setLoggedIn] = useState(true)
-
-    const timerStarted = useSelector((state) => state.app.timerStarted);
 
     let loggedInLabel
     if (props.loggedIn) {
@@ -35,29 +28,19 @@ const ResponsiveAppBar = (props) => {
         loggedInLabel = "Log In"
     }
 
-    const settings = ["Settings", "Statistics", loggedInLabel];
-
-    const handleOpenUserMenu = (event) => {
-        setAnchorElUser(event.currentTarget);
-    };
-
-    const handleSelectUserMenu = (selection) => {
-        setDialogOpen(selection);
-        setAnchorElUser(null);
-    };
+    const handleOpenDialog = (index) => {
+        setDialogOpen(index);
+    }
 
     const handleCloseDialog = () => {
         setDialogOpen(null)
-    }
-
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
     }
 
     return (
         <AppBar position="sticky">
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
+
                     <IconButton
                         size="large"
                         aria-label="account of current user"
@@ -77,40 +60,11 @@ const ResponsiveAppBar = (props) => {
                         Pomodoro Planner
                     </Typography>
                     <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open menu">
-                            {loggedIn
-                                ? <IconButton onClick={handleOpenUserMenu}
-                                disabled={timerStarted}
-                                sx={{ p: 0 }}>
-                                    <Avatar alt="?" src="/static/images/avatar/2.jpg" />
-                                </IconButton>
-                                : <Button onClick={handleOpenUserMenu}
-                                disabled={timerStarted}
-                                >user</Button>
-                            }
-                        </Tooltip>
-                        <Menu
-                            sx={{ mt: "45px" }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: "top",
-                                horizontal: "right"
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: "top",
-                                horizontal: "right"
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            {settings.map((setting, index) => (
-                                <MenuItem key={setting} onClick={() => handleSelectUserMenu(index + 1)}>
-                                    <Typography textAlign="center">{setting}</Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
+                        <ButtonGroup variant={'contained'} aria-label="outlined primary button group">
+                            <Button onClick={() => handleOpenDialog(2)}>Statistics</Button>
+                            <Button onClick={() => handleOpenDialog(1)}>Settings</Button>
+                            <Button onClick={() => handleOpenDialog(3)}>Log In</Button>
+                        </ButtonGroup>
                     </Box>
                 </Toolbar>
             </Container>
