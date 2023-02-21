@@ -1,4 +1,14 @@
-export const mockTasks =
+import Task from 'types/Task'
+import Tag from 'types/Tag'
+import HistoricTask from 'types/HistoricTask'
+
+type StateType = {
+    tasks: Task[], 
+    tags: Tag[], 
+    history: HistoricTask[]
+}; 
+
+export const mockTasks: StateType  =
 {
   tags: [
     { name: 'My tasks', color: '#FF6900' }, { name: 'escuela', color: '#FCB900' }, { name: 'programming', color: '#7BDCB5' }, { name: 'casa', color: '#00D084' }

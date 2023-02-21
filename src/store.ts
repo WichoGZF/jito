@@ -1,9 +1,9 @@
 import { configureStore, combineReducers, getDefaultMiddleware } from '@reduxjs/toolkit'
 
-import authReducer from './features/authSlice.js'
-import settingsReducer from './features/settingsSlice.js'
-import tasksReducer from './features/tasksSlice.js'
-import appReducer from './features/appSlice.js'
+import authReducer from './features/authSlice'
+import settingsReducer from './features/settingsSlice'
+import tasksReducer from './features/tasksSlice'
+import appReducer from './features/appSlice'
 
 import storage from 'redux-persist/lib/storage'
 import storageSession from 'redux-persist/lib/storage/session'
@@ -21,8 +21,8 @@ import {
 const rootPersistConfig = {
     key: 'root',
     storage,
-    blacklist: ['auth', 'app']
-}
+    blacklist: ['auth', 'app', 'tasks']
+}   
 
 const rootReducer = combineReducers({
     auth: authReducer,
@@ -41,6 +41,11 @@ export const store = configureStore({
             ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
         },
     }),
-}) 
+})  
+
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>
+// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+export type AppDispatch = typeof store.dispatch
 
 export const persistor = persistStore(store)

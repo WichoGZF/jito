@@ -16,9 +16,14 @@ import DialogLogIn from './DialogLogIn'
 import DialogStatistics from "./DialogStatistics";
 import ButtonGroup from "@mui/material/ButtonGroup";
 
+import { useTheme } from '@mui/material/styles';
 
 const ResponsiveAppBar = (props) => {
-    const [dialogOpen, setDialogOpen] = useState(null)
+    const [dialogOpen, setDialogOpen] = useState(0)
+
+    const theme = useTheme()
+
+    const colorTheme = useSelector((state) => state.settings.colorTheme)
 
     let loggedInLabel
     if (props.loggedIn) {
@@ -37,7 +42,7 @@ const ResponsiveAppBar = (props) => {
     }
 
     return (
-        <AppBar position="sticky">
+        <AppBar position="sticky" color='secondary'>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
 
@@ -60,7 +65,7 @@ const ResponsiveAppBar = (props) => {
                         Pomodoro Planner
                     </Typography>
                     <Box sx={{ flexGrow: 0 }}>
-                        <ButtonGroup variant={'contained'} aria-label="outlined primary button group">
+                        <ButtonGroup variant={'text'} aria-label="outlined primary button group">
                             <Button onClick={() => handleOpenDialog(2)}>Statistics</Button>
                             <Button onClick={() => handleOpenDialog(1)}>Settings</Button>
                             <Button onClick={() => handleOpenDialog(3)}>Log In</Button>

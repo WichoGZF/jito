@@ -5,13 +5,12 @@ import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui
 import Chip from '@mui/material/Chip'
 import Button from '@mui/material/Button'
 import { useSelector, useDispatch } from "react-redux";
-import { updateDates, deleteDue } from "features/tasksSlice.js";
-import { initialize } from "features/appSlice.js";
+import { updateDates, deleteDue } from "features/tasksSlice";
+import { initialize } from "features/appSlice";
 import isBefore from "date-fns/isBefore";
 import add from 'date-fns/add'
 
 const DueTaskEntry = (props) => {
-
     return (
         <ListItem
             key={props.id}
@@ -68,7 +67,7 @@ export default function OverdueTaskList(props) {
         if (task.repeat === 'false') {
             const dateArray = task.date.split('/')
             const [month, day, year] = dateArray
-            const taskDate = new Date(year, month-1, day)
+            const taskDate = new Date(year, month - 1, day)
             let dayIsBefore;
             if (!!hoursPastMidnight) {
                 add(todayDate, {
@@ -133,34 +132,29 @@ export default function OverdueTaskList(props) {
         )
     })
 
-    useEffect(() => {
-        if(!!overdueTaskList.length){
-            updateInitialized()
-        }
-    
-      })
+    return (
+        <Dialog maxWidth='sm' scroll='paper' open={props.open}>
+            <DialogTitle>Import overdue tasks?</DialogTitle>
+            <DialogContent>
+                <List>
+                    {overdueTaskList}
+                </List>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={() => {
+                    updateInitialized()
+                }}>
+                    Discard
+                </Button>
+                <Button onClick={() => {
+                    updateTasksDates(indexToIdArray(tasksToUpdate))
+                    deleteDueTasks(indexToIdArray(tasksToDelete))
+                    updateInitialized()
+                }}>Import</Button>
 
-    if (!!overdueTaskList.length) {
-        return (
-            <Dialog open={props.open}>
-                <DialogTitle>Import overdue tasks?</DialogTitle>
-                <DialogContent>
-                    <List>
-                        {overdueTaskList}
-                    </List>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => {
-                        updateTasksDates(indexToIdArray(tasksToUpdate))
-                        deleteDueTasks(indexToIdArray(tasksToDelete))
-                    }}>Import</Button>
-                </DialogActions>
-            </Dialog>
-        )
-    }
-    else {
-        return (<></>);
-    }
-
+            </DialogActions>
+        </Dialog >
+    )
 }
+
 

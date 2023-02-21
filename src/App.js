@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import ResponsiveAppBar from "./components/navbar/ResponsiveAppBar";
 import TaskList from './components/tasks/TaskList';
@@ -7,109 +7,100 @@ import Grid from '@mui/material/Grid'
 
 import { useDispatch, useSelector } from 'react-redux'
 import { startNewDay } from '../src/features/appSlice'
-import { createTheme, ThemeProvider, responsiveFontSizes } from "@mui/material/styles";
+import { ThemeProvider, responsiveFontSizes } from "@mui/material/styles";
 
 import Calendar from './components/timerSection/Calendar';
-import { Container, Divider, Stack } from '@mui/material';
+import { Container, Divider, Stack, Box} from '@mui/material';
 import Footer from 'components/bottom/Footer';
 import PaginationPanel from 'components/bottom/PaginationPanel';
+
+import midnightWorker from './midnightWorker'
+
+import { lightTheme, darkTheme } from 'theme';
 
 const composeResetDay = (tag) => (dispatch, getState) => {
   dispatch(startNewDay(getState().settings.pomodoroDuration))
 }
 
+const milisecondsInDay = (24 * 60 * 60 * 1000)
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const dispatch = useDispatch();
 
-  const date = useSelector((state) => state.app.calendarDate);
+  const todayDate = useSelector((state) => state.app.todayDate)
   const hoursAfterMidnight = useSelector((state) => state.settings.hoursPastMidnight)
   const colorTheme = useSelector((state) => state.settings.colorTheme)
 
-  //Converting from
-  const dateDigits = date.split('/') //mm/dd/yyyy
-  const [month, day, year] = dateDigits
-  const dateInDateType = new Date(year, month - 1, day)
+  const worker = useRef()
+
+  //Establishing worker 
+  useEffect(() => {
+    worker.current = new Worker(midnightWorker)
+    return () => {
+      worker.current.terminate();
+    }
+  }, [])
 
   useEffect(() => {
-    const hours = dateInDateType.getHours()
-    const minutes = dateInDateType.getMinutes()
-    const extraMiliseconds = hoursAfterMidnight * 60 * 60 * 1000
-    const actualMinutesInDay = hours * 60 + minutes
-    const remainingMinutes = 24 * 60 - actualMinutesInDay
-    const remainingMiliseconds = remainingMinutes * 60 * 1000
-
-    let resetDay = setTimeout(() => {
+    function eventHandler(event){ 
+      console.log('New day started');
       dispatch(composeResetDay())
-    }, remainingMiliseconds + extraMiliseconds)
+    }
+    //Actual timestamp
+    const timestamp = new Date();  
+    //Timestamp converted to miliseconds 
+    const timestampMiliseconds = (timestamp.getHours() * 60 * 60 * 1000) + (timestamp.getMinutes() * 60 * 1000) + (timestamp.getSeconds() * 1000);
 
+    //Extra miliseconds in a day according to settings
+    const extraMiliseconds = hoursAfterMidnight * 60 * 60 * 1000;
+    //Miliseconds remaining until rest
+    const remainingMiliseconds = (milisecondsInDay + extraMiliseconds) - timestampMiliseconds;
+
+    worker.current.postMessage(remainingMiliseconds)
+
+    worker.current.addEventListener('message', eventHandler);
     return () => {
-      clearTimeout(resetDay);
-    };
+      worker.current.removeEventListener('message', eventHandler)
+    }
 
-  }, [hoursAfterMidnight, date])
+  }, [hoursAfterMidnight, todayDate])
 
-  let theme
-  if (colorTheme === "dark") {
-    theme = createTheme({
-      palette: {
-        mode: 'dark',
-        primary: {
-          main: 'rgb(217, 85, 80)'
-        }
-      },
-      components: {
-        // @ts-ignore
-        MuiCalendarPicker: {
-          styleOverrides: {
-            root: {
-              color: "white"
-            }
-          }
-        },
-      }
-    });
+  let theme;
+  if (colorTheme === 'dark'){
+    theme = darkTheme
   }
-  else {
-    theme = createTheme({
-      palette: {
-        text: {
-          primary: "#616161",
-        },
-        primary: {
-          main: 'rgb(217, 85, 80)'
-        }
-
-      },
-    });
+  else{
+    theme = lightTheme
   }
 
   theme = responsiveFontSizes(theme);
 
   return (
     <ThemeProvider theme={theme}>
-      <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
-      <Container>
-        <Stack
-          justifyContent="flex-start"
-          alignItems="center"
-          sx={{ width: '100%', minHeight: '100vh', backgroundColor: 'background.default', minWidth: '700px', maxWidth: '1200px', }}
-          gap={4}
-        >
-          <Grid container spacing={4} sx={{ marginTop: '5px', width: '100%' }}>
-            <Calendar date={date}></Calendar>
-            <Grid item xs>
-              <TaskList></TaskList>
+      <Box sx={{backgroundColor: theme.palette.background.default}}>
+        <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
+        <Container>
+          <Stack
+            justifyContent="flex-start"
+            alignItems="center"
+            sx={{ width: '100%', minHeight: '100vh', backgroundColor: 'background.default', minWidth: '700px', maxWidth: '1200px', }}
+            gap={4}
+          >
+            <Grid container spacing={4} sx={{ marginTop: '5px', width: '100%' }}>
+              <Calendar></Calendar>
+              <Grid item xs>
+                <TaskList></TaskList>
+              </Grid>
             </Grid>
-          </Grid>
-          <Divider style={{ width: '100%' }}></Divider>
-          <PaginationPanel></PaginationPanel>
-          <Divider style={{ width: '100%' }}></Divider>
-          <Footer></Footer>
-        </Stack>
-      </Container>
+            <Divider style={{ width: '100%' }}></Divider>
+            <PaginationPanel></PaginationPanel>
+            <Divider style={{ width: '100%' }}></Divider>
+            <Footer></Footer>
+          </Stack>
+        </Container>
+      </Box>
     </ThemeProvider>
   );
 }

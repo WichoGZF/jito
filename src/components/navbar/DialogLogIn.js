@@ -19,7 +19,7 @@ export default function DialogLogIn(props){
                         </Typography>
                     </Grid>
                     <Grid item xs="auto">
-                        <IconButton onClick={props.handleClose}>
+                        <IconButton onClick={props.handleClose} disabled>
                             <CloseIcon></CloseIcon>
                         </IconButton>
                     </Grid>
@@ -36,7 +36,7 @@ export default function DialogLogIn(props){
                                 <TextField placeholder="Password"></TextField>
                             </Grid>
                             <Grid item xs>
-                                <Button variant="contained" fullWidth={true}>Log in</Button>
+                                <Button variant="contained" fullWidth={true} >Log in</Button>
                             </Grid>
                             <Grid item xs>
                                 <Button>Forgot your password?</Button>

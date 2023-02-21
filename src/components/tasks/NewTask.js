@@ -14,7 +14,7 @@ export default function NewTask(props) {
     return (
       <>
         <ListItem>
-          <Button icon={<AddTaskIcon></AddTaskIcon>} variant="outlined" onClick={handleClickNewTask} sx={{ width: "100%" }}>Add new task</Button>
+          <Button icon={<AddTaskIcon></AddTaskIcon>} variant='contained'  onClick={handleClickNewTask} sx={{ width: "100%" }}>Add new task</Button>
         </ListItem>
         {addNewTask ? <TaskInput
           edit={false} handleTaskSelectClose={handleClickNewTask}></TaskInput> : <></>}

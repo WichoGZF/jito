@@ -257,7 +257,7 @@ export default function DialogSettings(props) {
                             </Grid>
                         </Grid>
                         <Grid item>
-                            <Grid container spacing={4} direction="row" justifyContent="space-between" alignItems="center" fullWidth='true'>
+                            <Grid container spacing={4} direction="row" justifyContent="space-between" alignItems="center">
                                 <Grid item xs>
                                     <Typography>Ticking sound</Typography>
                                 </Grid>
@@ -329,6 +329,7 @@ export default function DialogSettings(props) {
                                     <Select
                                         sx={{ width: "100%" }}
                                         value={hoursPastMidnight}
+                                        disabled
                                         onChange={(event) => { setHoursPastMidnight(event.target.value) }}>
                                         <MenuItem value="0">0 hours past midnight</MenuItem>
                                         <MenuItem value="1">1 hours past midnight</MenuItem>

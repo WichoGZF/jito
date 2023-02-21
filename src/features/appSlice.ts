@@ -1,5 +1,4 @@
-import { start } from '@popperjs/core'
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { format } from 'date-fns'
 
 const fullDate = new Date
@@ -8,11 +7,39 @@ const hours = fullDate.getHours()
 const minutes = fullDate.getMinutes()
 const minutesPastMidnight = minutes + (hours * 60)
 
+interface Time { 
+    minutes: number, 
+    seconds: number,
+}
+
+type FormattedDate = string
+
+type Tag = string
+
+type TaskType = 'normal' | 'block'
+
+interface StateType {
+    calendarDate: FormattedDate, 
+    initialized: FormattedDate, 
+    todayDate: FormattedDate, 
+    tag: Tag | null, 
+    index: number | null, 
+    type: TaskType | null, 
+    timerState: boolean, 
+    rest: boolean, 
+    timerStarted: boolean, 
+    minutes: number,
+    seconds: number, 
+    completedRegular: boolean, 
+    normalTriggeredRest: boolean, 
+    storedTime: number, 
+}
+
 //Type property is not used, should be removed. 
-const initialState = {
+const initialState: StateType = {
     //Dates
     calendarDate: todayDate,
-    initialized: format(new Date("2022", "05", "23"), 'MM/dd/yyyy'), //move into tasks slice
+    initialized: format(new Date(2022, 5, 23), 'MM/dd/yyyy'), //move into tasks slice
     todayDate: todayDate,
     //First task properties
     tag: null,
@@ -53,28 +80,27 @@ const appSlice = createSlice({
         timerNotStarted: (state) => {
             state.timerStarted = false
         },
-        setCalendarDate: (state, action) => {
+        setCalendarDate: (state, action: PayloadAction<FormattedDate>) => {
             const date = action.payload
             console.log(action.payload)
             state.calendarDate = date
         },
-        currentTag: (state, action) => {
+        currentTag: (state, action: PayloadAction<Tag>) => {
             const tag = action.payload;
             state.tag = tag
         },
-        currentIndex: (state, action) => {
+        currentIndex: (state, action: PayloadAction<number>) => {
             const index = action.payload;
             state.index = index
         },
-        currentType: (state, action)  => {
+        currentType: (state, action: PayloadAction<TaskType>)  => {
             const type = action.payload; 
             state.type = type
         },
         initialize: (state) => {
             state.initialized = format(new Date, 'MM/dd/yyyy')
-            console.log(state.intialized)
         },
-        startNewDay: (state, action) => {
+        startNewDay: (state, action: PayloadAction<number>) => {
             //Calendar time
             state.calendarDate = format(new Date, 'MM/dd/yyyy')
             state.todayDate = format(new Date, 'MM/dd/yyyy')
@@ -91,7 +117,7 @@ const appSlice = createSlice({
             state.storedTime = 0 //The time stored
         },
         establishPomodoroTime: { //QoL Misleading name, not only it encompasses pomodoros but also rests
-            reducer(state, action) {
+            reducer(state, action: PayloadAction<Time>) {
                 const { minutes, seconds } = action.payload
                 state.minutes = minutes
                 state.seconds = seconds
@@ -111,7 +137,7 @@ const appSlice = createSlice({
             state.completedRegular = !state.completedRegular
         }
         },
-        setStoredTime: (state, action) => {
+        setStoredTime: (state, action: PayloadAction<number>) => {
             state.storedTime = action.payload //In seconds 
         },
         setNormalTriggeredRest: (state) => {

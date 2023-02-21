@@ -4,39 +4,56 @@ import { Typography } from '@mui/material';
 import { Grid } from '@mui/material';
 import { Box } from '@mui/system';
 import { Divider } from '@mui/material';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
 import {
   restartTask,
-} from '../../features/tasksSlice.js'
+} from '../../features/tasksSlice'
 import {
-  currentTag, currentIndex, currentType
-} from '../../features/appSlice.js'
+  currentTag, currentIndex, currentType, initialize
+} from '../../features/appSlice'
 import CompletedDialog from './CompletedDialog'
-import OverdueTaskList from './OverdueTaskList.js';
-import ListEntry from './ListEntry.js';
-import NewTask from './NewTask.js';
+import OverdueTaskList from './OverdueTaskList';
+import ListEntry from './ListEntry';
+import NewTask from './NewTask';
 
-export default function TaskList(props) {
+import Task from '../../types/Task'
+
+import { useAppSelector, useAppDispatch } from '../../hooks'
+import Tag from 'types/Tag';
+
+export default function TaskList() {
+  //Restarts all repeatables task  and returns array with non repeatables in past
+  //We don't need to check for nothing so the tasks just get repeated
+  function initializeTasks() {
+    const nonInitialized: number[] = [] //Repeatable tasks with past history
+    const pastTasks: Task[] = [] //Normal tasks in the past
+    tasks.forEach((task: Task, index: number) => {
+      if (task.repeat !== 'false') {
+        if (task.completed || task.defaultBlocks > task.blocks!) { //Since is repeatable task.blocks isnt empty
+          nonInitialized.push(index)
+        }
+      }
+      else {
+        pastTasks.push(task)
+      }
+    })
+    dispatch(restartTask(nonInitialized))
+    return (pastTasks)
+  }
+
   const [deletedTask, setDeletedTask] = useState(null) //saves deleted task, controls redo pop up. after 5s changes are
   //stored in tasks.history via use effect and state turned into null thus disappearing the pop up
 
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
-  const tasks = useSelector(state => state.tasks.tasks)
-  const tags = useSelector(state => state.tasks.tags)
-  const calendarDate = useSelector(state => state.app.calendarDate)
-  const initializedDate = useSelector(state => state.app.initialized)
-  const todayDate = useSelector(state => state.app.todayDate)
+  const tasks = useAppSelector(state => state.tasks.tasks)
+  const tags = useAppSelector(state => state.tasks.tags)
+  const calendarDate = useAppSelector(state => state.app.calendarDate)
+  const initializedDate = useAppSelector(state => state.app.initialized)
+  const todayDate = useAppSelector(state => state.app.todayDate)
 
   const initialized = initializedDate === todayDate
 
-  function nextTodoId(todos) {
-    const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1)
-    return maxId + 1
-  }
-
-  function taskToListEntry(task, firstTask, index) {
+  function taskToListEntry(task: Task, firstTask: boolean, index: number) {
     return (
       <ListEntry
         key={task.tag + task.id}
@@ -56,14 +73,17 @@ export default function TaskList(props) {
   }
   const splitCalendarDate = calendarDate.split('/')
   const [month, calendarDay, year] = splitCalendarDate
-  const realCalendarDate = new Date(year, month - 1, calendarDay)
+  const realCalendarDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(calendarDay))
   const dayOfTheWeek = realCalendarDate.getDay();
 
-  let allTagTasks = []
-
-  let firstTaskIndex
-  let firstTaskTag
-  let firstTaskType
+  let allTagTasks: any[] = [] //React array
+  // For overDue normals dialog
+  let overdueNormals: Task[] = []
+  //
+  let firstTaskIndex: number
+  let firstTaskTag: string
+  let firstTaskType: 'normal' | 'block'
+  //
   //irrelevant you could have used one of the abovce but w/e
   let firstTaskAdded = false
   tasks.forEach((task, index) => {
@@ -107,32 +127,28 @@ export default function TaskList(props) {
     }
   })
 
-  //Debugging
-  //Does this only run once?
-  useEffect(() => {
-    console.log('Re-render tasklist');
+  //Current tag useEffect 
+  //Dispatches the information about the current tag
 
+  useEffect(() => {
     if (allTagTasks.length) {
       dispatch(currentTag(firstTaskTag));
       dispatch(currentIndex(firstTaskIndex));
       dispatch(currentType(firstTaskType));
     }
-    /*Task initiliazing */
-    console.log('Initialized: ', initialized)
-    if (!initialized) {
-      const nonInitialized = []
-      tasks.forEach((task, index) => {
-        if (task.repeat !== 'false') {
-          if (task.completed || task.defaultBlocks > task.blocks){
-            nonInitialized.push(index)
-          }
-        }
-      })
-      dispatch(restartTask(nonInitialized))
-    }
-
   })
 
+  //Initialization useEffect 
+  //Initializes overdue tasks, and pushes past dates into array 
+  useEffect(() => {
+    if (!initialized) {
+      overdueNormals = initializeTasks()
+      //If there are no overdue normals initialize the app
+      if(overdueNormals.length === 0){
+        dispatch(initialize())
+      }
+    }
+  }, [initialized])
 
   return (
     <Box key={'tasklist-box'}>
@@ -141,7 +157,7 @@ export default function TaskList(props) {
         <Divider key="divider"></Divider>
         <NewTask key="newTask"></NewTask>
         {allTagTasks}
-        <OverdueTaskList key="overdues" open={!initialized}></OverdueTaskList>
+        <OverdueTaskList key="overdues" open={!initialized} tasks={overdueNormals}></OverdueTaskList>
         <CompletedDialog key="completed"></CompletedDialog>
       </Grid>
     </Box>

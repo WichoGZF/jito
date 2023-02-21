@@ -1,4 +1,4 @@
-import { LocalizationProvider, CalendarPicker } from "@mui/lab";
+import { LocalizationProvider, CalendarPicker } from "@mui/x-date-pickers";
 import { Grid, Divider } from "@mui/material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { setCalendarDate } from "../../features/appSlice";
@@ -7,11 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import TimerControl from "./TimerControl";
 import { format } from 'date-fns'
 
-export default function Calendar(props) {
-    const date = props.date
-
+export default function Calendar() {
     const dispatch = useDispatch();
 
+    const calendarDate = useSelector((state) => state.app.calendarDate);
     const timerStarted = useSelector((state) => state.app.timerStarted);
     const timerState = useSelector((state) => state.app.timerState);
 
@@ -19,7 +18,7 @@ export default function Calendar(props) {
         dispatch(setCalendarDate(format(newDate, 'MM/dd/yyyy')))
     }
 
-    const dateDigits = date.split('/') //mm/dd/yyyy
+    const dateDigits = calendarDate.split('/') //mm/dd/yyyy
     const [month, day, year] = dateDigits
     const dateInDateType = new Date(year, month - 1, day)
 

@@ -1,26 +1,37 @@
-import { mockTasks } from '../mock.js'
+import { mockTasks } from '../mock'
 
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { format } from 'date-fns'
+import Task from '../types/Task'
+import Tag from '../types/Tag'
+import HistoricTask from '../types/HistoricTask'
 
-const initialState = mockTasks;
+type StateType = {
+    tasks: Task[],
+    tags: Tag[],
+    history: HistoricTask[]
+};
 
-function nextTodoId(todos) {
-    const maxId = todos.reduce((maxId, todo) => Math.max(todo.id, maxId), -1)
+
+const initialState: StateType = mockTasks;
+
+function nextTodoId(todos: any) {
+    const maxId = todos.reduce((maxId: any, todo: any) => Math.max(todo.id, maxId), -1)
     return maxId + 1
 }
 
 //Optimization
 /*
 Complete time s
-
 */
+
+
 const tasksSlice = createSlice({
     name: 'tasks',
     initialState,
     reducers: {
         addTask: {
-            reducer(state, action) {
+            reducer(state, action: PayloadAction<Task>) {
                 const task = action.payload
                 state.tasks.push(
                     {
@@ -36,7 +47,7 @@ const tasksSlice = createSlice({
             }
         },
         editTask: {
-            reducer(state, action) {
+            reducer(state, action: PayloadAction<{ task: Task, index: number }>) {
                 const { task, index } = action.payload
                 state.tasks[index] = task
             },
@@ -49,21 +60,13 @@ const tasksSlice = createSlice({
                 }
             }
         },
-        deleteTask: {
-            reducer(state, action){
-                const index = action.payload
-                console.log('Deleting tag number: ', index, action.payload, action)
-                state.tasks.splice(index, 1)
-            },
-            prepare(index){
-                return {
-                    payload: index
-                }
-            }
-  
+        deleteTask: (state, action: PayloadAction<number>) => {
+            const index = action.payload
+            console.log('Deleting tag number: ', index, action.payload, action)
+            state.tasks.splice(index, 1)
         },
         addTimeEntry: {
-            reducer(state, action) {
+            reducer(state, action: PayloadAction<HistoricTask>) {
                 const completedEntry = action.payload
                 state.history.push(completedEntry)
             },
@@ -79,7 +82,7 @@ const tasksSlice = createSlice({
 
         },
         reorderTask: {
-            reducer(state, action) {
+            reducer(state, action: PayloadAction<{ targetIndex: number, sourceIndex: number, position: string }>) {
                 const { targetIndex, sourceIndex, position } = action.payload
 
                 //Add task to desired position
@@ -108,11 +111,11 @@ const tasksSlice = createSlice({
                 }
             }
         },
-        addTag: (state, action) => {
+        addTag: (state, action: PayloadAction<Tag>) => {
             const newTagName = action.payload
             state.tags.unshift(newTagName)
         },
-        deleteTag: (state, action) => {
+        deleteTag: (state, action: PayloadAction<string>) => {
             const tagToDelete = action.payload
 
             const tagToChangeIndex = state.tags.findIndex((tag) => {
@@ -130,7 +133,7 @@ const tasksSlice = createSlice({
         },
 
         changeTagName: {
-            reducer(state, action) {
+            reducer(state, action: PayloadAction<{ tagToChange: string, newTagName: string }>) {
                 const { tagToChange, newTagName } = action.payload
 
                 const tagToChangeIndex = state.tags.findIndex((tag) => {
@@ -141,7 +144,7 @@ const tasksSlice = createSlice({
 
                 state.tasks.forEach((task, index) => {
                     if (task.tag === tagToChange) {
-                        state.tasks[index] = newTagName;
+                        state.tasks[index].tag = newTagName;
                     }
                 })
             },
@@ -155,7 +158,7 @@ const tasksSlice = createSlice({
             }
         },
         changeTagColor: {
-            reducer(state, action) {
+            reducer(state, action: PayloadAction<{ tagToChange: string, color: string }>) {
                 const { tagToChange, color } = action.payload
 
                 const tagToChangeIndex = state.tags.findIndex((tag) => {
@@ -173,7 +176,7 @@ const tasksSlice = createSlice({
             },
 
         },
-        updateBlocks: (state, action) => {
+        updateBlocks: (state, action: PayloadAction<number>) => {
             const index = action.payload;
             const repeat = state.tasks[index].repeat
             if (state.tasks[index].type === 'block') {
@@ -183,41 +186,41 @@ const tasksSlice = createSlice({
                         state.tasks[index].blocks = state.tasks[index].defaultBlocks
                     }
                     else {
-                        tasksSlice.caseReducers.deleteTask(state, index)
+                        state.tasks.splice(index, 1)
                     }
                 }
                 else {
-                    state.tasks[index].blocks -= 1
+                    state.tasks[index].blocks! -= 1
                 }
             }
             else { //Is normal
-                state.tasks[index].blocks += 1
+                state.tasks[index].blocks! += 1
             }
         },
-        restartTask: (state, action) => {
+        restartTask: (state, action: PayloadAction<number[]>) => {
             const indexes = action.payload;
-            indexes.forEach((taskIndex)=> {
+            indexes.forEach((taskIndex) => {
                 state.tasks[taskIndex].completed = false;
                 state.tasks[taskIndex].blocks = state.tasks[taskIndex].defaultBlocks
             })
         },
-        completeTask: (state, action) => { //For normal task
-            const  index = action.payload
+        completeTask: (state, action: PayloadAction<number>) => { //For normal task
+            const index = action.payload
 
             if (state.tasks[index].repeat === 'false') {
-                tasksSlice.caseReducers.deleteTask(state, index)
+                state.tasks.splice(index, 1)
             }
             else {
                 state.tasks[index].completed = true
             }
         },
-        updateDates: (state, action) => {
-            //where action.payload is an array of tasks to be updated to today's date.
+        updateDates: (state, action: PayloadAction<number[]>) => {
+            //where action.payload is an array of task's ids to be updated to today's date.
             console.log('updating dates:', action.payload)
             const tasksToUpdate = action.payload
 
             tasksToUpdate.forEach((taskId) => {
-                const taskIndex = state.tasks.findIndex( (task) => task.id === taskId)
+                const taskIndex = state.tasks.findIndex((task) => task.id === taskId)
                 console.log(taskIndex)
                 state.tasks[taskIndex].date = format(new Date, 'MM/dd/yyyy')
                 console.log('updating dates TaskId: ', taskId, 'TaskIndex', taskIndex);
@@ -225,11 +228,11 @@ const tasksSlice = createSlice({
         },
         //Delete due receives an array containing the indexes, then it makes another array with
         //id values and uses it to find the indexes to delete. 
-        deleteDue: (state, action) => {
+        deleteDue: (state, action: PayloadAction<number[]>) => {
             const tasksToDelete = action.payload
             console.log('deleting dates', tasksToDelete)
             tasksToDelete.forEach((taskId) => {
-                const taskIndex = state.tasks.findIndex( (task) => task.id === taskId)
+                const taskIndex = state.tasks.findIndex((task) => task.id === taskId)
                 console.log('deleting dates TaskId: ', taskId, 'TaskIndex', taskIndex);
                 state.tasks.splice(taskIndex, 1)
             })

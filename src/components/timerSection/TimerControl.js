@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import TimerCard from './TimerCard';
-import { useSelector, useDispatch } from 'react-redux/es/exports.js';
+import { useSelector, useDispatch } from 'react-redux/es/exports';
 
-import { addTimeEntry } from '../../features/tasksSlice.js';
+import { addTimeEntry } from '../../features/tasksSlice';
 
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -26,8 +26,8 @@ import tickers from '../../sounds/tickers.mp3'
 import {
   startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, establishPomodoroTime,
   disableNormalTriggeredRest, setStoredTime, setCalendarDate
-} from '../../features/appSlice.js'
-import { updateBlocks } from '../../features/tasksSlice.js';
+} from '../../features/appSlice'
+import { updateBlocks } from '../../features/tasksSlice';
 
 import workerTimer from "./worker"
 
