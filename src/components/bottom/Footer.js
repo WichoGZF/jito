@@ -9,7 +9,7 @@ Pomodoro Planner made by Luis Gustavo - wichogzf@gmail.com`
 export default function Footer(props) { 
 
     return (
-            <Typography fontSize={12} color='text.secondary' textAlign={'center'} sx={{ whiteSpace: 'pre-line' }}>
+            <Typography fontSize={12} pb={4} color='text.secondary' textAlign={'center'} sx={{ whiteSpace: 'pre-line' }}>
                 {footerContent}
             </Typography>
     )
