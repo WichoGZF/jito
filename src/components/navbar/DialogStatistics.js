@@ -429,7 +429,7 @@ export default function DialogStatistics(props) {
 
                 <Grid container direction="row" justifyContent="space-between" alignItems="center">
                     <Grid item>
-                        <Typography color="grey.700" variant="h5">
+                        <Typography variant="h5">
                             Statistics
                         </Typography>
                     </Grid>
@@ -476,7 +476,7 @@ export default function DialogStatistics(props) {
                         <Grid container item justifyContent='space-between' alignItems='center'>
                             <Grid item><Typography>History</Typography></Grid>
                             <Grid item>
-                                <Select value={historySelect} onChange={(event) => { setHistorySelect(event.target.value) }}>
+                                <Select size='small' value={historySelect} onChange={(event) => { setHistorySelect(event.target.value) }}>
                                     <MenuItem value={'days'}><Typography>Days</Typography></MenuItem>
                                     <MenuItem value={'weeks'}><Typography>Weeks</Typography></MenuItem>
                                     <MenuItem value={'months'}><Typography>Months</Typography></MenuItem>
@@ -491,7 +491,7 @@ export default function DialogStatistics(props) {
                     <Grid container item spacing={5} sx={{ marginBottom: '32px' }}>
                         <Grid container item justifyContent='space-between' alignItems='center'>
                             <Grid item>
-                                <Typography >Average productive time by day of the week</Typography>
+                                <Typography >Average time</Typography>
                             </Grid>
                         </Grid>
                         <Grid item xs>
@@ -503,12 +503,12 @@ export default function DialogStatistics(props) {
                         <Grid container item justifyContent='space-between' alignItems='center'>
                             <Grid item>
                                 <Stack>
-                                    <Typography >Time distribution by tag</Typography>
+                                    <Typography >Time distribution</Typography>
                                 </Stack>
 
                             </Grid>
                             <Grid item>
-                                <Select value={timeDistribuitionSelect} onChange={(event) => { setTimeDistribuitionSelect(event.target.value) }}>
+                                <Select size='small' value={timeDistribuitionSelect} onChange={(event) => { setTimeDistribuitionSelect(event.target.value) }}>
                                     <MenuItem value={'all'}>Total</MenuItem>
                                     <MenuItem value={'month'}>This month</MenuItem>
                                     <MenuItem value={'week'}>This week</MenuItem>
