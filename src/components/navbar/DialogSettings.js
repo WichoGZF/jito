@@ -1,5 +1,5 @@
 import { VolumeDown, VolumeUp } from "@mui/icons-material";
-import { Dialog, DialogTitle, Grid, Tabs, Tab, IconButton, DialogContent, TextField, Typography, Switch, Slider, Select, MenuItem, ToggleButtonGroup, ToggleButton, Button, DialogActions } from "@mui/material";
+import { Dialog, DialogTitle, Grid, Tabs, Tab, IconButton, DialogContent, TextField, Typography, Switch, Slider, Select, MenuItem, ToggleButtonGroup, ToggleButton, Button, DialogActions, Divider } from "@mui/material";
 import { establishPomodoroTime } from "../../features/appSlice";
 import { updateSettings } from '../../features/settingsSlice.js'
 import React, { useState } from "react";
@@ -107,300 +107,299 @@ export default function DialogSettings(props) {
         <Dialog
             open={props.open}
             onClose={props.handleClose}
-            maxWidth={"xs"}
+            maxWidth={"sm"}
+            fullWidth={true}
         >
             <DialogTitle>
                 <Grid container direction="row" justifyContent="space-between" alignItems="center" >
-                    <Grid item xs="auto">
-                        <Tabs
-                            onChange={handleChangeTabSelected}
-                            value={tabSelected}>
-                            <Tab label="Timer" {...a11yProps(0)}>
-                            </Tab>
-                            <Tab label="Notification" {...a11yProps(1)}>
-                            </Tab>
-                            <Tab label="App" {...a11yProps(2)}>
-                            </Tab>
-                        </Tabs>
-                    </Grid>
-                    <Grid item xs="auto">
-                        <IconButton onClick={props.handleClose}>
-                            <CloseIcon></CloseIcon>
-                        </IconButton>
-                    </Grid>
+                    <Typography variant='h5'>
+                        Settings
+                    </Typography>
+                    <IconButton onClick={props.handleClose}>
+                        <CloseIcon></CloseIcon>
+                    </IconButton>
                 </Grid>
             </DialogTitle>
             <DialogContent dividers>
-                <TabPanel value={tabSelected} index={0}>
-                    <Grid container spacing={2} direction='column'>
-                        <Grid item>
-                            <TextField label="Pomodoro duration" helperText="Minutes"
-                                value={pomodoroDuration}
-                                onChange={(event) => setPomodoroDuration(event.target.value)}
-                                sx={{ width: "100%" }}
+                <Grid container spacing={2} direction='column'>
+                    <Grid item>
+                        <Typography variant='h6'>Timer</Typography>
+                    </Grid>
+                    <Grid item>
+                        <TextField label="Pomodoro duration" helperText="Minutes" size='small'
+                            value={pomodoroDuration}
+                            onChange={(event) => setPomodoroDuration(event.target.value)}
+                            sx={{ width: "100%" }}
 
-                            ></TextField>
-                        </Grid>
-                        <Grid item>
-                            <TextField label="Short break duration" helperText="Minutes"
-                                value={shortBreakDuration}
-                                onChange={(event) => setShortBreakDuration(event.target.value)}
-                                sx={{ width: "100%" }}
-                            ></TextField>
-
-                        </Grid>
-                        <Grid item>
-                            <TextField label="Long break duration" helperText="Minutes"
-                                value={longBreakDuration}
-                                onChange={(event) => setLongBreakDuration(event.target.value)}
-                                sx={{ width: "100%" }}
-                            ></TextField>
-
-                        </Grid>
-                        <Grid item>
-                            <TextField label="Long break every" helperText="Pomodoros"
-                                value={longBreakEvery}
-                                onChange={(event) => setLongBreakEvery(event.target.value)}
-                                sx={{ width: "100%" }}
-                            ></TextField>
-                        </Grid>
-                        <Grid item>
-                            <Grid container justifyContent="space-between" alignItems='center' direction='row'>
-                                <Grid item xs="auto">
-                                    <Typography>Automatic pomodoro start:</Typography>
-                                </Grid>
-                                <Grid item xs="auto">
-                                    <Switch checked={automaticPomodoroStart}
-                                        onChange={() => setAutomaticPomodoroStart(!automaticPomodoroStart)}></Switch>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        <Grid item>
-                            <Grid container justifyContent="space-between" alignItems='center' direction='row'>
-                                <Grid item xs="auto">
-                                    <Typography>Automatic break start:</Typography>
-                                </Grid>
-                                <Grid item xs="auto">
-                                    <Switch
-                                        checked={automaticBreakStart}
-                                        onChange={() => setAutomaticBreakStart(!automaticBreakStart)}></Switch>
-                                </Grid>
-                            </Grid>
-                        </Grid>
+                        ></TextField>
+                    </Grid>
+                    <Grid item>
+                        <TextField label="Short break duration" helperText="Minutes" size='small'
+                            value={shortBreakDuration}
+                            onChange={(event) => setShortBreakDuration(event.target.value)}
+                            sx={{ width: "100%" }}
+                        ></TextField>
 
                     </Grid>
-                </TabPanel>
-                <TabPanel value={tabSelected} index={1}>
-                    <Grid container spacing={3} direction="column" >
-                        <Grid item>
-                            <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
-                                <Grid item xs="auto"><Typography>Alarm volume</Typography></Grid>
-                                <Grid item xs>
-                                    <Grid container spacing={2} direction="row" alignItems="center">
-                                        <Grid item xs='auto'>
-                                            <VolumeDown />
-                                        </Grid>
-                                        <Grid item xs>
-                                            <Slider aria-label="Volume"
-                                                value={alarmVolume}
-                                                onChange={(event, newValue) => { setAlarmVolume(newValue) }} />
-                                        </Grid>
-                                        <Grid item xs='auto'>
-                                            <VolumeUp />
-                                        </Grid>
+                    <Grid item>
+                        <TextField label="Long break duration" helperText="Minutes" size='small'
+                            value={longBreakDuration}
+                            onChange={(event) => setLongBreakDuration(event.target.value)}
+                            sx={{ width: "100%" }}
+                        ></TextField>
+
+                    </Grid>
+                    <Grid item>
+                        <TextField label="Long break every" helperText="Pomodoros" size='small'
+                            value={longBreakEvery}
+                            onChange={(event) => setLongBreakEvery(event.target.value)}
+                            sx={{ width: "100%" }}
+                        ></TextField>
+                    </Grid>
+                    <Grid item>
+                        <Grid container justifyContent="space-between" alignItems='center' direction='row'>
+                            <Grid item xs="auto">
+                                <Typography>Automatic pomodoro start:</Typography>
+                            </Grid>
+                            <Grid item xs="auto">
+                                <Switch checked={automaticPomodoroStart}
+                                    onChange={() => setAutomaticPomodoroStart(!automaticPomodoroStart)}></Switch>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Grid container justifyContent="space-between" alignItems='center' direction='row'>
+                            <Grid item xs="auto">
+                                <Typography>Automatic break start:</Typography>
+                            </Grid>
+                            <Grid item xs="auto">
+                                <Switch
+                                    checked={automaticBreakStart}
+                                    onChange={() => setAutomaticBreakStart(!automaticBreakStart)}></Switch>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Divider></Divider>
+                    </Grid>
+
+                    {/*Sounds*/}
+                    <Grid item>
+                        <Typography variant='h6'>Sounds</Typography>
+                    </Grid>
+                    <Grid item>
+                        <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
+                            <Grid item xs="auto"><Typography>Alarm volume</Typography></Grid>
+                            <Grid item xs>
+                                <Grid container spacing={2} direction="row" alignItems="center">
+                                    <Grid item xs='auto'>
+                                        <VolumeDown />
+                                    </Grid>
+                                    <Grid item xs>
+                                        <Slider aria-label="Volume"
+                                            value={alarmVolume}
+                                            onChange={(event, newValue) => { setAlarmVolume(newValue) }} />
+                                    </Grid>
+                                    <Grid item xs='auto'>
+                                        <VolumeUp />
                                     </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid item>
-                            <Grid container spacing={4} direction="row" justifyContent="space-between" alignItems="center">
-                                <Grid item xs>
-                                    <Typography>Alarm sound</Typography>
-                                </Grid>
-                                <Grid item xs={5}>
-                                    <Select
-                                        sx={{ width: "100%" }}
-                                        value={alarmSound}
-                                        onChange={(event) => { setAlarmSound(event.target.value) }}>
-                                        <MenuItem value="answerTone">Answer tone</MenuItem>
-                                        <MenuItem value="bell">Bell</MenuItem>
-                                        <MenuItem value="clearAnnounce">Clear announce</MenuItem>
-                                        <MenuItem value="confirmationTone">Confirmation tone</MenuItem>
-                                        <MenuItem value="doorbellLight">Doorbell light</MenuItem>
-                                        <MenuItem value="doorbellPlain">Doorbell plain</MenuItem>
-                                        <MenuItem value="flute">Flute</MenuItem>
-                                        <MenuItem value="positive">Positive</MenuItem>
-                                    </Select>
-                                </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Grid container spacing={4} direction="row" justifyContent="space-between" alignItems="center">
+                            <Grid item xs>
+                                <Typography>Alarm sound</Typography>
+                            </Grid>
+                            <Grid item xs={5}>
+                                <Select size='small'
+                                    sx={{ width: "100%" }}
+                                    value={alarmSound}
+                                    onChange={(event) => { setAlarmSound(event.target.value) }}>
+                                    <MenuItem value="answerTone">Answer tone</MenuItem>
+                                    <MenuItem value="bell">Bell</MenuItem>
+                                    <MenuItem value="clearAnnounce">Clear announce</MenuItem>
+                                    <MenuItem value="confirmationTone">Confirmation tone</MenuItem>
+                                    <MenuItem value="doorbellLight">Doorbell light</MenuItem>
+                                    <MenuItem value="doorbellPlain">Doorbell plain</MenuItem>
+                                    <MenuItem value="flute">Flute</MenuItem>
+                                    <MenuItem value="positive">Positive</MenuItem>
+                                </Select>
                             </Grid>
                         </Grid>
-                        <Grid item>
-                            <Grid container justifyContent="space-between" alignItems="center" spacing={4}>
-                                <Grid item xs='auto'>
-                                    <Typography>Ticking volume</Typography>
-                                </Grid>
-                                <Grid item xs>
-                                    <Grid container spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
-                                        <Grid item xs='auto'>
-                                            <VolumeDown />
-                                        </Grid>
-                                        <Grid item xs>
-                                            <Slider aria-label="Volume"
-                                                value={tickingVolume}
-                                                onChange={(event, newValue) => { setTickingVolume(newValue) }} />
-                                        </Grid>
-                                        <Grid item xs='auto'>
-                                            <VolumeUp />
-                                        </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Grid container justifyContent="space-between" alignItems="center" spacing={4}>
+                            <Grid item xs='auto'>
+                                <Typography>Ticking volume</Typography>
+                            </Grid>
+                            <Grid item xs>
+                                <Grid container spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
+                                    <Grid item xs='auto'>
+                                        <VolumeDown />
+                                    </Grid>
+                                    <Grid item xs>
+                                        <Slider aria-label="Volume"
+                                            value={tickingVolume}
+                                            onChange={(event, newValue) => { setTickingVolume(newValue) }} />
+                                    </Grid>
+                                    <Grid item xs='auto'>
+                                        <VolumeUp />
                                     </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>
-                        <Grid item>
-                            <Grid container spacing={4} direction="row" justifyContent="space-between" alignItems="center">
-                                <Grid item xs>
-                                    <Typography>Ticking sound</Typography>
-                                </Grid>
-                                <Grid item xs={5}>
-                                    <Select sx={{ width: '100%' }}
-                                        value={tickingSound}
-                                        onChange={(event) => setTickingSound(event.target.value)}>
-                                        <MenuItem value="clock">Clock tick</MenuItem>
-                                        <MenuItem value="pendulum">Pendulum</MenuItem>
-                                        <MenuItem value="wallClockTick">Wall clock tick</MenuItem>
-                                    </Select>
-                                </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Grid container spacing={4} direction="row" justifyContent="space-between" alignItems="center">
+                            <Grid item xs>
+                                <Typography>Ticking sound</Typography>
                             </Grid>
-                        </Grid>
-                        <Grid item>
-                            <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
-                                <Grid item xs='auto'>
-                                    <Typography>Alarm on pomodoro end</Typography>
-                                </Grid>
-                                <Grid item xs='auto'>
-                                    <Switch checked={alarmOnPomodoroEnd}
-                                        onChange={() => { setAlarmOnPomodoroEnd(!alarmOnPomodoroEnd) }}></Switch>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        <Grid item>
-                            <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
-                                <Grid item xs='auto'>
-                                    <Typography>Alarm on break end</Typography>
-                                </Grid>
-                                <Grid item xs='auto'>
-                                    <Switch checked={alarmOnBreakEnd}
-                                        onChange={() => { setAlarmOnBreakEnd(!alarmOnBreakEnd) }}></Switch>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        <Grid item>
-                            <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
-                                <Grid item xs='auto'>
-                                    <Typography>Ticking sound on break</Typography>
-                                </Grid>
-                                <Grid item xs='auto'>
-                                    <Switch value={tickingSoundOnBreak}
-                                        onChange={() => { setTickingSoundOnBreak(!tickingSoundOnBreak) }}></Switch>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        <Grid item>
-                            <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
-                                <Grid item xs='auto'>
-                                    <Typography>Ticking sound on pomodoro</Typography>
-                                </Grid>
-                                <Grid item xs='auto'>
-                                    <Switch checked={tickingSoundOnPomodoro}
-                                        onChange={() => { setTickingSoundOnPomodoro(!tickingSoundOnPomodoro) }}></Switch>
-                                </Grid>
+                            <Grid item xs={5}>
+                                <Select sx={{ width: '100%' }} size='small'
+                                    value={tickingSound}
+                                    onChange={(event) => setTickingSound(event.target.value)}>
+                                    <MenuItem value="clock">Clock tick</MenuItem>
+                                    <MenuItem value="pendulum">Pendulum</MenuItem>
+                                    <MenuItem value="wallClockTick">Wall clock tick</MenuItem>
+                                </Select>
                             </Grid>
                         </Grid>
                     </Grid>
-                </TabPanel>
-                <TabPanel value={tabSelected} index={2}>
-                    <Grid container spacing={2} direction="column" >
-                        <Grid item>
-                            <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
-                                <Grid item xs='auto'>
-                                    <Typography>Start new day at</Typography>
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <Select
-                                        sx={{ width: "100%" }}
-                                        value={hoursPastMidnight}
-                                        disabled
-                                        onChange={(event) => { setHoursPastMidnight(event.target.value) }}>
-                                        <MenuItem value="0">0 hours past midnight</MenuItem>
-                                        <MenuItem value="1">1 hours past midnight</MenuItem>
-                                        <MenuItem value="2">2 hours past midnight</MenuItem>
-                                        <MenuItem value="3">3 hours past midnight</MenuItem>
-                                        <MenuItem value="4">4 hours past midnight</MenuItem>
-                                        <MenuItem value="5">5 hours past midnight</MenuItem>
-                                        <MenuItem value="6">6 hours past midnight</MenuItem>
-                                        <MenuItem value="7">7 hours past midnight</MenuItem>
-                                        <MenuItem value="8">8 hours past midnight</MenuItem>
-                                        <MenuItem value="9">9 hours past midnight</MenuItem>
-                                        <MenuItem value="10">10 hours past midnight</MenuItem>
-                                        <MenuItem value="11">11 hours past midnight</MenuItem>
-                                        <MenuItem value="12">12 hours past midnight</MenuItem>
-                                        <MenuItem value="13">13 hours past midnight</MenuItem>
-                                        <MenuItem value="14">14 hours past midnight</MenuItem>
-                                        <MenuItem value="15">15 hours past midnight</MenuItem>
-                                        <MenuItem value="16">16 hours past midnight</MenuItem>
-                                        <MenuItem value="17">17 hours past midnight</MenuItem>
-                                        <MenuItem value="18">18 hours past midnight</MenuItem>
-                                        <MenuItem value="19">19 hours past midnight</MenuItem>
-                                        <MenuItem value="20">20 hours past midnight</MenuItem>
-                                        <MenuItem value="21">21 hours past midnight</MenuItem>
-                                        <MenuItem value="22">22 hours past midnight</MenuItem>
-                                        <MenuItem value="23">23 hours past midnight</MenuItem>
-                                    </Select>
-                                </Grid>
+                    <Grid item>
+                        <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
+                            <Grid item xs='auto'>
+                                <Typography>Alarm on pomodoro end</Typography>
+                            </Grid>
+                            <Grid item xs='auto'>
+                                <Switch checked={alarmOnPomodoroEnd}
+                                    onChange={() => { setAlarmOnPomodoroEnd(!alarmOnPomodoroEnd) }}></Switch>
                             </Grid>
                         </Grid>
-                        <Grid item>
-                            <Grid container direction='row' justifyContent='space-between' alignItems='center'>
-                                <Grid item xs='auto'>
-                                    <Typography>
-                                        Color theme
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs='auto'>
-                                    <ToggleButtonGroup
-                                        value={colorTheme}
-                                        exclusive
-                                        onChange={(event, newTheme) => { setColorTheme(newTheme) }}
-                                        aria-label="theme select"
-                                    >
-                                        <ToggleButton value="light" aria-label="dark theme">
-                                            <Button>Light</Button>
-                                        </ToggleButton>
-                                        <ToggleButton value="dark" aria-label="dark theme">
-                                            <Button>Dark</Button>
-                                        </ToggleButton>
-                                    </ToggleButtonGroup>
-                                </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
+                            <Grid item xs='auto'>
+                                <Typography>Alarm on break end</Typography>
+                            </Grid>
+                            <Grid item xs='auto'>
+                                <Switch checked={alarmOnBreakEnd}
+                                    onChange={() => { setAlarmOnBreakEnd(!alarmOnBreakEnd) }}></Switch>
                             </Grid>
                         </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
+                            <Grid item xs='auto'>
+                                <Typography>Ticking sound on break</Typography>
+                            </Grid>
+                            <Grid item xs='auto'>
+                                <Switch value={tickingSoundOnBreak}
+                                    onChange={() => { setTickingSoundOnBreak(!tickingSoundOnBreak) }}></Switch>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
+                            <Grid item xs='auto'>
+                                <Typography>Ticking sound on pomodoro</Typography>
+                            </Grid>
+                            <Grid item xs='auto'>
+                                <Switch checked={tickingSoundOnPomodoro}
+                                    onChange={() => { setTickingSoundOnPomodoro(!tickingSoundOnPomodoro) }}></Switch>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Divider></Divider>
+                    </Grid>
+                    <Grid item>
+                        <Typography variant='h6'>General</Typography>
 
-                        <Grid item>
-                            <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
-                                <Grid item xs>
-                                    <Typography>Language</Typography>
-                                </Grid>
-                                <Grid item xs={5}>
-                                    <Select sx={{ width: '100%' }}
-                                        value={language}
-                                        onChange={(event) => { setLanguage(event.target.value) }}>
-                                        <MenuItem value={"English"}>English</MenuItem>
-                                        <MenuItem value={"Español"}>Español</MenuItem>
-                                    </Select>
-                                </Grid>
+                    </Grid>
+                    <Grid item>
+                        <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
+                            <Grid item xs='auto'>
+                                <Typography>Start new day at</Typography>
+                            </Grid>
+                            <Grid item xs={6}>
+                                <Select size='small'
+                                    sx={{ width: "100%" }}
+                                    value={hoursPastMidnight}
+                                    disabled
+                                    onChange={(event) => { setHoursPastMidnight(event.target.value) }}>
+                                    <MenuItem value="0">0 hours past midnight</MenuItem>
+                                    <MenuItem value="1">1 hours past midnight</MenuItem>
+                                    <MenuItem value="2">2 hours past midnight</MenuItem>
+                                    <MenuItem value="3">3 hours past midnight</MenuItem>
+                                    <MenuItem value="4">4 hours past midnight</MenuItem>
+                                    <MenuItem value="5">5 hours past midnight</MenuItem>
+                                    <MenuItem value="6">6 hours past midnight</MenuItem>
+                                    <MenuItem value="7">7 hours past midnight</MenuItem>
+                                    <MenuItem value="8">8 hours past midnight</MenuItem>
+                                    <MenuItem value="9">9 hours past midnight</MenuItem>
+                                    <MenuItem value="10">10 hours past midnight</MenuItem>
+                                    <MenuItem value="11">11 hours past midnight</MenuItem>
+                                    <MenuItem value="12">12 hours past midnight</MenuItem>
+                                    <MenuItem value="13">13 hours past midnight</MenuItem>
+                                    <MenuItem value="14">14 hours past midnight</MenuItem>
+                                    <MenuItem value="15">15 hours past midnight</MenuItem>
+                                    <MenuItem value="16">16 hours past midnight</MenuItem>
+                                    <MenuItem value="17">17 hours past midnight</MenuItem>
+                                    <MenuItem value="18">18 hours past midnight</MenuItem>
+                                    <MenuItem value="19">19 hours past midnight</MenuItem>
+                                    <MenuItem value="20">20 hours past midnight</MenuItem>
+                                    <MenuItem value="21">21 hours past midnight</MenuItem>
+                                    <MenuItem value="22">22 hours past midnight</MenuItem>
+                                    <MenuItem value="23">23 hours past midnight</MenuItem>
+                                </Select>
                             </Grid>
                         </Grid>
                     </Grid>
-                </TabPanel>
+                    <Grid item>
+                        <Grid container direction='row' justifyContent='space-between' alignItems='center'>
+                            <Grid item xs='auto'>
+                                <Typography>
+                                    Color theme
+                                </Typography>
+                            </Grid>
+                            <Grid item xs='auto'>
+                                <ToggleButtonGroup
+                                    value={colorTheme}
+                                    size='small'
+                                    exclusive
+                                    onChange={(event, newTheme) => { setColorTheme(newTheme) }}
+                                    aria-label="theme select"
+                                >
+                                    <ToggleButton value="light" aria-label="dark theme">
+                                        <Button>Light</Button>
+                                    </ToggleButton>
+                                    <ToggleButton value="dark" aria-label="dark theme">
+                                        <Button>Dark</Button>
+                                    </ToggleButton>
+                                </ToggleButtonGroup>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+
+                    <Grid item>
+                        <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
+                            <Grid item xs>
+                                <Typography>Language</Typography>
+                            </Grid>
+                            <Grid item xs={5}>
+                                <Select sx={{ width: '100%' }} size='small'
+                                    value={language}
+                                    onChange={(event) => { setLanguage(event.target.value) }}>
+                                    <MenuItem value={"English"}>English</MenuItem>
+                                    <MenuItem value={"Español"}>Español</MenuItem>
+                                </Select>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
             </DialogContent>
             <DialogActions >
                 <Button onClick={
