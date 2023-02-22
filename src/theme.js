@@ -18,16 +18,6 @@ const lightTheme = createTheme({
             primary: '#201A19',
         }
     },
-    components: {
-        // @ts-ignore
-        MuiCalendarPicker: {
-            styleOverrides: {
-                root: {
-                    color: "white"
-                }
-            }
-        },
-    }
 });
 
 const darkTheme = createTheme({
@@ -42,6 +32,16 @@ const darkTheme = createTheme({
             contrastText: '#442927'
         },
     },
+    components: {
+        // @ts-ignore
+        MuiCalendarPicker: {
+            styleOverrides: {
+                root: {
+                    color: "white"
+                }
+            }
+        },
+    }
 });
 
 export {lightTheme, darkTheme} 
