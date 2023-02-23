@@ -21,7 +21,7 @@ import {
 const rootPersistConfig = {
     key: 'root',
     storage,
-    blacklist: ['auth', 'app', 'tasks']
+    blacklist: ['auth']
 }   
 
 const rootReducer = combineReducers({
