@@ -17,6 +17,7 @@ import PaginationPanel from 'components/bottom/PaginationPanel';
 import midnightWorker from './midnightWorker'
 
 import { lightTheme, darkTheme } from 'theme';
+import { format } from 'date-fns';
 
 const composeResetDay = (tag) => (dispatch, getState) => {
   dispatch(startNewDay(getState().settings.pomodoroDuration))
@@ -41,6 +42,15 @@ function App() {
     return () => {
       worker.current.terminate();
     }
+  }, [])
+
+  //UseEffect to check if the day has been shown yet 
+  useEffect(() => {
+      //Fetch actual date to see if todayDate is outdated
+      const actualDate = format(new Date(), 'MM/dd/yyyy') 
+      if(actualDate !== todayDate){
+        dispatch(composeResetDay())
+      }
   }, [])
 
   useEffect(() => {
