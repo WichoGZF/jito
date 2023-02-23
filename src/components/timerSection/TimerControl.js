@@ -25,7 +25,7 @@ import tickers from '../../sounds/tickers.mp3'
 
 import {
   startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, establishPomodoroTime,
-  disableNormalTriggeredRest, setStoredTime, setCalendarDate
+  disableNormalTriggeredRest, setStoredTime, setCalendarDate, resetPomodoros, increasePomodoros
 } from '../../features/appSlice'
 import { updateBlocks } from '../../features/tasksSlice';
 
@@ -52,12 +52,14 @@ export default function TimerControl(props) {
   const normalTriggeredRest = useSelector(state => state.app.normalTriggeredRest)
 
   const storedTime = useSelector(state => state.app.storedTime)
+
+  const pomodoros = useSelector(state => state.app.pomodoros)
   //Dispatch
   const dispatch = useDispatch()
 
-  const [pomodoros, setPomodoros] = useState(0);
   const [showWarning, setShowWarning] = useState(true)
   const [warningDialog, setWarningDialog] = useState(false);
+
 
   const alarmSound = settings.alarmSound
   const [alarm] = useSound(notifications, {
@@ -100,7 +102,7 @@ export default function TimerControl(props) {
       else {
         progress = ((timerMinuts * 60 + timerSeconds) / (settings.shortBreakDuration * 60) * 100)
       }
-    }
+    }   
   }
   else {
     const timePassed = (settings.pomodoroDuration * 60) - (timerMinuts * 60 + timerSeconds)
@@ -137,7 +139,7 @@ export default function TimerControl(props) {
     if (rest) {
       dispatch(endRest())
       if (pomodoros === settings.longBreakEvery) {
-        setPomodoros(0)
+        dispatch(resetPomodoros())
       }
     }
   }
@@ -181,7 +183,11 @@ export default function TimerControl(props) {
 
         if (timerSeconds === 0) {
           if (timerMinuts === 0) {
-            if (rest) { //On rest end
+            if (rest) { //On rest end 
+              //If it's the last rest reset the progress blocks 
+              if(settings.longBreakEvery === pomodoros){
+                dispatch(resetPomodoros())
+              }
               if (settings.alarmOnBreakEnd) {
                 alarm({ id: settings.alarmSound })
               }
@@ -214,7 +220,7 @@ export default function TimerControl(props) {
                 dispatch(timerNotStarted())
               }
               dispatch(startRest())
-              setPomodoros(pomodoros + 1)
+              dispatch(increasePomodoros())
               dispatchPomodoro()
               //"UpdateBlocks" reducer already handles the logic for how to update the specific task (only need index)
               dispatch(updateBlocks(actualIndex))

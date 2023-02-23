@@ -33,6 +33,7 @@ interface StateType {
     completedRegular: boolean, 
     normalTriggeredRest: boolean, 
     storedTime: number, 
+    pomodoros: number, 
 }
 
 //Type property is not used, should be removed. 
@@ -56,6 +57,7 @@ const initialState: StateType = {
     completedRegular: false,  
     normalTriggeredRest: false,
     storedTime: 0, //The time stored
+    pomodoros: 0, //The ammount of pomodoros until now that have been completed. 
 }
 
 const appSlice = createSlice({
@@ -115,6 +117,9 @@ const appSlice = createSlice({
             state.completedRegular = false  
             state.normalTriggeredRest = false
             state.storedTime = 0 //The time stored
+            //reset pomdoros 
+            state.pomodoros = 0 
+            
         },
         establishPomodoroTime: { //QoL Misleading name, not only it encompasses pomodoros but also rests
             reducer(state, action: PayloadAction<Time>) {
@@ -145,11 +150,17 @@ const appSlice = createSlice({
         },
         disableNormalTriggeredRest: (state) => {
             state.normalTriggeredRest = false
+        },
+        resetPomodoros: (state) => { 
+            state.pomodoros = 0; 
+        },
+        increasePomodoros: (state) => { 
+            state.pomodoros++; 
         }
     }
 })
 //Could wrap the three 'current' reducers into a single one
 export const { startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, setCalendarDate, currentTag, currentIndex, currentType, initialize,
-    startNewDay, establishPomodoroTime, handleCompletedRegular, setStoredTime, setNormalTriggeredRest, disableNormalTriggeredRest} = appSlice.actions
+    startNewDay, establishPomodoroTime, handleCompletedRegular, setStoredTime, setNormalTriggeredRest, disableNormalTriggeredRest, resetPomodoros, increasePomodoros} = appSlice.actions
 export default appSlice.reducer
 
