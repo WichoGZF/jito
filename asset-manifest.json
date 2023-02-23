@@ -1,16 +1,19 @@
 {
   "files": {
-    "main.js": "/jito/static/js/main.918da59c.js",
-    "static/js/845.45cf642c.chunk.js": "/jito/static/js/845.45cf642c.chunk.js",
+    "main.css": "/jito/static/css/main.74ef74be.css",
+    "main.js": "/jito/static/js/main.52c1b42c.js",
+    "static/js/845.a582ced2.chunk.js": "/jito/static/js/845.a582ced2.chunk.js",
     "static/media/tones.mp3": "/jito/static/media/tones.6c9925b811bd233b754c.mp3",
     "static/media/tickers.mp3": "/jito/static/media/tickers.69af8d6b76fb2c3b549d.mp3",
     "static/media/Google__G__Logo.svg": "/jito/static/media/Google__G__Logo.2eec9b0f0538e8ae6a35e009b306818c.svg",
     "static/media/Facebook_Logo.svg": "/jito/static/media/Facebook_Logo.736b18ef5272a81c6fe7f4af8bed3805.svg",
     "index.html": "/jito/index.html",
-    "main.918da59c.js.map": "/jito/static/js/main.918da59c.js.map",
-    "845.45cf642c.chunk.js.map": "/jito/static/js/845.45cf642c.chunk.js.map"
+    "main.74ef74be.css.map": "/jito/static/css/main.74ef74be.css.map",
+    "main.52c1b42c.js.map": "/jito/static/js/main.52c1b42c.js.map",
+    "845.a582ced2.chunk.js.map": "/jito/static/js/845.a582ced2.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.918da59c.js"
+    "static/css/main.74ef74be.css",
+    "static/js/main.52c1b42c.js"
   ]
 }
