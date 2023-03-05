@@ -65,13 +65,13 @@ export default function TimerControl(props) {
   const [alarm] = useSound(notifications, {
     sprite: {
       answerTone: [0, 2000],
-      bell: [2000, 6000],
-      clearAnnounce: [6000, 11000],
-      confirmationTone: [11000, 13000],
-      doorbellLight: [13000, 15000],
-      doorbellPlain: [15000, 17000],
-      flute: [17000, 21000],
-      positive: [22000, 25000]
+      bell: [2000, 4000],
+      clearAnnounce: [6000, 5000],
+      confirmationTone: [11000, 2000],
+      doorbellLight: [13000, 2000],
+      doorbellPlain: [15000, 2000],
+      flute: [17000, 4000],
+      positive: [22000, 2000]
     },
     volume: settings.alarmVolume / 100,
   })
@@ -79,8 +79,8 @@ export default function TimerControl(props) {
   const [tick] = useSound(tickers, {
     sprite: {
       clock: [0, 100],
-      pendulum: [100, 230],
-      wallClockTick: [230, 350]
+      pendulum: [100, 130],
+      wallClockTick: [230, 120]
     },
     volume: settings.tickingVolume / 100,
   })
