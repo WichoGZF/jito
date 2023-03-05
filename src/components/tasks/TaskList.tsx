@@ -19,6 +19,7 @@ import Task from '../../types/Task'
 
 import { useAppSelector, useAppDispatch } from '../../hooks'
 import Tag from 'types/Tag';
+import { isBefore } from 'date-fns';
 
 export default function TaskList() {
   //Restarts all repeatables task  and returns array with non repeatables in past
@@ -26,6 +27,9 @@ export default function TaskList() {
   function initializeTasks() {
     const nonInitialized: number[] = [] //Repeatable tasks with past history
     const pastTasks: Task[] = [] //Normal tasks in the past
+    //Today date
+    const todayDate = new Date
+    todayDate.setHours(0, 0, 0, 0)
     tasks.forEach((task: Task, index: number) => {
       if (task.repeat !== 'false') {
         if (task.completed || task.defaultBlocks > task.blocks!) { //Since is repeatable task.blocks isnt empty
@@ -33,7 +37,14 @@ export default function TaskList() {
         }
       }
       else {
-        pastTasks.push(task)
+        const dateArray: string[] = task.date!.split('/');
+        const taskDate = new Date(+dateArray[2], +dateArray[0] - 1, +dateArray[1])
+        let dayIsBefore;
+        dayIsBefore = isBefore(taskDate, todayDate)
+
+        if (dayIsBefore) {
+          pastTasks.push(task)
+        }
       }
     })
     dispatch(restartTask(nonInitialized))
@@ -144,11 +155,13 @@ export default function TaskList() {
     if (!initialized) {
       overdueNormals = initializeTasks()
       //If there are no overdue normals initialize the app
-      if(overdueNormals.length === 0){
+      if (overdueNormals.length === 0) {
         dispatch(initialize())
       }
     }
   }, [initialized])
+
+  const overdueNormalsEmpty = !!overdueNormals.length
 
   return (
     <Box key={'tasklist-box'}>
@@ -157,7 +170,7 @@ export default function TaskList() {
         <Divider key="divider"></Divider>
         <NewTask key="newTask"></NewTask>
         {allTagTasks}
-        <OverdueTaskList key="overdues" open={!initialized} tasks={overdueNormals}></OverdueTaskList>
+        <OverdueTaskList key="overdues" open={!initialized && overdueNormalsEmpty} tasks={overdueNormals}></OverdueTaskList>
         <CompletedDialog key="completed"></CompletedDialog>
       </Grid>
     </Box>

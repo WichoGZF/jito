@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText } from '@mui/material'
+import { useState } from "react";
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 import Checkbox from '@mui/material/Checkbox';
 import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import Chip from '@mui/material/Chip'
@@ -7,8 +7,6 @@ import Button from '@mui/material/Button'
 import { useSelector, useDispatch } from "react-redux";
 import { updateDates, deleteDue } from "features/tasksSlice";
 import { initialize } from "features/appSlice";
-import isBefore from "date-fns/isBefore";
-import add from 'date-fns/add'
 
 const DueTaskEntry = (props) => {
     return (
@@ -32,10 +30,17 @@ const DueTaskEntry = (props) => {
     )
 }
 
-export default function OverdueTaskList(props) {
+interface PropType {
+    open: boolean,
+    tasks: any,
+}
+
+export default function OverdueTaskList({ open, tasks }: PropType) {
+    const [tasksChecklist, setTaskChecklist] = useState(() => {
+        return (tasks.map((task) => false))
+    })
+
     const tags = useSelector((state) => state.tasks.tags)
-    const tasks = useSelector((state) => state.tasks.tasks)
-    const hoursPastMidnight = useSelector((state) => state.settings.hoursPastMidnight)
     const dispatch = useDispatch()
 
     const updateInitialized = () => {
@@ -51,58 +56,6 @@ export default function OverdueTaskList(props) {
         dispatch(updateDates(array))
     }
 
-    const indexToIdArray = (indexArray) => {
-        let idArray = [];
-        indexArray.forEach(index => {
-            idArray.push(tasks[index].id)
-        })
-        return idArray;
-    }
-
-    const todayDate = new Date
-    todayDate.setHours(0, 0, 0, 0)
-
-    let overdueTasks = []
-    tasks.forEach((task, index) => {
-        if (task.repeat === 'false') {
-            const dateArray = task.date.split('/')
-            const [month, day, year] = dateArray
-            const taskDate = new Date(year, month - 1, day)
-            let dayIsBefore;
-            if (!!hoursPastMidnight) {
-                add(todayDate, {
-                    years: 0,
-                    months: 0,
-                    weeks: 0,
-                    days: 1,
-                    hours: hoursPastMidnight,
-                    minutes: 0,
-                    seconds: 0,
-                })
-            }
-            dayIsBefore = isBefore(taskDate, todayDate)
-
-            if (dayIsBefore) {
-                overdueTasks.push(index)
-            }
-        }
-    })
-
-    const [tasksChecklist, setTaskChecklist] = useState(() => {
-        return (overdueTasks.map((task) => false))
-    })
-
-    let tasksToUpdate = []
-    let tasksToDelete = []
-    tasksChecklist.forEach((checked, index) => {
-        if (checked) {
-            tasksToUpdate.push(overdueTasks[index])
-        }
-        else {
-            tasksToDelete.push(overdueTasks[index])
-        }
-    })
-
     const handleChecklist = (index) => {
         setTaskChecklist((oldState) => {
             const newState = [...oldState]
@@ -111,13 +64,32 @@ export default function OverdueTaskList(props) {
         })
     }
 
+    const indexToIdArray = (indexArray) => {
+        let idArray = [];
+        indexArray.forEach(index => {
+            idArray.push(tasks[index].id)
+        })
+        return idArray;
+    }
+
+    let tasksToUpdate = []
+    let tasksToDelete = []
+
+    tasksChecklist.forEach((checked, index) => {
+        if (checked) {
+            tasksToUpdate.push(tasks[index])
+        }
+        else {
+            tasksToDelete.push(tasks[index])
+        }
+    })
 
     const getColor = (tagName) => {
         const tag = tags.find(tag => tag.name === tagName)
         return tag.color
     }
 
-    const overdueTaskList = overdueTasks.map((index, arrayIndex) => {
+    const overdueTaskList = tasks.map((index, arrayIndex) => {
         return (
             <DueTaskEntry
                 key={'due' + tasks[index].id}
@@ -133,7 +105,7 @@ export default function OverdueTaskList(props) {
     })
 
     return (
-        <Dialog maxWidth='sm' scroll='paper' open={props.open}>
+        <Dialog maxWidth='sm' scroll='paper' open={open}>
             <DialogTitle>Import overdue tasks?</DialogTitle>
             <DialogContent>
                 <List>
