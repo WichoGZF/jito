@@ -44,7 +44,7 @@ const paginationContent = [
 
 ]
 
-export default function PaginationPanel(props) {
+export default function PaginationPanel() {
     const [page, setPage] = useState(1);
     const handleChange = (event, value) => {
         setPage(value)

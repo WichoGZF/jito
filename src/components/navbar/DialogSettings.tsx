@@ -1,51 +1,20 @@
 import { VolumeDown, VolumeUp } from "@mui/icons-material";
-import { Dialog, DialogTitle, Grid, Tabs, Tab, IconButton, DialogContent, TextField, Typography, Switch, Slider, Select, MenuItem, ToggleButtonGroup, ToggleButton, Button, DialogActions, Divider } from "@mui/material";
+import { Dialog, DialogTitle, Grid, IconButton, DialogContent, TextField, Typography, Switch, Slider, Select, MenuItem, ToggleButtonGroup, ToggleButton, Button, DialogActions, Divider } from "@mui/material";
 import { establishPomodoroTime } from "../../features/appSlice";
 import { updateSettings } from '../../features/settingsSlice.js'
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import  { useState } from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
-import { Box } from "@mui/system";
+import { useAppDispatch, useAppSelector } from "hooks";
 
-function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box sx={{ p: 3 }}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
+interface PropTypes{ 
+    open: boolean,
+    handleClose: any,
 }
 
-TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.number.isRequired,
-    value: PropTypes.number.isRequired,
-};
-
-function a11yProps(index) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-    };
-}
-
-export default function DialogSettings(props) {
-    const settings = useSelector(state => state.settings)
-    const dispatch = useDispatch()
-    //State holding the setting's values
-    const [tabSelected, setTabSelected] = useState(0) //0 for timer, 1 for notification, 2 for app section.
+export default function DialogSettings(props: PropTypes) {
+    const settings = useAppSelector(state => state.settings)
+    const dispatch = useAppDispatch()
     //Timer settings
     const [pomodoroDuration, setPomodoroDuration] = useState(settings.pomodoroDuration);
     const [shortBreakDuration, setShortBreakDuration] = useState(settings.shortBreakDuration);
@@ -67,20 +36,16 @@ export default function DialogSettings(props) {
     const [hoursPastMidnight, setHoursPastMidnight] = useState(settings.hoursPastMidnight)
     const [language, setLanguage] = useState(settings.language)
 
-    const handleChangeTabSelected = (event, newValue) => {
-        setTabSelected(newValue)
-    };
-
     const saveSettings = () => {
         if (settings.pomodoroDuration !== pomodoroDuration) {
             dispatch(establishPomodoroTime(pomodoroDuration, 0))
         }
         dispatch(updateSettings(
             {
-                pomodoroDuration: parseInt(pomodoroDuration),
-                shortBreakDuration: parseInt(shortBreakDuration),
-                longBreakDuration: parseInt(longBreakDuration),
-                longBreakEvery: parseInt(longBreakEvery), //pomodoros
+                pomodoroDuration: pomodoroDuration,
+                shortBreakDuration: shortBreakDuration,
+                longBreakDuration: longBreakDuration,
+                longBreakEvery: longBreakEvery, //pomodoros
                 automaticPomodoroStart: automaticPomodoroStart,
                 automaticBreakStart: automaticBreakStart,
 
@@ -97,7 +62,7 @@ export default function DialogSettings(props) {
                 //app
 
                 colorTheme: colorTheme,
-                hoursPastMidnight: parseInt(hoursPastMidnight),
+                hoursPastMidnight: hoursPastMidnight,
                 language: language
             }
         ))
@@ -128,7 +93,7 @@ export default function DialogSettings(props) {
                     <Grid item>
                         <TextField label="Pomodoro duration" helperText="Minutes" size='small'
                             value={pomodoroDuration}
-                            onChange={(event) => setPomodoroDuration(event.target.value)}
+                            onChange={(event) => setPomodoroDuration(parseInt(event.target.value))}
                             sx={{ width: "100%" }}
 
                         ></TextField>
@@ -136,7 +101,7 @@ export default function DialogSettings(props) {
                     <Grid item>
                         <TextField label="Short break duration" helperText="Minutes" size='small'
                             value={shortBreakDuration}
-                            onChange={(event) => setShortBreakDuration(event.target.value)}
+                            onChange={(event) => setShortBreakDuration(parseInt(event.target.value))}
                             sx={{ width: "100%" }}
                         ></TextField>
 
@@ -144,7 +109,7 @@ export default function DialogSettings(props) {
                     <Grid item>
                         <TextField label="Long break duration" helperText="Minutes" size='small'
                             value={longBreakDuration}
-                            onChange={(event) => setLongBreakDuration(event.target.value)}
+                            onChange={(event) => setLongBreakDuration(parseInt(event.target.value))}
                             sx={{ width: "100%" }}
                         ></TextField>
 
@@ -152,7 +117,7 @@ export default function DialogSettings(props) {
                     <Grid item>
                         <TextField label="Long break every" helperText="Pomodoros" size='small'
                             value={longBreakEvery}
-                            onChange={(event) => setLongBreakEvery(event.target.value)}
+                            onChange={(event) => setLongBreakEvery(parseInt(event.target.value))}
                             sx={{ width: "100%" }}
                         ></TextField>
                     </Grid>
@@ -198,7 +163,7 @@ export default function DialogSettings(props) {
                                     <Grid item xs>
                                         <Slider aria-label="Volume"
                                             value={alarmVolume}
-                                            onChange={(event, newValue) => { setAlarmVolume(newValue) }} />
+                                            onChange={(event, newValue) => { setAlarmVolume(newValue as number) }} />
                                     </Grid>
                                     <Grid item xs='auto'>
                                         <VolumeUp />
@@ -242,7 +207,7 @@ export default function DialogSettings(props) {
                                     <Grid item xs>
                                         <Slider aria-label="Volume"
                                             value={tickingVolume}
-                                            onChange={(event, newValue) => { setTickingVolume(newValue) }} />
+                                            onChange={(event, newValue) => { setTickingVolume(newValue as number) }} />
                                     </Grid>
                                     <Grid item xs='auto'>
                                         <VolumeUp />
@@ -317,45 +282,6 @@ export default function DialogSettings(props) {
                     <Grid item>
                         <Typography variant='h6'>General</Typography>
 
-                    </Grid>
-                    <Grid item>
-                        <Grid container direction="row" justifyContent="space-between" alignItems="center" spacing={4}>
-                            <Grid item xs='auto'>
-                                <Typography>Start new day at</Typography>
-                            </Grid>
-                            <Grid item xs={6}>
-                                <Select size='small'
-                                    sx={{ width: "100%" }}
-                                    value={hoursPastMidnight}
-                                    disabled
-                                    onChange={(event) => { setHoursPastMidnight(event.target.value) }}>
-                                    <MenuItem value="0">0 hours past midnight</MenuItem>
-                                    <MenuItem value="1">1 hours past midnight</MenuItem>
-                                    <MenuItem value="2">2 hours past midnight</MenuItem>
-                                    <MenuItem value="3">3 hours past midnight</MenuItem>
-                                    <MenuItem value="4">4 hours past midnight</MenuItem>
-                                    <MenuItem value="5">5 hours past midnight</MenuItem>
-                                    <MenuItem value="6">6 hours past midnight</MenuItem>
-                                    <MenuItem value="7">7 hours past midnight</MenuItem>
-                                    <MenuItem value="8">8 hours past midnight</MenuItem>
-                                    <MenuItem value="9">9 hours past midnight</MenuItem>
-                                    <MenuItem value="10">10 hours past midnight</MenuItem>
-                                    <MenuItem value="11">11 hours past midnight</MenuItem>
-                                    <MenuItem value="12">12 hours past midnight</MenuItem>
-                                    <MenuItem value="13">13 hours past midnight</MenuItem>
-                                    <MenuItem value="14">14 hours past midnight</MenuItem>
-                                    <MenuItem value="15">15 hours past midnight</MenuItem>
-                                    <MenuItem value="16">16 hours past midnight</MenuItem>
-                                    <MenuItem value="17">17 hours past midnight</MenuItem>
-                                    <MenuItem value="18">18 hours past midnight</MenuItem>
-                                    <MenuItem value="19">19 hours past midnight</MenuItem>
-                                    <MenuItem value="20">20 hours past midnight</MenuItem>
-                                    <MenuItem value="21">21 hours past midnight</MenuItem>
-                                    <MenuItem value="22">22 hours past midnight</MenuItem>
-                                    <MenuItem value="23">23 hours past midnight</MenuItem>
-                                </Select>
-                            </Grid>
-                        </Grid>
                     </Grid>
                     <Grid item>
                         <Grid container direction='row' justifyContent='space-between' alignItems='center'>

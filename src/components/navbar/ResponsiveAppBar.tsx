@@ -9,7 +9,7 @@ import Container from "@mui/material/Container";
 import AvTimerIcon from "@mui/icons-material/AvTimer";
 import Button from '@mui/material/Button';
 
-import { useSelector } from 'react-redux'
+import { useAppSelector } from "hooks";
 
 import DialogSettings from './DialogSettings'
 import DialogLogIn from './DialogLogIn'
@@ -18,12 +18,16 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 
 import { useTheme } from '@mui/material/styles';
 
-const ResponsiveAppBar = (props) => {
-    const [dialogOpen, setDialogOpen] = useState(0)
+interface PropTypes{ 
+    loggedIn: boolean;
+}
+
+const ResponsiveAppBar = (props: PropTypes) => {
+    const [dialogOpen, setDialogOpen] = useState<number>(0)
 
     const theme = useTheme()
 
-    const colorTheme = useSelector((state) => state.settings.colorTheme)
+    const colorTheme = useAppSelector((state) => state.settings.colorTheme)
 
     let loggedInLabel
     if (props.loggedIn) {
@@ -33,12 +37,12 @@ const ResponsiveAppBar = (props) => {
         loggedInLabel = "Log In"
     }
 
-    const handleOpenDialog = (index) => {
+    const handleOpenDialog = (index: number) => {
         setDialogOpen(index);
     }
 
     const handleCloseDialog = () => {
-        setDialogOpen(null)
+        setDialogOpen(0)
     }
 
     return (
@@ -73,9 +77,9 @@ const ResponsiveAppBar = (props) => {
                     </Box>
                 </Toolbar>
             </Container>
-            <DialogLogIn open={dialogOpen === 3} handleClose={handleCloseDialog}></DialogLogIn>
             <DialogSettings open={dialogOpen === 1} handleClose={handleCloseDialog}></DialogSettings>
             <DialogStatistics open={dialogOpen === 2} handleClose={handleCloseDialog}></DialogStatistics>
+            <DialogLogIn open={dialogOpen === 3} handleClose={handleCloseDialog}></DialogLogIn>
         </AppBar>
     );
 };

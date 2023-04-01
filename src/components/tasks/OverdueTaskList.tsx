@@ -1,47 +1,25 @@
 import { useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
-import Checkbox from '@mui/material/Checkbox';
-import { List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
-import Chip from '@mui/material/Chip'
+import { List } from '@mui/material';
 import Button from '@mui/material/Button'
-import { useSelector, useDispatch } from "react-redux";
+import { useAppSelector, useAppDispatch } from "hooks";
 import { updateDates, deleteDue } from "features/tasksSlice";
 import { initialize } from "features/appSlice";
+import Task from "types/Task";
+import { DueTaskEntry } from "./DueTaskEntry";
 
-const DueTaskEntry = (props) => {
-    return (
-        <ListItem
-            key={props.id}
-            disablePadding>
-            <ListItemButton onClick={() => props.onClick(props.index)} sx={{ marginRight: '1' }}>
-                <ListItemIcon>
-                    <Checkbox
-                        edge="start"
-                        checked={props.checked}
-                    ></Checkbox>
-                </ListItemIcon>
-                <ListItemText>
-                    {props.taskName} {props.date}
-                </ListItemText>
-                <Chip label={props.tagName} sx={{ backgroundColor: props.tagColor, marginLeft: '15px' }}></Chip>
-            </ListItemButton>
-
-        </ListItem>
-    )
-}
-
-interface PropType {
+interface OverdueTasksProps {
     open: boolean,
-    tasks: any,
+    tasks: Task[],
 }
 
-export default function OverdueTaskList({ open, tasks }: PropType) {
+export default function OverdueTaskList({ open, tasks }: OverdueTasksProps) {
     const [tasksChecklist, setTaskChecklist] = useState(() => {
         return (tasks.map((task) => false))
     })
 
-    const tags = useSelector((state) => state.tasks.tags)
-    const dispatch = useDispatch()
+    const tags = useAppSelector((state) => state.tasks.tags)
+    const dispatch = useAppDispatch()
 
     const updateInitialized = () => {
         dispatch(initialize())
@@ -56,7 +34,7 @@ export default function OverdueTaskList({ open, tasks }: PropType) {
         dispatch(updateDates(array))
     }
 
-    const handleChecklist = (index) => {
+    const handleChecklist = (index:number) => {
         setTaskChecklist((oldState) => {
             const newState = [...oldState]
             newState[index] = !newState[index]
@@ -89,18 +67,18 @@ export default function OverdueTaskList({ open, tasks }: PropType) {
         return tag.color
     }
 
-    const overdueTaskList = tasks.map((index, arrayIndex) => {
+    const overdueTaskList = tasks.map((task, arrayIndex) => {
         return (
             <DueTaskEntry
-                key={'due' + tasks[index].id}
+                key={'due' + task.id}
                 index={arrayIndex}
                 checked={tasksChecklist[arrayIndex]}
-                id={tasks[index].id}
-                taskName={tasks[index].name}
-                tagName={tasks[index].tag}
-                tagColor={getColor(tasks[index].tag)}
-                onClick={handleChecklist}>
-            </DueTaskEntry>
+                id={task.id}
+                taskName={task.name}
+                tagName={task.tag}
+                date={task.date}
+                tagColor={getColor(task.tag)}
+                onClick={handleChecklist}/>
         )
     })
 

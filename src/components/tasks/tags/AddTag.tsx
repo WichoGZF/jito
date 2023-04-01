@@ -2,27 +2,28 @@ import { Box, Stack, Collapse, Alert, IconButton, Button, ListItem, Input } from
 import { addTag } from "features/tasksSlice"
 import React, { useState, useRef } from "react"
 import { TwitterPicker } from "react-color"
-import { useSelector, useDispatch } from "react-redux"
+import { useAppDispatch, useAppSelector } from "hooks"
 import CloseIcon from '@mui/icons-material/Close'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CheckIcon from '@mui/icons-material/Check';
 
-export default function AddTag(props) {
+export default function AddTag() {
     const [colorPick, setColorPick] = useState(false)
     const [color, setColor] = useState('gray')
     const [tagName, setTagName] = useState('')
     const [addNewTag, setAddNewTag] = useState(false)
     const [alert, setAlert] = useState(false)
   
-    const tags = useSelector((state) => state.tasks.tags)
-    const dispatch = useDispatch()
+    const tags = useAppSelector((state) => state.tasks.tags)
+    const dispatch = useAppDispatch()
   
-    const colorRef = useRef(null)
-    const colorBounding = colorRef.current?.getBoundingClientRect()
+    const colorRef = useRef<HTMLElement>(null)
+    const colorBounding = colorRef.current?.getBoundingClientRect()!
   
     const colorX = colorRef.current ? colorBounding.x - 260 + 16 : 0
     const colorY = colorRef.current ? colorBounding.y + 24 + 12 : 0
   
+    //Color most likely a string, idk
     const handleChangeColor = (color) => {
       setColor(color.hex);
       setColorPick(!colorPick)

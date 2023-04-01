@@ -1,13 +1,21 @@
 import { Dialog, Stack, DialogTitle, IconButton, DialogContent, Grid, Chip, DialogActions, List } from "@mui/material"
 import React, { useState } from "react"
-import { useSelector } from "react-redux"
 import AddTag from "./AddTag"
 import TagEntry from "./TagEntry"
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useAppSelector } from "hooks";
 
-export default function TagDialog(props) {
-    const tags = useSelector(state => state.tasks.tags)
+interface PropTypes{
+  tagSelected: string,
+  openTagSelect: boolean,
+  handleChangeTag: Function, 
+  handleChangeColor: Function, 
+  handleOpenTagSelect: Function,
+}
+
+export default function TagDialog(props: PropTypes) {
+    const tags = useAppSelector(state => state.tasks.tags)
   
     const [openTagEdit, setOpenTagEdit] = useState(false)
     const tagSelected = props.tagSelected
@@ -49,8 +57,7 @@ export default function TagDialog(props) {
                   return (
                     <Grid item xs='auto' key={tagObject.name}>
                       <Chip clickable onClick={() => { handleTagSelected(tagObject.name, tagObject.color) }}
-                        label={tagObject.name} sx={{ backgroundColor: tagObject.color }}>
-                      </Chip>
+                        label={tagObject.name} sx={{ backgroundColor: tagObject.color }}/>
                     </Grid>
                   )
                 }

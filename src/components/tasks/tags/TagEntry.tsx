@@ -6,9 +6,10 @@ import { changeTagColor, deleteTag, changeTagName } from 'features/tasksSlice';
 import React, { useState, useRef } from 'react';
 import { TwitterPicker } from 'react-color';
 import { useDispatch } from 'react-redux';
+import { useAppDispatch } from 'hooks';
 
 export default function TagEntry(props) {
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
   
     const [colorPick, setColorPick] = useState(false)
     const [color, setColor] = useState(props.color)
@@ -16,8 +17,8 @@ export default function TagEntry(props) {
     const [tagName, setTagName] = useState(props.tag)
     const [deleteDialog, setDeleteDialog] = useState(false)
   
-    const colorRef = useRef(null)
-    const colorBounding = colorRef.current?.getBoundingClientRect()
+    const colorRef = useRef<HTMLElement>(null)!;
+    const colorBounding = colorRef.current.getBoundingClientRect()
   
     const colorX = colorRef.current ? colorBounding.x - 260 + 16 : 0
     const colorY = colorRef.current ? colorBounding.y + 24 + 12 : 0
@@ -25,6 +26,7 @@ export default function TagEntry(props) {
     const handleEditName = () => {
       setEditName(!editName)
     }
+    //What type
     const handleChangeColor = (color) => {
       setColor(color.hex);
       if (color !== props.color) {

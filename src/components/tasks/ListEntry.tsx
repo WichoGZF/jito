@@ -3,13 +3,14 @@ import { Typography, IconButton, ListItem, Menu, MenuItem, ListItemIcon, ListIte
 import { ItemTypes } from "components/ItemTypes"
 import { handleCompletedRegular, stopRunning } from "features/appSlice"
 import { addTimeEntry, deleteTask, completeTask, reorderTask } from "features/tasksSlice"
-import React, { useState, useRef } from "react"
+import { useState, useRef } from "react"
 import { useDrop, useDrag } from "react-dnd"
-import { useDispatch, useSelector } from "react-redux"
+import { useAppDispatch, useAppSelector } from "hooks"
 import TaskInput from "./TaskInput"
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
 import RepeatIcon from '@mui/icons-material/Repeat';
+import Tag from "types/Tag"
 
 //Dispatches the time entry for the statistics and also dispatches the 'rest' time accumulated. 
 const composeCompleteEntry = (tag) => (dispatch, getState) => {
@@ -22,18 +23,31 @@ const composeCompleteEntry = (tag) => (dispatch, getState) => {
     dispatch(addTimeEntry(todayDate, secondsElapsed, tag))
   }
   
-  
+  interface PropTypes{
+        key: string, 
+        text: string,
+        description: string,
+        index: number,
+        date: string|null,
+        type: 'normal' | 'block', // for types
+        blocks: number | null,
+        repeat: 'daily' | 'weekly' | 'false', 
+        repeatOn: number[],
+        tag: string, 
+        tags: Tag[], 
+        firstTask: boolean,
+  }  
   //Rendering first task
- export default function ListEntry(props) {
+ export default function ListEntry(props: PropTypes) {
   
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
   
-    const rest = useSelector((state) => state.app.rest)
-    const todayDate = useSelector((state) => state.app.todayDate)
-    const calendarDate = useSelector((state) => state.app.calendarDate)
+    const rest = useAppSelector((state) => state.app.rest)
+    const todayDate = useAppSelector((state) => state.app.todayDate)
+    const calendarDate = useAppSelector((state) => state.app.calendarDate)
   
-    const timerState = useSelector((state) => state.app.timerState)
-    const timerStarted = useSelector((state) => state.app.timerStarted)
+    const timerState = useAppSelector((state) => state.app.timerState)
+    const timerStarted = useAppSelector((state) => state.app.timerStarted)
   
     const [onHover, setOnHover] = useState({ display: 'none' })
     const [completeHover, setCompleteHover] = useState(false)
@@ -41,7 +55,6 @@ const composeCompleteEntry = (tag) => (dispatch, getState) => {
     const [dragHover, setDragHover] = useState(null)
   
     const [dropDownRef, setDropDownRef] = useState(null)
-  
     const [editTask, setEditTask] = useState(false)
   
     const handleDragHover = () => setDragHover(null);
@@ -222,12 +235,10 @@ const composeCompleteEntry = (tag) => (dispatch, getState) => {
               blocks={props.blocks}
               repeat={props.repeat}
               repeatOn={props.repeatOn}
-              tagName={props.tag}
               index={props.index}
               tagColor={tagColor}
               handleTaskSelectClose={handleEditTask}
-            >
-            </TaskInput>
+            />
           </ListItem>
         </>
       )

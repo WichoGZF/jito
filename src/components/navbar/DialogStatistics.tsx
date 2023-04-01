@@ -2,7 +2,7 @@ import { Dialog, DialogTitle, Grid, Typography, IconButton, DialogContent, Stack
 import { differenceInCalendarWeeks, differenceInCalendarDays, differenceInCalendarMonths, getDay, subDays, subMonths } from "date-fns"
 import React, { useState } from "react"
 import { Line, Bar, Doughnut } from "react-chartjs-2"
-import { useSelector } from "react-redux"
+import { useAppSelector } from "hooks"
 import CloseIcon from '@mui/icons-material/Close';
 
 import {
@@ -18,16 +18,22 @@ import {
     ArcElement,
 } from 'chart.js';
 
+interface PropTypes {
+    open: boolean,
+    handleClose: any,
+}
 
+type TimeTypes = 'today' | 'week' | 'month' | 'all';
+type HistoryTypes = 'days' | 'weeks' | 'months';
 
-export default function DialogStatistics(props) {
+export default function DialogStatistics(props: PropTypes) {
     //Redux selectors
-    const tags = useSelector(state => state.tasks.tags)
-    const history = useSelector(state => state.tasks.history)
+    const tags = useAppSelector(state => state.tasks.tags)
+    const history = useAppSelector(state => state.tasks.history)
 
     //Component state
-    const [historySelect, setHistorySelect] = useState("days")
-    const [timeDistribuitionSelect, setTimeDistribuitionSelect] = useState("all")
+    const [historySelect, setHistorySelect] = useState<HistoryTypes>("days")
+    const [timeDistribuitionSelect, setTimeDistribuitionSelect] = useState<TimeTypes>("all")
 
     const monthNames = ["January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -59,7 +65,7 @@ export default function DialogStatistics(props) {
 
             const weekDifference = differenceInCalendarWeeks(
                 todayDate,
-                new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
+                new Date(parseInt(completedYear), parseInt(completedMonth) - 1, parseInt(completedDay))
             )
             if (weekDifference < 1) {
                 totalTimeSpent += time;
@@ -96,7 +102,7 @@ export default function DialogStatistics(props) {
 
             const dayDifference = differenceInCalendarDays(
                 todayDate,
-                new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
+                new Date(parseInt(completedYear), parseInt(completedMonth) - 1, parseInt(completedDay))
             )
             if (dayDifference < 7) {
                 dayTimeSpent[6 - dayDifference] += time;
@@ -113,7 +119,7 @@ export default function DialogStatistics(props) {
 
             const weekDifference = differenceInCalendarWeeks(
                 todayDate,
-                new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
+                new Date(parseInt(completedYear), parseInt(completedMonth) - 1, completedDay)
             )
             if (weekDifference < 7) {
                 weekTimeSpent[6 - weekDifference] += time;
@@ -130,7 +136,7 @@ export default function DialogStatistics(props) {
 
             const monthDifference = differenceInCalendarMonths(
                 todayDate,
-                new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
+                new Date(parseInt(completedYear), parseInt(completedMonth) - 1, parseInt(completedDay))
             )
             if (monthDifference < 7) {
                 monthTimeSpent[6 - monthDifference] += time;
@@ -145,19 +151,21 @@ export default function DialogStatistics(props) {
             const { completeDate, time } = completedTask
             const [completedMonth, completedDay, completedYear] = completeDate.split('/')
 
-            const dayOfTheWeek = getDay(new Date(completedYear, parseInt(completedMonth) - 1, completedDay))
+            const dayOfTheWeek = getDay(new Date(parseInt(completedYear), parseInt(completedMonth) - 1, parseInt(completedDay)))
             daysOfTheWeek[dayOfTheWeek] += time;
         }
         return daysOfTheWeek
     }
 
 
-    const tagsTime = (time) => {
-        let tagTime = {}
-        for (const tag of tags) {
-            tagTime[tag.name] = 0
-        }
-        switch (time) {
+    const tagsTime = (timeType: TimeTypes) => {
+        let tagTime: {
+            [key: string]: number
+        } = {}
+        tags.forEach((tag, index) => {
+            tagTime[`${tag.name}`] = 0;
+        });
+        switch (timeType) {
             case 'today':
                 for (const completedTask of history) {
                     const { completeDate, time, tag } = completedTask
@@ -172,7 +180,7 @@ export default function DialogStatistics(props) {
                     const [completedMonth, completedDay, completedYear] = completeDate.split('/')
                     const dayDifference = differenceInCalendarDays(
                         todayDate,
-                        new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
+                        new Date(parseInt(completedYear), parseInt(completedMonth) - 1, completedDay)
                     )
                     if (dayDifference < 7) {
                         tagTime[tag] += time;
@@ -185,7 +193,7 @@ export default function DialogStatistics(props) {
                     const [completedMonth, completedDay, completedYear] = completeDate.split('/')
                     const monthDifference = differenceInCalendarMonths(
                         todayDate,
-                        new Date(completedYear, parseInt(completedMonth) - 1, completedDay)
+                        new Date(parseInt(completedYear), parseInt(completedMonth) - 1, completedDay)
                     )
                     if (monthDifference < 1) {
                         tagTime[tag] += time;
@@ -194,19 +202,19 @@ export default function DialogStatistics(props) {
                 break;
             case 'all':
                 for (const completedTask of history) {
-                    const { completedTime, time, tag } = completedTask
+                    const { completeDate, time, tag } = completedTask
                     tagTime[tag] += time;
                 }
                 break;
         }
 
 
-        let array = []
+        let array: number[] = []
         Object.values(tagTime).forEach((value, index) => array.push(value))
         return (array)
     }
 
-    const secondsToHourMins = (seconds) => {
+    const secondsToHourMins = (seconds: number) => {
         const minutes = Math.trunc(seconds / 60)
         const hours = Math.trunc(minutes / 60)
         if (hours > 0) {
@@ -217,7 +225,7 @@ export default function DialogStatistics(props) {
         }
     }
 
-    const hoursToHoursMins = (hours) => {
+    const hoursToHoursMins = (hours: number) => {
         const minutes = Math.trunc(hours * 60)
         if (hours >= 1) {
             return (`${Math.trunc(hours)}h ${minutes % 60}m`)
@@ -228,12 +236,12 @@ export default function DialogStatistics(props) {
     }
 
 
-    const secondsArrayToMinutesArray = (secondsArray) => {
+    const secondsArrayToMinutesArray = (secondsArray: number[]) => {
         secondsArray.forEach((seconds, index) => secondsArray[index] = Math.floor(seconds / 60))
         return secondsArray
     }
 
-    const secondsArrayToHoursArray = (secondsArray) => {
+    const secondsArrayToHoursArray = (secondsArray: number[]) => {
         secondsArray.forEach((seconds, index) => secondsArray[index] = ((seconds / 60) / 60))
         return secondsArray
     }
@@ -263,7 +271,7 @@ export default function DialogStatistics(props) {
             },
             tooltip: {
                 callbacks: {
-                    title: (item, date) => {
+                    title: (_a, _b) => {
                         return ''
                     },
                     label: (item, data) => {
@@ -276,7 +284,6 @@ export default function DialogStatistics(props) {
             y: {
                 ticks: {
                     callback: function (value, index, ticks) {
-
                         return hoursToHoursMins(value)
                     }
                 },
@@ -406,9 +413,9 @@ export default function DialogStatistics(props) {
         ],
     };
 
-   const optionsDoughnut = {
+    const optionsDoughnut = {
         responsive: true,
-        plugins:{
+        plugins: {
             tooltip: {
                 callbacks: {
                     label: (item, data) => {
@@ -476,7 +483,7 @@ export default function DialogStatistics(props) {
                         <Grid container item justifyContent='space-between' alignItems='center'>
                             <Grid item><Typography>History</Typography></Grid>
                             <Grid item>
-                                <Select size='small' value={historySelect} onChange={(event) => { setHistorySelect(event.target.value) }}>
+                                <Select size='small' value={historySelect} onChange={(event) => { setHistorySelect(event.target.value as HistoryTypes) }}>
                                     <MenuItem value={'days'}><Typography>Days</Typography></MenuItem>
                                     <MenuItem value={'weeks'}><Typography>Weeks</Typography></MenuItem>
                                     <MenuItem value={'months'}><Typography>Months</Typography></MenuItem>

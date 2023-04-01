@@ -1,10 +1,8 @@
-import { Button, InputLabel, MenuItem, Select, TextField, Typography } from "@mui/material"
-import * as React from "react";
+import { Button, MenuItem, Select, TextField, Typography } from "@mui/material"
 import { useState } from "react"
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
-import IconButton from "@mui/material/IconButton";
 import Grid from '@mui/material/Grid';
 import Input from '@mui/material/Input';
 import RepeatIcon from '@mui/icons-material/Repeat';
@@ -13,23 +11,32 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
-import FormLabel from '@mui/material/FormLabel';
-
-import { DialogContent, DialogActions, Dialog } from "@mui/material";
-import FormGroup from '@mui/material/FormGroup'
-import Checkbox from '@mui/material/Checkbox'
-
+import FormLabel from '@mui/material/FormLabel'
 import TagDialog from "./tags/TagDialog";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useAppDispatch, useAppSelector } from "hooks";
 import { addTask, editTask } from 'features/tasksSlice'
 
 import WeekPicker from './WeekPicker'
 
-export default function TaskInput(props) {
-    const tags = useSelector(state => state.tasks.tags)
-    const dateSelected = useSelector(state => state.app.calendarDate)
-    const dispatch = useDispatch()
+interface PropTypes {
+    edit: boolean,
+    name: string,
+    tag: string,
+    description: string,
+    type: 'normal' | 'block',
+    blocks: number | null,
+    repeat: 'daily' | 'weekly' | 'false',
+    repeatOn: number[],
+    index: number,
+    tagColor: string,
+    handleTaskSelectClose: () => void
+}
+
+export default function TaskInput(props: PropTypes) {
+    const tags = useAppSelector(state => state.tasks.tags)
+    const dateSelected = useAppSelector(state => state.app.calendarDate)
+    const dispatch = useAppDispatch()
 
     const [taskName, setTaskName] = useState(props.edit ? props.name : "")
     const [taskDesc, setTaskDesc] = useState(props.edit ? props.description : "")
@@ -37,7 +44,7 @@ export default function TaskInput(props) {
     const [blocks, setBlocks] = useState(props.edit ? props.blocks : '') //nuumber of blocks
     const [repeat, setRepeat] = useState(props.edit ? props.repeat : 'false') //true or false
     const [repeatOn, setRepeatOn] = useState(props.edit ? props.repeatOn : [false, false, false, false, false, false, false])
-    const [tag, setTag] = useState(props.edit ? props.tagName : tags[0].name)
+    const [tag, setTag] = useState(props.edit ? props.tag : tags[0].name)
     const [color, setColor] = useState(props.edit ? props.tagColor : tags[0].color)
     //for comps.
     const [toggleRepeat, setToggleRepeat] = useState(false)
@@ -114,7 +121,7 @@ export default function TaskInput(props) {
     const isWeekly = repeat === 'weekly'
 
     return (
-        <Box sx={{width: '100%'}}>
+        <Box sx={{ width: '100%' }}>
             <Grid container direction='column' gap={1.5} sx={{ padding: "15px", border: '1px', borderStyle: 'solid', borderColor: "#e2e2e2", borderRadius: '25px' }}>
 
                 <TextField id="task-name"
@@ -176,7 +183,7 @@ export default function TaskInput(props) {
                         <FormLabel>
                             <Typography variant='button'>Repeat</Typography>
                         </FormLabel>
-                        <RepeatIcon color={repeat? 'primary' : 'disabled'}></RepeatIcon>
+                        <RepeatIcon color={repeat ? 'primary' : 'disabled'}></RepeatIcon>
                     </Grid>
                     <Select labelId="select"
                         value={repeat}

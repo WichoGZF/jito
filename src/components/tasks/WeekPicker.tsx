@@ -2,7 +2,12 @@ import IconButton from '@mui/material/IconButton';
 import Stack from '@mui/material/Stack'
 import * as React from "react";
 
-export default function WeekPicker({ repeatOn, handleChangeRepeatOn }) {
+interface PropTypes{ 
+    repeatOn: boolean[], 
+    handleChangeRepeatOn: (arg0:number) => void;
+}
+
+export default function WeekPicker({ repeatOn, handleChangeRepeatOn }: PropTypes) {
 
     console.log('Repeat on ', repeatOn, handleChangeRepeatOn)
     return (

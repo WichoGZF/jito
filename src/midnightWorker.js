@@ -21,4 +21,4 @@ code = code.substring(code.indexOf("{") + 1, code.lastIndexOf("}"));
 const blob = new Blob([code], { type: "application/javascript" });
 const worker = URL.createObjectURL(blob);
 
-module.exports = worker;
+export default worker;

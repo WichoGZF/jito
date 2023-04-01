@@ -1,38 +1,32 @@
-import React, { useState, useEffect, useRef } from 'react';
-
+import { useState, useEffect, useRef } from 'react';
 import ResponsiveAppBar from "./components/navbar/ResponsiveAppBar";
 import TaskList from './components/tasks/TaskList';
-
 import Grid from '@mui/material/Grid'
-
-import { useDispatch, useSelector } from 'react-redux'
-import { startNewDay } from '../src/features/appSlice'
+import { startNewDay } from './features/appSlice'
 import { ThemeProvider, responsiveFontSizes } from "@mui/material/styles";
-
 import Calendar from './components/timerSection/Calendar';
 import { Container, Divider, Stack, Box} from '@mui/material';
 import Footer from 'components/bottom/Footer';
 import PaginationPanel from 'components/bottom/PaginationPanel';
-
 import midnightWorker from './midnightWorker'
-
 import { lightTheme, darkTheme } from 'theme';
-import { format } from 'date-fns';
+import { format } from 'date-fns';  
+import { useAppSelector, useAppDispatch } from 'hooks';
 
-const composeResetDay = (tag) => (dispatch, getState) => {
+const composeResetDay = () => (dispatch, getState) => {
   dispatch(startNewDay(getState().settings.pomodoroDuration))
 }
 
 const milisecondsInDay = (24 * 60 * 60 * 1000)
-
+ 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const todayDate = useSelector((state) => state.app.todayDate)
-  const hoursAfterMidnight = useSelector((state) => state.settings.hoursPastMidnight)
-  const colorTheme = useSelector((state) => state.settings.colorTheme)
+  const todayDate = useAppSelector((state) => state.app.todayDate)
+  const hoursAfterMidnight = useAppSelector((state) => state.settings.hoursPastMidnight)
+  const colorTheme = useAppSelector((state) => state.settings.colorTheme)
 
   const worker = useRef()
 
@@ -40,7 +34,7 @@ function App() {
   useEffect(() => {
     worker.current = new Worker(midnightWorker)
     return () => {
-      worker.current.terminate();
+      worker!.current.terminate();
     }
   }, [])
 
@@ -49,14 +43,14 @@ function App() {
       //Fetch actual date to see if todayDate is outdated
       const actualDate = format(new Date(), 'MM/dd/yyyy') 
       if(actualDate !== todayDate){
-        dispatch(composeResetDay())
+        dispatch(composeResetDay());
       }
   }, [])
 
   useEffect(() => {
-    function eventHandler(event){ 
+    function eventHandler(){ 
       console.log('New day started');
-      dispatch(composeResetDay())
+      dispatch(composeResetDay());
     }
     //Actual timestamp
     const timestamp = new Date();  

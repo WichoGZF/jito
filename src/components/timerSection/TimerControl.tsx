@@ -1,61 +1,45 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import TimerCard from './TimerCard';
-import { useSelector, useDispatch } from 'react-redux/es/exports';
-
+import { useAppDispatch, useAppSelector } from 'hooks';
 import { addTimeEntry } from '../../features/tasksSlice';
-
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { Checkbox } from '@mui/material';
-
 import Button from '@mui/material/Button'
-import { ElevatorSharp } from '@mui/icons-material';
-
 import useSound from 'use-sound';
-
-//notification sounds
 import notifications from '../../sounds/tones.mp3'
-//ticking sounds
 import tickers from '../../sounds/tickers.mp3'
-
 import {
   startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, establishPomodoroTime,
   disableNormalTriggeredRest, setStoredTime, setCalendarDate, resetPomodoros, increasePomodoros
 } from '../../features/appSlice'
 import { updateBlocks } from '../../features/tasksSlice';
-
 import workerTimer from "./worker"
 
-//Todo
-//After finishing a break 
-//Optimization 
-//Don't really need to trigger a re-render on every minute/second change. Can let the reducer handle it instead. 
-
-export default function TimerControl(props) {
+export default function TimerControl() {
   //Random settings
-  const settings = useSelector(state => state.settings)
-  const actualTag = useSelector(state => state.app.tag)
-  const actualIndex = useSelector(state => state.app.index)
-  const todayDate = useSelector(state => state.app.todayDate)
-  const calendarDate = useSelector(state => state.app.calendarDate)
+  const settings = useAppSelector(state => state.settings)
+  const actualTag = useAppSelector(state => state.app.tag)
+  const actualIndex = useAppSelector(state => state.app.index)
+  const todayDate = useAppSelector(state => state.app.todayDate)
+  const calendarDate = useAppSelector(state => state.app.calendarDate)
   //TimerState
-  const timerMinuts = useSelector(state => state.app.minutes)
-  const timerSeconds = useSelector(state => state.app.seconds)
-  const timerState = useSelector(state => state.app.timerState)
-  const timerStarted = useSelector(state => state.app.timerStarted)
-  const rest = useSelector(state => state.app.rest)
-  const normalTriggeredRest = useSelector(state => state.app.normalTriggeredRest)
+  const timerMinuts = useAppSelector(state => state.app.minutes)
+  const timerSeconds = useAppSelector(state => state.app.seconds)
+  const timerState = useAppSelector(state => state.app.timerState)
+  const timerStarted = useAppSelector(state => state.app.timerStarted)
+  const rest = useAppSelector(state => state.app.rest)
+  const normalTriggeredRest = useAppSelector(state => state.app.normalTriggeredRest)
 
-  const storedTime = useSelector(state => state.app.storedTime)
+  const storedTime = useAppSelector(state => state.app.storedTime)
 
-  const pomodoros = useSelector(state => state.app.pomodoros)
+  const pomodoros = useAppSelector(state => state.app.pomodoros)
   //Dispatch
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   const [showWarning, setShowWarning] = useState(true)
   const [warningDialog, setWarningDialog] = useState(false);

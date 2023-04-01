@@ -1,10 +1,10 @@
 import CloseIcon from '@mui/icons-material/Close'
-const { Dialog, DialogTitle, Grid, IconButton, DialogContent, DialogContentText, FormControlLabel, Checkbox, Typography, DialogActions, Button } = require("@mui/material")
-const { establishPomodoroTime, setStoredTime, startRest, setNormalTriggeredRest, timerNotStarted, handleCompletedRegular } = require("features/appSlice")
-const { useState } = require("react")
-const React = require("react")
-const { useSelector, useDispatch } = require("react-redux")
+import { Dialog, DialogTitle, Grid, IconButton, DialogContent, DialogContentText, FormControlLabel, Checkbox, Typography, DialogActions, Button } from "@mui/material"
+import { establishPomodoroTime, setStoredTime, startRest, setNormalTriggeredRest, timerNotStarted, handleCompletedRegular } from 'features/appSlice'
+import React, {useState} from "react"
+import { useAppSelector, useAppDispatch } from 'hooks'
 
+//In dire need of proper types.
 const composeStoredTime = (action) => (dispatch, getState) => {
     const pomodoroDuration = getState().settings.pomodoroDuration
     if (action === 'discard') {
@@ -32,10 +32,10 @@ const composeStoredTime = (action) => (dispatch, getState) => {
     dispatch(timerNotStarted())
   }
 
- export default function CompletedDialog(props) {
+ export default function CompletedDialog() {
     //True/false property activated when task is completed
-    const completedRegular = useSelector((state) => state.app.completedRegular)
-    const dispatch = useDispatch()
+    const completedRegular = useAppSelector((state) => state.app.completedRegular)
+    const dispatch = useAppDispatch()
   
     const [rememberSelection, setRememberSelection] = useState(false)
   
@@ -43,10 +43,10 @@ const composeStoredTime = (action) => (dispatch, getState) => {
       dispatch(handleCompletedRegular())
     }
   
-    const clockMinutes = useSelector((state) => state.app.minutes);
-    const clockSeconds = useSelector((state) => state.app.seconds);
-    const pomodoroDuration = useSelector((state) => state.settings.pomodoroDuration)
-    const shortBreakDuration = useSelector((state) => state.settings.shortBreakDuration)
+    const clockMinutes = useAppSelector((state) => state.app.minutes);
+    const clockSeconds = useAppSelector((state) => state.app.seconds);
+    const pomodoroDuration = useAppSelector((state) => state.settings.pomodoroDuration)
+    const shortBreakDuration = useAppSelector((state) => state.settings.shortBreakDuration)
   
     const pomodoroSeconds = pomodoroDuration * 60
     const totalClock = (pomodoroSeconds) - (clockMinutes * 60 + clockSeconds)

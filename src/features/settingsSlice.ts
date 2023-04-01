@@ -1,6 +1,32 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const mockSettings = {
+interface StateType { 
+    pomodoroDuration: number,
+    shortBreakDuration: number,
+    longBreakDuration: number,
+    longBreakEvery: number, //pomodoros
+    automaticPomodoroStart:  boolean,
+    automaticBreakStart:  boolean,
+
+    // notification
+
+    alarmVolume: number, 
+    alarmSound: string,
+    tickingVolume: number,
+    tickingSound: string,
+    alarmOnPomodoroEnd: boolean,
+    alarmOnBreakEnd: boolean,
+    tickingSoundOnBreak: boolean,
+    tickingSoundOnPomodoro: boolean,
+    //app
+
+    colorTheme: string,
+    hoursPastMidnight:number,
+    language: string,
+
+}
+
+const mockSettings: StateType = {
     pomodoroDuration: 25,
     shortBreakDuration: 5,
     longBreakDuration: 15,

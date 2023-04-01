@@ -4,8 +4,12 @@ import { ReactComponent as GoogleIcon } from '../../assets/Google__G__Logo.svg'
 import { ReactComponent as FacebookIcon } from '../../assets/Facebook_Logo.svg'
 import CloseIcon from '@mui/icons-material/Close';
 
+interface PropTypes{ 
+    handleClose: any, 
+    open: boolean, 
+}
 
-export default function DialogLogIn(props){
+export default function DialogLogIn(props: PropTypes){
     return (
         <Dialog
             open={props.open}
