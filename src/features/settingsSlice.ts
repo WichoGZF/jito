@@ -1,32 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
+import Setting from 'types/Setting'
 
-interface StateType { 
-    pomodoroDuration: number,
-    shortBreakDuration: number,
-    longBreakDuration: number,
-    longBreakEvery: number, //pomodoros
-    automaticPomodoroStart:  boolean,
-    automaticBreakStart:  boolean,
-
-    // notification
-
-    alarmVolume: number, 
-    alarmSound: string,
-    tickingVolume: number,
-    tickingSound: string,
-    alarmOnPomodoroEnd: boolean,
-    alarmOnBreakEnd: boolean,
-    tickingSoundOnBreak: boolean,
-    tickingSoundOnPomodoro: boolean,
-    //app
-
-    colorTheme: string,
-    hoursPastMidnight:number,
-    language: string,
-
-}
-
-const mockSettings: StateType = {
+const mockSettings: Setting = {
     pomodoroDuration: 25,
     shortBreakDuration: 5,
     longBreakDuration: 15,
@@ -36,7 +11,7 @@ const mockSettings: StateType = {
 
     // notification
 
-    alarmVolume: 50, 
+    alarmVolume: 50,
     alarmSound: "bell",
     tickingVolume: 50,
     tickingSound: "clock",
@@ -47,19 +22,16 @@ const mockSettings: StateType = {
     //app
 
     colorTheme: 'light',
-    hoursPastMidnight: 0,
-    language: "English"
-
 }
 
 const settingsSlice = createSlice({
     name: 'settings',
     initialState: mockSettings,
     reducers: {
-       updateSettings: (state, action) => {
+        updateSettings: (state, action) => {
             return action.payload
-       }
+        }
     }
 })
-export const {updateSettings} = settingsSlice.actions
+export const { updateSettings } = settingsSlice.actions
 export default settingsSlice.reducer 
