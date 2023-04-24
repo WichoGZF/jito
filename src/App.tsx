@@ -12,6 +12,7 @@ import midnightWorker from './midnightWorker'
 import { lightTheme, darkTheme } from 'theme';
 import { format } from 'date-fns';  
 import { useAppSelector, useAppDispatch } from 'hooks';
+import Subscribe from 'components/subscription/Subscribe';
 
 const composeResetDay = () => (dispatch, getState) => {
   dispatch(startNewDay(getState().settings.pomodoroDuration))
@@ -20,12 +21,16 @@ const composeResetDay = () => (dispatch, getState) => {
 const milisecondsInDay = (24 * 60 * 60 * 1000)
  
 function App() {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [subscribeDialogOpen, setSusbcribeDialogOpen] = useState<boolean>(false);
+
+  const handleCloseSubscripe = () => {
+    setSusbcribeDialogOpen(false); 
+  }
 
   const dispatch = useAppDispatch();
 
   const todayDate = useAppSelector((state) => state.app.todayDate)
-  const hoursAfterMidnight = useAppSelector((state) => state.settings.hoursPastMidnight)
   const colorTheme = useAppSelector((state) => state.settings.colorTheme)
 
   const worker = useRef()
@@ -57,10 +62,8 @@ function App() {
     //Timestamp converted to miliseconds 
     const timestampMiliseconds = (timestamp.getHours() * 60 * 60 * 1000) + (timestamp.getMinutes() * 60 * 1000) + (timestamp.getSeconds() * 1000);
 
-    //Extra miliseconds in a day according to settings
-    const extraMiliseconds = hoursAfterMidnight * 60 * 60 * 1000;
     //Miliseconds remaining until rest
-    const remainingMiliseconds = (milisecondsInDay + extraMiliseconds) - timestampMiliseconds;
+    const remainingMiliseconds = (milisecondsInDay) - timestampMiliseconds;
 
     worker.current.postMessage(remainingMiliseconds)
 
@@ -69,7 +72,7 @@ function App() {
       worker.current.removeEventListener('message', eventHandler)
     }
 
-  }, [hoursAfterMidnight, todayDate])
+  }, [todayDate])
 
   let theme;
   if (colorTheme === 'dark'){
@@ -105,6 +108,7 @@ function App() {
           </Stack>
         </Container>
       </Box>
+      <Subscribe open={subscribeDialogOpen} handleClose={handleCloseSubscripe}></Subscribe>
     </ThemeProvider>
   );
 }
