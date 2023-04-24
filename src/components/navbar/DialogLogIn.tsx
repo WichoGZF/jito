@@ -1,69 +1,57 @@
-import { Dialog, DialogTitle, Grid, Typography, IconButton, DialogContent, TextField, Button, Divider, SvgIcon } from "@mui/material";
-import React from "react";
-import { ReactComponent as GoogleIcon } from '../../assets/Google__G__Logo.svg'
-import { ReactComponent as FacebookIcon } from '../../assets/Facebook_Logo.svg'
+import { Dialog, DialogTitle, Grid, IconButton, Typography } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
+import { useState, useEffect } from "react";
+import Login from "./LogIn/LogIn";
+import Register from "./LogIn/Register";
 
-interface PropTypes{ 
-    handleClose: any, 
-    open: boolean, 
+interface PropTypes {
+    handleClose: any,
+    open: boolean,
 }
 
-export default function DialogLogIn(props: PropTypes){
+export default function DialogLogIn(props: PropTypes) {
+    const [register, setRegister] = useState<boolean>(false);
+    const [forgotPassword, setForgotPassword] = useState<boolean>(false);
+
+    const handleSetRegister = () => { 
+        setRegister((state) => !state)   
+    }
+
+    const handleClose = () => {
+        props.handleClose()
+    }
+
+    //Due to double state change elements would swap making it ugly. 
+    useEffect(()=> { 
+        const timer = setTimeout(() => {
+            if(register){ 
+                setRegister(false);
+            }
+        },100);
+        return () => clearTimeout(timer)
+    
+    }, [props.open])
+
     return (
         <Dialog
             open={props.open}
-            onClose={props.handleClose}
+            onClose={handleClose}
         >
             <DialogTitle>
                 <Grid container direction="row" justifyContent="space-between" alignItems="center">
                     <Grid item xs="auto">
-                        <Typography>
-                            Log in (WIP)
-                        </Typography>
+                            {register? 'Register' : 'Log-In'}
                     </Grid>
                     <Grid item xs="auto">
-                        <IconButton onClick={props.handleClose} disabled>
+                        <IconButton onClick={props.handleClose}>
                             <CloseIcon></CloseIcon>
                         </IconButton>
                     </Grid>
                 </Grid>
             </DialogTitle>
-            <DialogContent>
-                <Grid container spacing={5} direction="row" >
-                    <Grid item xs>
-                        <Grid container spacing={2} direction="column" alignItems="expand">
-                            <Grid item>
-                                <TextField placeholder="Username or email address"></TextField>
-                            </Grid>
-                            <Grid item>
-                                <TextField placeholder="Password"></TextField>
-                            </Grid>
-                            <Grid item xs>
-                                <Button variant="contained" fullWidth={true} >Log in</Button>
-                            </Grid>
-                            <Grid item xs>
-                                <Button>Forgot your password?</Button>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                    <Divider orientation="vertical" flexItem sx={{ pl: "40px" }}></Divider>
-                    <Grid item xs>
-                        <Grid container spacing={2} direction="column">
-                            <Grid item>
-                                <Button variant="outlined" fullWidth={true} startIcon={<SvgIcon component={GoogleIcon}></SvgIcon>}>Sign in with Google</Button>
-                            </Grid>
-                            <Grid item>
-                                <Button variant="outlined" fullWidth={true} startIcon={<SvgIcon component={FacebookIcon} viewBox="0 0 48 48"></SvgIcon>}>Continue with Facebook</Button>
-                            </Grid>
-                            <Grid item>
-                                <Button fullWidth={true}>Register with email</Button>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
 
-            </DialogContent>
+            {register ? <Register/> : <Login handleSetRegister={handleSetRegister}/>}
+
         </Dialog>
     )
 }
