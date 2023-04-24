@@ -33,8 +33,6 @@ export default function DialogSettings(props: PropTypes) {
     const [tickingSoundOnPomodoro, setTickingSoundOnPomodoro] = useState(settings.tickingSoundOnPomodoro)
     //App 
     const [colorTheme, setColorTheme] = useState(settings.colorTheme)
-    const [hoursPastMidnight, setHoursPastMidnight] = useState(settings.hoursPastMidnight)
-    const [language, setLanguage] = useState(settings.language)
 
     const saveSettings = () => {
         if (settings.pomodoroDuration !== pomodoroDuration) {
@@ -62,8 +60,6 @@ export default function DialogSettings(props: PropTypes) {
                 //app
 
                 colorTheme: colorTheme,
-                hoursPastMidnight: hoursPastMidnight,
-                language: language
             }
         ))
     }
@@ -305,22 +301,6 @@ export default function DialogSettings(props: PropTypes) {
                                         <Button>Dark</Button>
                                     </ToggleButton>
                                 </ToggleButtonGroup>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-
-                    <Grid item>
-                        <Grid container spacing={2} direction="row" justifyContent='space-between' alignItems='center'>
-                            <Grid item xs>
-                                <Typography>Language</Typography>
-                            </Grid>
-                            <Grid item xs={5}>
-                                <Select sx={{ width: '100%' }} size='small'
-                                    value={language}
-                                    onChange={(event) => { setLanguage(event.target.value) }}>
-                                    <MenuItem value={"English"}>English</MenuItem>
-                                    <MenuItem value={"Español"}>Español</MenuItem>
-                                </Select>
                             </Grid>
                         </Grid>
                     </Grid>
