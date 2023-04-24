@@ -69,9 +69,9 @@ interface SettingsUpdateInfo {
 }
 
 // Define a service using a base URL and expected endpoints
-export const pomodoroApi = createApi({
+export const apiSlice = createApi({
   reducerPath: 'pomodoroApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:8000/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:8000/', credentials: "include" }),
   endpoints: (builder) => ({
     //USER ENDPOINTS
     authenticateUser: builder.query<void, LoginInfo>({
@@ -157,6 +157,6 @@ export const pomodoroApi = createApi({
 
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useAuthenticateUserQuery, useRegisterUserMutation, useLazyGetUserDataQuery,
+export const { useLazyAuthenticateUserQuery, useRegisterUserMutation, useLazyGetUserDataQuery,
   usePostTaskMutation, useDeleteTaskMutation, useUpdateTaskMutation, useUpdateTagMutation, useDeleteTagMutation, usePostTagMutation,
-  useUpdateSettingsMutation, usePostHistoricTaskMutation } = pomodoroApi 
+  useUpdateSettingsMutation, usePostHistoricTaskMutation } = apiSlice 
