@@ -1,4 +1,4 @@
-import { Grid, DialogContent, TextField, Button, Divider, SvgIcon, FormControl } from "@mui/material";
+import { Grid, DialogContent, TextField, Button, Divider, SvgIcon, FormControl, Typography } from "@mui/material";
 import { Google, Facebook } from "@mui/icons-material";
 import FormGroup from "@mui/material/FormGroup/FormGroup";
 interface Props {
@@ -13,10 +13,10 @@ function Login({ handleSetRegister }: Props) {
                     <form>
                             <Grid container spacing={2} direction="column" alignItems="expand">
                                 <Grid item>
-                                    <TextField placeholder="Username or email" required name="user"></TextField>
+                                    <TextField inputProps={{ maxLength: 15 }} placeholder="Username" required name="user"></TextField>
                                 </Grid>
                                 <Grid item>
-                                    <TextField placeholder="Password" required name="password"></TextField>
+                                    <TextField inputProps={{ maxLength: 15 }} placeholder="Password" required name="password"></TextField>
                                 </Grid>
                                 <Grid item xs>
                                     <Button variant="contained" fullWidth={true} type='submit'>Log in</Button>

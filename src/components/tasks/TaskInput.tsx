@@ -132,6 +132,7 @@ export default function TaskInput(props: PropTypes) {
                     label={<Typography variant='button'>Name</Typography>}
                     required
                     size='small'
+                    inputProps={{ maxLength: 100 }}
                 />
                 <TextField id="task-description"
                     value={taskDesc}
@@ -139,6 +140,7 @@ export default function TaskInput(props: PropTypes) {
                     label={<Typography variant='button'>Details</Typography>}
                     multiline
                     size='small'
+                    inputProps={{ maxLength: 200 }}
                 />
                 <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '10px' }}>
                     <FormControl>

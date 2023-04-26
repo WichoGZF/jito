@@ -90,7 +90,7 @@ export default function AddTag() {
               <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: color, borderRadius: '50%' }}></Box>
             </IconButton>
             {colorPick ? colorSelector : null}
-            <Input placeholder='New tag' value={tagName} onChange={(event) => setTagName(event.target.value)}></Input>
+            <Input placeholder='New tag' inputProps={{ maxLength: 20 }} value={tagName} onChange={(event) => setTagName(event.target.value)}></Input>
             <IconButton onClick={saveTag}><CheckIcon></CheckIcon></IconButton>
             <IconButton onClick={handleAddNewTag}><CloseIcon></CloseIcon></IconButton>
           </ListItem>

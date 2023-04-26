@@ -16,10 +16,13 @@ function Register() {
                 <Divider></Divider>
                 <Grid container spacing={2} direction="column" alignItems="expand">
                     <Grid item>
-                        <TextField placeholder="Username or email" size={'small'} fullWidth></TextField>
+                        <TextField inputProps={{ maxLength: 15 }} placeholder="Username" size={'small'} fullWidth></TextField>
                     </Grid>
                     <Grid item>
-                        <TextField placeholder="Password" size={'small'} fullWidth={true}></TextField>
+                        <TextField inputProps={{ maxLength: 50 }} placeholder="Email" size={'small'} fullWidth></TextField>
+                    </Grid>
+                    <Grid item>
+                        <TextField inputProps={{ maxLength: 15 }} placeholder="Password" size={'small'} fullWidth={true}></TextField>
                     </Grid>
                     <Grid item xs mt={2}>
                         <Button variant="contained" size={'large'} fullWidth={true} >Register</Button>
