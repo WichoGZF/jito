@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import Setting from 'types/Setting'
 
 const mockSettings: Setting = {
@@ -28,7 +28,7 @@ const settingsSlice = createSlice({
     name: 'settings',
     initialState: mockSettings,
     reducers: {
-        updateSettings: (state, action) => {
+        updateSettings: (state, action: PayloadAction<Setting>) => {
             return action.payload
         }
     }
