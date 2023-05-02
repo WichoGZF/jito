@@ -1,16 +1,16 @@
-import axios from 'axios'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
 const backendURL = 'http://127.0.0.1:3000'
+const clientURL = 'http://127.0.0.1:8000'
 
-interface RegisterParams{
+interface RegisterParams {
     username: string
-    password: string 
+    password: string
     email: string
 }
 
-interface LoginParams{ 
-    username: string 
+interface LoginParams {
+    username: string
     password: string
 }
 
@@ -18,52 +18,82 @@ export const registerUser = createAsyncThunk(
     'auth/register',
     async ({ username, password, email }: RegisterParams, { rejectWithValue }) => {
         try {
-            const config = {
+            const data: RequestInit = {
+                method: "POST",
+                credentials: 'include',
+                mode: "cors",
                 headers: {
                     'Content-Type': 'application/json',
+                    'Origin': clientURL
                 },
+                body: JSON.stringify(
+                    {
+                        username: username,
+                        password: password,
+                        email: email
+                    }
+                )
             }
-            const response = await axios.post(
-                `${backendURL}/users`,
-                { username, password, email },
-                config
-            )
+            const response = await fetch(`${backendURL}/users`, data)
+            if (response.ok) {
+                const userId = await response.text()
+                const parsedUserid = userId.replace('"', '');
+                return parseInt(parsedUserid)
+            }
+            else {
+                const data = await response.text()
+                throw new Error(data)
+            }
+
         } catch (error: any) {
-            // return custom error message from backend if present
-            if (error.response && error.response.data.message) {
-                return rejectWithValue(error.response.data.message)
-            } else {
-                return rejectWithValue(error.message)
+            let newErrorMessage = error.message.trim()
+            let clientError = ""
+            if (newErrorMessage === "models: duplicate email") {
+                clientError = "Email already in use"
             }
+            else if (newErrorMessage === "models: duplicate username") {
+                clientError = "Username already in use"
+            }
+            else{ 
+                clientError = "Error registering"
+            }
+            return rejectWithValue(clientError)
         }
     }
 )
 
 export const validateUser = createAsyncThunk(
     'auth/validate',
-    async ({ username, password}: LoginParams, { rejectWithValue }) => {
+    async ({ username, password }: LoginParams, { rejectWithValue }) => {
         try {
-            const config = {
-                withCredentials: true, 
+            const data: RequestInit = {
+                method: "POST",
+                mode: "cors",
+                credentials: "include",
                 headers: {
                     'Content-Type': 'application/json',
+                    'Origin': clientURL
                 },
-                
+                body: JSON.stringify(
+                    {
+                        username: username,
+                        password: password,
+                    }
+                )
             }
-            const response = await axios.post(
-                `${backendURL}/users:validate`,
-                { username, password },
-                config
-            )
-            console.log(response)
-
+            const response = await fetch(`${backendURL}/users:validate`, data)
+            if (response.ok) {
+                const userId = await response.text()
+                const parsedUserid = userId.replace('"', '');
+                return parseInt(parsedUserid)
+            }
+            else {
+                const data = await response.text()
+                throw new Error(data)
+            }
         } catch (error: any) {
-            // return custom error message from backend if present
-            if (error.response && error.response.data.message) {
-                return rejectWithValue(error.response.data.message)
-            } else {
-                return rejectWithValue(error.message)
-            }
+            let errorMessage:string = "Incorrect username or password"
+            return rejectWithValue(errorMessage)
         }
     }
 )

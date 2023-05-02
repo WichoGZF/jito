@@ -3,7 +3,7 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import settingsReducer from './features/settingsSlice'
 import tasksReducer from './features/tasksSlice'
 import appReducer from './features/appSlice'
-
+import authReducer from './features/authSlice'
 import { apiSlice } from 'features/api/apiSlice'
 
 
@@ -11,6 +11,7 @@ const rootReducer = combineReducers({
     settings: settingsReducer,
     tasks: tasksReducer,
     app: appReducer,
+    auth: authReducer, 
     [apiSlice.reducerPath]: apiSlice.reducer
 })
 
