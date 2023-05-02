@@ -236,11 +236,16 @@ const tasksSlice = createSlice({
                 console.log('deleting dates TaskId: ', taskId, 'TaskIndex', taskIndex);
                 state.tasks.splice(taskIndex, 1)
             })
+        },
+        updateTaskSlice: (state, action: PayloadAction<StateType>) => {
+            state.history = action.payload.history
+            state.tasks = action.payload.tasks
+            state.tags = action.payload.tags
         }
     }
 })
 
 export const { addTask, editTask, deleteTask, addTimeEntry, reorderTask,
     addTag, deleteTag, changeTagName, changeTagColor, updateBlocks,
-    restartTask, completeTask, updateDates, deleteDue } = tasksSlice.actions
+    restartTask, completeTask, updateDates, deleteDue, updateTaskSlice } = tasksSlice.actions
 export default tasksSlice.reducer
