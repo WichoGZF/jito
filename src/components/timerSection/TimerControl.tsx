@@ -19,6 +19,12 @@ import {
 } from '../../features/appSlice'
 import { updateBlocks } from '../../features/tasksSlice';
 import workerTimer from "./worker"
+import { usePostHistoricTaskMutation } from 'features/api/apiSlice';
+import DialogSkipWarning from './DialogSkipWarning';
+
+/* TIMER CONTROL  
+  Manages clock related logic and functionality depending on state of worker. Dispatches updates to tasks-slice on clock end and updates the app state. 
+*/
 
 export default function TimerControl() {
   //Random settings
@@ -34,16 +40,17 @@ export default function TimerControl() {
   const timerStarted = useAppSelector(state => state.app.timerStarted)
   const rest = useAppSelector(state => state.app.rest)
   const normalTriggeredRest = useAppSelector(state => state.app.normalTriggeredRest)
-
   const storedTime = useAppSelector(state => state.app.storedTime)
-
   const pomodoros = useAppSelector(state => state.app.pomodoros)
+  //Task info 
   //Dispatch
   const dispatch = useAppDispatch()
 
   const [showWarning, setShowWarning] = useState(true)
   const [warningDialog, setWarningDialog] = useState(false);
 
+  const [postHistoric, postResult] = usePostHistoricTaskMutation();
+  const userid = useAppSelector(state => state.auth.userid)
 
   const alarmSound = settings.alarmSound
   const [alarm] = useSound(notifications, {
@@ -68,6 +75,12 @@ export default function TimerControl() {
     },
     volume: settings.tickingVolume / 100,
   })
+  //Callback for handling user deciding to skip warning dialog.
+  const handleSkipCallback = () => { 
+      resetTimer();
+      handleWarningDialog();
+  }
+
 
   //TODO
   //Proper rounding, plus add it into every other calculation 
@@ -86,7 +99,7 @@ export default function TimerControl() {
       else {
         progress = ((timerMinuts * 60 + timerSeconds) / (settings.shortBreakDuration * 60) * 100)
       }
-    }   
+    }
   }
   else {
     const timePassed = (settings.pomodoroDuration * 60) - (timerMinuts * 60 + timerSeconds)
@@ -94,6 +107,18 @@ export default function TimerControl() {
   }
 
   const dispatchPomodoro = () => {
+    const newHistoricTask = {
+      id: 0,
+      completeDate: todayDate,
+      time: settings.pomodoroDuration,
+      tag: actualTag!,
+    }
+    postHistoric(
+      {
+        userId: userid!,
+        historicTask: newHistoricTask
+      }
+    ).unwrap().then(fulfilled => console.log(fulfilled)).catch(rejected => console.log(rejected))
     dispatch(addTimeEntry(todayDate, settings.pomodoroDuration * 60, actualTag))
   }
 
@@ -169,7 +194,7 @@ export default function TimerControl() {
           if (timerMinuts === 0) {
             if (rest) { //On rest end 
               //If it's the last rest reset the progress blocks 
-              if(settings.longBreakEvery === pomodoros){
+              if (settings.longBreakEvery === pomodoros) {
                 dispatch(resetPomodoros())
               }
               if (settings.alarmOnBreakEnd) {
@@ -258,31 +283,12 @@ export default function TimerControl() {
         progress={progress}
         rest={rest}
       ></TimerCard>
-      <Dialog
-        open={warningDialog}
-        onClose={handleWarningDialog}
-      >
-        <DialogTitle>
-          {"Warning"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Skipping the current pomodoro won't count towards the pomodoro count.
-            The time spent will not be saved for statistics either. Do you want to
-            continue?
-          </DialogContentText>
-          <FormControlLabel control={<Checkbox checked={!showWarning} onChange={() => setShowWarning(false)}></Checkbox>} label="Don't show again"></FormControlLabel>
-          <DialogActions>
-            <Button onClick={handleWarningDialog}>Disagree</Button>
-            <Button onClick={
-              () => {
-                resetTimer();
-                handleWarningDialog();
-              }
-            }>Agree</Button>
-          </DialogActions>
-        </DialogContent>
-      </Dialog>
+      <DialogSkipWarning 
+      open={warningDialog} 
+      onClose={handleWarningDialog} 
+      skipCallback={handleSkipCallback} 
+      showWarning={showWarning} 
+      handleShowWarning={() => setShowWarning(!showWarning)}/>
     </>
   )
 }
