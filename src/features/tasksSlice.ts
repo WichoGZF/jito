@@ -40,18 +40,20 @@ const tasksSlice = createSlice({
                         id: nextTodoId(state.tasks)
                     })
             },
-            prepare(task) {
+            prepare(task: Task) {
                 return {
                     payload: task
                 }
             }
         },
+        //Edit given task that matches ID
+
         editTask: {
             reducer(state, action: PayloadAction<{ task: Task, index: number }>) {
                 const { task, index } = action.payload
                 state.tasks[index] = task
             },
-            prepare(task, index) {
+            prepare(task: Task, index: number) {
                 return {
                     payload: {
                         task: task,
@@ -70,9 +72,10 @@ const tasksSlice = createSlice({
                 const completedEntry = action.payload
                 state.history.push(completedEntry)
             },
-            prepare(date, time, tag) {
+            prepare(date:string, time:number, tag:string) {
                 return {
                     payload: {
+                        id: 0,
                         completeDate: date,
                         time: time,
                         tag: tag,
@@ -101,7 +104,7 @@ const tasksSlice = createSlice({
                 }
 
             },
-            prepare(hoverIndex, dragIndex, position) {
+            prepare(hoverIndex: number, dragIndex: number, position: string) {
                 return {
                     payload: {
                         targetIndex: hoverIndex,
@@ -148,7 +151,7 @@ const tasksSlice = createSlice({
                     }
                 })
             },
-            prepare(tagToChange, newTagName) {
+            prepare(tagToChange: string, newTagName: string) {
                 return {
                     payload: {
                         tagToChange,
@@ -166,7 +169,7 @@ const tasksSlice = createSlice({
                 })
                 state.tags[tagToChangeIndex].color = color
             },
-            prepare(tagToChange, color) {
+            prepare(tagToChange: string, color: string) {
                 return {
                     payload: {
                         tagToChange,
@@ -181,7 +184,7 @@ const tasksSlice = createSlice({
             const repeat = state.tasks[index].repeat
             if (state.tasks[index].type === 'block') {
                 if (state.tasks[index].blocks === 1) {
-                    if (repeat !== "false") {
+                    if (repeat !== "no-repeat") {
                         state.tasks[index].completed = true
                         state.tasks[index].blocks = state.tasks[index].defaultBlocks
                     }
@@ -207,7 +210,7 @@ const tasksSlice = createSlice({
         completeTask: (state, action: PayloadAction<number>) => { //For normal task
             const index = action.payload
 
-            if (state.tasks[index].repeat === 'false') {
+            if (state.tasks[index].repeat === 'no-repeat') {
                 state.tasks.splice(index, 1)
             }
             else {
