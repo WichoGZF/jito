@@ -11,17 +11,13 @@ import PaginationPanel from 'components/bottom/PaginationPanel';
 import midnightWorker from './midnightWorker'
 import { lightTheme, darkTheme } from 'theme';
 import { format } from 'date-fns';
-import { useAppSelector, useAppDispatch } from 'hooks';
+import { useAppSelector } from 'hooks/useAppSelector';
+import { useAppDispatch } from 'hooks/useAppDispatch'
 import Subscribe from 'components/subscription/Subscribe';
 import { useLazyGetUserDataQuery } from 'features/api/apiSlice';
 import { updateSettings } from 'features/settingsSlice';
 import { updateTaskSlice } from 'features/tasksSlice';
-
-const composeResetDay = () => (dispatch, getState) => {
-  dispatch(startNewDay(getState().settings.pomodoroDuration))
-}
-
-const milisecondsInDay = (24 * 60 * 60 * 1000)
+import useMidnightClock from 'hooks/useMidnightClock';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
@@ -39,13 +35,14 @@ function App() {
 
   }, [hasSession])
 
-  useEffect(() => { 
-    if(result.data){ 
+  useEffect(() => {
+    if (result.data) {
       dispatch(updateSettings(result.data.settings))
       dispatch(updateTaskSlice({
         tasks: result.data.tasks,
+
         tags: result.data.tags,
-        history: result.data.historicTask
+        history: result.data.history
       }))
     }
   }, [result])
@@ -60,46 +57,7 @@ function App() {
   const todayDate = useAppSelector((state) => state.app.todayDate)
   const colorTheme = useAppSelector((state) => state.settings.colorTheme)
 
-  const worker = useRef()
-
-  //Establishing worker 
-  useEffect(() => {
-    worker.current = new Worker(midnightWorker)
-    return () => {
-      worker!.current.terminate();
-    }
-  }, [])
-
-  //UseEffect to check if the day has been shown yet 
-  useEffect(() => {
-    //Fetch actual date to see if todayDate is outdated
-    const actualDate = format(new Date(), 'MM/dd/yyyy')
-    if (actualDate !== todayDate) {
-      dispatch(composeResetDay());
-    }
-  }, [])
-
-  useEffect(() => {
-    function eventHandler() {
-      console.log('New day started');
-      dispatch(composeResetDay());
-    }
-    //Actual timestamp
-    const timestamp = new Date();
-    //Timestamp converted to miliseconds 
-    const timestampMiliseconds = (timestamp.getHours() * 60 * 60 * 1000) + (timestamp.getMinutes() * 60 * 1000) + (timestamp.getSeconds() * 1000);
-
-    //Miliseconds remaining until rest
-    const remainingMiliseconds = (milisecondsInDay) - timestampMiliseconds;
-
-    worker.current.postMessage(remainingMiliseconds)
-
-    worker.current.addEventListener('message', eventHandler);
-    return () => {
-      worker.current.removeEventListener('message', eventHandler)
-    }
-
-  }, [todayDate])
+  useMidnightClock()
 
   let theme;
   if (colorTheme === 'dark') {
