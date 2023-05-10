@@ -1,62 +1,30 @@
-import { useState, useEffect, useRef, useContext } from 'react';
+import { useState } from 'react';
 import ResponsiveAppBar from "./components/navbar/ResponsiveAppBar";
 import TaskList from './components/tasks/TaskList';
 import Grid from '@mui/material/Grid'
-import { startNewDay } from './features/appSlice'
 import { ThemeProvider, responsiveFontSizes } from "@mui/material/styles";
 import Calendar from './components/timerSection/Calendar';
 import { Container, Divider, Stack, Box } from '@mui/material';
 import Footer from 'components/bottom/Footer';
 import PaginationPanel from 'components/bottom/PaginationPanel';
-import midnightWorker from './midnightWorker'
 import { lightTheme, darkTheme } from 'theme';
-import { format } from 'date-fns';
 import { useAppSelector } from 'hooks/useAppSelector';
 import { useAppDispatch } from 'hooks/useAppDispatch'
 import Subscribe from 'components/subscription/Subscribe';
-import { useLazyGetUserDataQuery } from 'features/api/apiSlice';
-import { updateSettings } from 'features/settingsSlice';
-import { updateTaskSlice } from 'features/tasksSlice';
+
 import useMidnightClock from 'hooks/useMidnightClock';
+import useGetUserData from 'hooks/useGetUserData';
 
 function App() {
-  const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [subscribeDialogOpen, setSusbcribeDialogOpen] = useState<boolean>(false);
-
-  const hasSession = useAppSelector(state => state.auth.hasSession)
-  const userid = useAppSelector(state => state.auth.userid)
-
-  const [getUserData, result] = useLazyGetUserDataQuery()
-
-  useEffect(() => {
-    if (hasSession && (userid !== null)) {
-      getUserData(userid)
-    }
-
-  }, [hasSession])
-
-  useEffect(() => {
-    if (result.data) {
-      dispatch(updateSettings(result.data.settings))
-      dispatch(updateTaskSlice({
-        tasks: result.data.tasks,
-
-        tags: result.data.tags,
-        history: result.data.history
-      }))
-    }
-  }, [result])
-
 
   const handleCloseSubscripe = () => {
     setSusbcribeDialogOpen(false);
   }
 
-  const dispatch = useAppDispatch();
-
-  const todayDate = useAppSelector((state) => state.app.todayDate)
   const colorTheme = useAppSelector((state) => state.settings.colorTheme)
 
+  useGetUserData()
   useMidnightClock()
 
   let theme;
@@ -72,7 +40,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ backgroundColor: theme.palette.background.default }}>
-        <ResponsiveAppBar loggedIn={loggedIn}></ResponsiveAppBar>
+        <ResponsiveAppBar></ResponsiveAppBar>
         <Container>
           <Stack
             justifyContent="flex-start"
