@@ -17,43 +17,13 @@ import NewTask from './NewTask';
 
 import Task from '../../types/Task'
 
-import { useAppSelector, useAppDispatch } from '../../hooks'
+import { useAppSelector } from 'hooks/useAppSelector'
+import {useAppDispatch} from 'hooks/useAppDispatch'
 import Tag from 'types/Tag';
 import { isBefore } from 'date-fns';
+import useInitializeTasks from 'hooks/useInitializeTasks';
 
 export default function TaskList() {
-  //Restarts all repeatables task  and returns array with non repeatables in past
-  //We don't need to check for nothing so the tasks just get repeated
-  function initializeTasks() {
-    const nonInitialized: number[] = [] //Repeatable tasks with past history
-    const pastTasks: Task[] = [] //Normal tasks in the past
-    //Today date
-    const todayDate = new Date
-    todayDate.setHours(0, 0, 0, 0)
-    tasks.forEach((task: Task, index: number) => {
-      if (task.repeat !== 'false') {
-        if (task.completed || task.defaultBlocks > task.blocks!) { //Since is repeatable task.blocks isnt empty
-          nonInitialized.push(index)
-        }
-      }
-      else {
-        const dateArray: string[] = task.date!.split('/');
-        const taskDate = new Date(+dateArray[2], +dateArray[0] - 1, +dateArray[1])
-        let dayIsBefore;
-        dayIsBefore = isBefore(taskDate, todayDate)
-
-        if (dayIsBefore) {
-          pastTasks.push(task)
-        }
-      }
-    })
-    dispatch(restartTask(nonInitialized))
-    return (pastTasks)
-  }
-
-  const [deletedTask, setDeletedTask] = useState(null) //saves deleted task, controls redo pop up. after 5s changes are
-  //stored in tasks.history via use effect and state turned into null thus disappearing the pop up
-
   const dispatch = useAppDispatch()
 
   const tasks = useAppSelector(state => state.tasks.tasks)
@@ -64,10 +34,13 @@ export default function TaskList() {
 
   const initialized = initializedDate === todayDate
 
+  const [overdueNormals] = useInitializeTasks(tasks, initialized)
+
   function taskToListEntry(task: Task, firstTask: boolean, index: number) {
     return (
       <ListEntry
         key={task.tag + task.id}
+        id = {task.id}
         text={task.name}
         description={task.description}
         index={index}
@@ -79,6 +52,7 @@ export default function TaskList() {
         tag={task.tag}
         tags={tags}
         firstTask={firstTask}
+        completed={task.completed}
       ></ListEntry>
     )
   }
@@ -88,18 +62,16 @@ export default function TaskList() {
   const dayOfTheWeek = realCalendarDate.getDay();
 
   let allTagTasks: any[] = [] //React array
-  // For overDue normals dialog
-  let overdueNormals: Task[] = []
-  //
+  // For overDue normals dialog  //
   let firstTaskIndex: number
   let firstTaskTag: string
   let firstTaskType: 'normal' | 'block'
   //
-  //irrelevant you could have used one of the abovce but w/e
+  //Loop for mapping tasks into components to show.
   let firstTaskAdded = false
   tasks.forEach((task, index) => {
 
-    if (task.repeat === 'false') {
+    if (task.repeat === 'no-repeat') {
       if (task.date === calendarDate) {
         if (!allTagTasks.length) {
           firstTaskAdded = true
@@ -138,9 +110,7 @@ export default function TaskList() {
     }
   })
 
-  //Current tag useEffect 
-  //Dispatches the information about the current tag
-
+  //Dispatches the information about the current tag to appSlice.
   useEffect(() => {
     if (allTagTasks.length) {
       dispatch(currentTag(firstTaskTag));
@@ -149,20 +119,6 @@ export default function TaskList() {
     }
   })
 
-  //Initialization useEffect 
-  //Initializes overdue tasks, and pushes past dates into array 
-  useEffect(() => {
-    if (!initialized) {
-      overdueNormals = initializeTasks()
-      //If there are no overdue normals initialize the app
-      if (overdueNormals.length === 0) {
-        dispatch(initialize())
-      }
-    }
-  }, [initialized])
-
-  const overdueNormalsEmpty = !!overdueNormals.length
-
   return (
     <Box key={'tasklist-box'}>
       <Typography variant="overline" color="text.primary" sx={{ pl: 1 }}>Scheduled tasks</Typography>
@@ -170,7 +126,7 @@ export default function TaskList() {
         <Divider key="divider"></Divider>
         <NewTask key="newTask"></NewTask>
         {allTagTasks}
-        <OverdueTaskList key="overdues" open={!initialized && overdueNormalsEmpty} tasks={overdueNormals}></OverdueTaskList>
+        <OverdueTaskList key="overdues" open={!initialized && !!overdueNormals.length} tasks={overdueNormals}></OverdueTaskList>
         <CompletedDialog key="completed"></CompletedDialog>
       </Grid>
     </Box>
