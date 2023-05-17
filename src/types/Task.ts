@@ -1,15 +1,15 @@
 export default interface Task{ 
+    id: number, 
     name: string, 
     tag: string, 
-    id: number, 
     description: string, 
     date: string | null, 
     type: 'normal' | 'block', 
     completed: boolean, 
     defaultBlocks: number, 
     blocks: number|null, 
-    repeat: 'daily' | 'weekly' | 'false', 
-    repeatOn: number[], 
+    repeat: 'daily' | 'weekly' | 'no-repeat', 
+    repeatOn: boolean[], 
 }
 
 

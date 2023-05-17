@@ -2,7 +2,8 @@ import CloseIcon from '@mui/icons-material/Close'
 import { Dialog, DialogTitle, Grid, IconButton, DialogContent, DialogContentText, FormControlLabel, Checkbox, Typography, DialogActions, Button } from "@mui/material"
 import { establishPomodoroTime, setStoredTime, startRest, setNormalTriggeredRest, timerNotStarted, handleCompletedRegular } from 'features/appSlice'
 import React, {useState} from "react"
-import { useAppSelector, useAppDispatch } from 'hooks'
+import { useAppDispatch } from "hooks/useAppDispatch"
+import { useAppSelector } from "hooks/useAppSelector"
 
 //In dire need of proper types.
 const composeStoredTime = (action) => (dispatch, getState) => {
