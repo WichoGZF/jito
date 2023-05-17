@@ -3,6 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useState, useEffect } from "react";
 import Login from "./LogIn/LogIn";
 import Register from "./LogIn/Register";
+import { useAppSelector } from "hooks/useAppSelector";
 
 interface PropTypes {
     handleClose: any,
@@ -12,6 +13,8 @@ interface PropTypes {
 export default function DialogLogIn(props: PropTypes) {
     const [register, setRegister] = useState<boolean>(false);
     const [forgotPassword, setForgotPassword] = useState<boolean>(false);
+
+    const loginSucess = useAppSelector(store => store.auth.loginSuccess)
 
     const handleSetRegister = () => { 
         setRegister((state) => !state)   
@@ -31,6 +34,13 @@ export default function DialogLogIn(props: PropTypes) {
         return () => clearTimeout(timer)
     
     }, [props.open])
+
+    useEffect(() => { 
+        if(loginSucess){
+            handleClose()
+        }
+
+    }, [loginSucess])
 
     return (
         <Dialog
