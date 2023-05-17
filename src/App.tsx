@@ -9,11 +9,10 @@ import Footer from 'components/bottom/Footer';
 import PaginationPanel from 'components/bottom/PaginationPanel';
 import { lightTheme, darkTheme } from 'theme';
 import { useAppSelector } from 'hooks/useAppSelector';
-import { useAppDispatch } from 'hooks/useAppDispatch'
 import Subscribe from 'components/subscription/Subscribe';
-
 import useMidnightClock from 'hooks/useMidnightClock';
 import useGetUserData from 'hooks/useGetUserData';
+import CompletedDialog from 'components/tasks/CompletedDialog';
 
 function App() {
   const [subscribeDialogOpen, setSusbcribeDialogOpen] = useState<boolean>(false);
@@ -61,6 +60,7 @@ function App() {
           </Stack>
         </Container>
       </Box>
+      <CompletedDialog key="completed"></CompletedDialog>
       <Subscribe open={subscribeDialogOpen} handleClose={handleCloseSubscripe}></Subscribe>
     </ThemeProvider>
   );
