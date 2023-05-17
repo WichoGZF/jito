@@ -2,7 +2,7 @@ import { Dialog, DialogTitle, Grid, Typography, IconButton, DialogContent, Stack
 import { differenceInCalendarWeeks, differenceInCalendarDays, differenceInCalendarMonths, getDay, subDays, subMonths } from "date-fns"
 import React, { useState } from "react"
 import { Line, Bar, Doughnut } from "react-chartjs-2"
-import { useAppSelector } from "hooks"
+import { useAppSelector } from "hooks/useAppSelector"
 import CloseIcon from '@mui/icons-material/Close';
 
 import {

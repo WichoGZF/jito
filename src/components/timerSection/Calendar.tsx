@@ -2,7 +2,8 @@ import { LocalizationProvider, CalendarPicker } from "@mui/x-date-pickers";
 import { Grid, Divider } from "@mui/material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { setCalendarDate } from "../../features/appSlice";
-import { useAppSelector, useAppDispatch } from "hooks";
+import { useAppSelector} from "hooks/useAppSelector";
+import { useAppDispatch} from "hooks/useAppDispatch"
 import TimerControl from "./TimerControl";
 import { format } from 'date-fns'
 
