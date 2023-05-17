@@ -3,7 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions'
-import { useAppDispatch } from "hooks";
+import { useAppDispatch } from "hooks/useAppDispatch";
 import { logoutSession } from "features/authSlice";
 
 interface PropTypes {
