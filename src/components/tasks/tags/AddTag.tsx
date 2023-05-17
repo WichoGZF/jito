@@ -1,11 +1,13 @@
 import { Box, Stack, Collapse, Alert, IconButton, Button, ListItem, Input } from "@mui/material"
 import { addTag } from "features/tasksSlice"
-import React, { useState, useRef } from "react"
+import  { useState, useRef } from "react"
 import { TwitterPicker } from "react-color"
-import { useAppDispatch, useAppSelector } from "hooks"
+import { useAppDispatch } from "hooks/useAppDispatch"
+import { useAppSelector } from "hooks/useAppSelector"
 import CloseIcon from '@mui/icons-material/Close'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CheckIcon from '@mui/icons-material/Check';
+import useHandleTagUpdate from "hooks/useHandleTagUpdate"
 
 export default function AddTag() {
     const [colorPick, setColorPick] = useState(false)
@@ -14,9 +16,12 @@ export default function AddTag() {
     const [addNewTag, setAddNewTag] = useState(false)
     const [alert, setAlert] = useState(false)
   
+    const userId = useAppSelector((state) => state.auth.userid)
     const tags = useAppSelector((state) => state.tasks.tags)
     const dispatch = useAppDispatch()
   
+    const [saveTag] = useHandleTagUpdate()
+
     const colorRef = useRef<HTMLElement>(null)
     const colorBounding = colorRef.current?.getBoundingClientRect()!
   
@@ -38,15 +43,20 @@ export default function AddTag() {
       setAlert(!alert)
     }
   
-    const saveTag = () => {
+    const handleSave = () => {
       let uniqueName = true;
       for (const tagObject of tags) {
         if (tagObject.name === tagName) {
           uniqueName = false;
         }
       }
+      const newTag = { 
+        id: 0, 
+        name: tagName, 
+        color: color,
+      }
       if (uniqueName) {
-        dispatch(addTag({ name: tagName, color: color }))
+        saveTag(newTag)
         handleAddNewTag()
       }
       else {
@@ -54,7 +64,7 @@ export default function AddTag() {
       }
   
     }
-  
+
   
     const colorSelector = <Box sx={{ position: 'absolute', zIndex: '2' }}>
       <Box sx={{ position: 'fixed', top: `${colorY}px`, right: '0px', bottom: '0px', left: `${colorX}px`, }}>
@@ -91,7 +101,7 @@ export default function AddTag() {
             </IconButton>
             {colorPick ? colorSelector : null}
             <Input placeholder='New tag' inputProps={{ maxLength: 20 }} value={tagName} onChange={(event) => setTagName(event.target.value)}></Input>
-            <IconButton onClick={saveTag}><CheckIcon></CheckIcon></IconButton>
+            <IconButton onClick={handleSave}><CheckIcon></CheckIcon></IconButton>
             <IconButton onClick={handleAddNewTag}><CloseIcon></CloseIcon></IconButton>
           </ListItem>
           : <></>
