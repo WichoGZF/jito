@@ -2,12 +2,13 @@ import TaskInput from "components/tasks/TaskInput"
 import Task from "types/Task";
 import { useAppSelector } from "hooks/useAppSelector";
 import format from "date-fns/format";
+import useHandleCreateTask from "hooks/useHandleCreateTask";
 /*
 Input component for handling a new task. Handles both use cases of adding a new task and editing an existing one. 
 */
 export default function TaskCreate({ onClose }: { onClose: () => void }) {
+    const [onSave] = useHandleCreateTask()
     const tag = useAppSelector(state => state.tasks.tags[0])
-
     const emptyTask: Task = {
         name: '',
         id: 0,
@@ -27,7 +28,7 @@ export default function TaskCreate({ onClose }: { onClose: () => void }) {
             task={emptyTask}
             tagColor={tag.color}
             onClose={onClose}
-            onSaveTask={() => { }}
+            onSaveTask={onSave}
         />
     )
 }
