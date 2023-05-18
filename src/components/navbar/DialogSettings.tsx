@@ -2,16 +2,20 @@ import { VolumeDown, VolumeUp } from "@mui/icons-material";
 import { Dialog, DialogTitle, Grid, IconButton, DialogContent, TextField, Typography, Switch, Slider, Select, MenuItem, ToggleButtonGroup, ToggleButton, Button, DialogActions, Divider } from "@mui/material";
 import { establishPomodoroTime } from "../../features/appSlice";
 import { updateSettings } from '../../features/settingsSlice.js'
-import  { useState } from "react";
+import { useState } from "react";
 import CloseIcon from '@mui/icons-material/Close';
 import PropTypes from 'prop-types';
-import { useAppDispatch, useAppSelector } from "hooks";
+import { useAppDispatch } from "hooks/useAppDispatch"
+import { useAppSelector } from "hooks/useAppSelector"
+import { useUpdateSettingsMutation } from "features/api/apiSlice";
 
-interface PropTypes{ 
+interface PropTypes {
     open: boolean,
     handleClose: any,
 }
-
+/*
+Dialog for settings section modal. Features Mutation on "Accept" and a "Discard" on Cancel. 
+*/
 export default function DialogSettings(props: PropTypes) {
     const settings = useAppSelector(state => state.settings)
     const dispatch = useAppDispatch()
@@ -33,35 +37,47 @@ export default function DialogSettings(props: PropTypes) {
     const [tickingSoundOnPomodoro, setTickingSoundOnPomodoro] = useState(settings.tickingSoundOnPomodoro)
     //App 
     const [colorTheme, setColorTheme] = useState(settings.colorTheme)
+    const [updateSettingsMut, updateResult] = useUpdateSettingsMutation()
 
-    const saveSettings = () => {
+    const userid = useAppSelector(state => state.auth.userid)
+
+    const saveSettings = async () => {
         if (settings.pomodoroDuration !== pomodoroDuration) {
             dispatch(establishPomodoroTime(pomodoroDuration, 0))
         }
-        dispatch(updateSettings(
-            {
-                pomodoroDuration: pomodoroDuration,
-                shortBreakDuration: shortBreakDuration,
-                longBreakDuration: longBreakDuration,
-                longBreakEvery: longBreakEvery, //pomodoros
-                automaticPomodoroStart: automaticPomodoroStart,
-                automaticBreakStart: automaticBreakStart,
+        const newSettings = {
+            pomodoroDuration: pomodoroDuration,
+            shortBreakDuration: shortBreakDuration,
+            longBreakDuration: longBreakDuration,
+            longBreakEvery: longBreakEvery, //pomodoros
+            automaticPomodoroStart: automaticPomodoroStart,
+            automaticBreakStart: automaticBreakStart,
 
-                // notification
+            // notification
 
-                alarmVolume: alarmVolume,
-                alarmSound: alarmSound,
-                tickingVolume: tickingVolume,
-                tickingSound: tickingSound,
-                alarmOnPomodoroEnd: alarmOnPomodoroEnd,
-                alarmOnBreakEnd: alarmOnBreakEnd,
-                tickingSoundOnBreak: tickingSoundOnBreak,
-                tickingSoundOnPomodoro: tickingSoundOnPomodoro,
-                //app
+            alarmVolume: alarmVolume,
+            alarmSound: alarmSound,
+            tickingVolume: tickingVolume,
+            tickingSound: tickingSound,
+            alarmOnPomodoroEnd: alarmOnPomodoroEnd,
+            alarmOnBreakEnd: alarmOnBreakEnd,
+            tickingSoundOnBreak: tickingSoundOnBreak,
+            tickingSoundOnPomodoro: tickingSoundOnPomodoro,
+            //app
 
-                colorTheme: colorTheme,
-            }
-        ))
+            colorTheme: colorTheme,
+        }
+        try {
+            const result = await updateSettingsMut({
+                userId: userid!,
+                settings: newSettings
+            })
+            console.log(result)
+            dispatch(updateSettings(newSettings))
+        }
+        catch (error) {
+            console.log(error)
+        }
     }
 
     return (
