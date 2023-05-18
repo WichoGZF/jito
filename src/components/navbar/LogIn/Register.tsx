@@ -1,4 +1,4 @@
-import { Grid, DialogContent, TextField, Button, Stack, SvgIcon, Divider, Typography, Alert } from "@mui/material";
+import { Grid, DialogContent, TextField, Button, Divider, Typography, Alert } from "@mui/material";
 import facebookLogo from "assets/facebook_logo.webp"
 import googleLogo from "assets/Google__G__Logo.svg"
 
@@ -6,6 +6,7 @@ import { useState } from 'react'
 import { registerUser } from "features/authActions";
 import { useAppDispatch } from "hooks/useAppDispatch"
 import { useAppSelector } from "hooks/useAppSelector"
+import { LoadingButton } from "@mui/lab";
 
 function Register() {
     const [username, setUsername] = useState<string>("");
@@ -19,6 +20,7 @@ function Register() {
 
     const dispatch = useAppDispatch()
 
+    const registerLoading = useAppSelector(state => state.auth.registerLoading)
     const registerError = useAppSelector(state => state.auth.registerError)
     const registerErrorMessage = useAppSelector(state => state.auth.registerErrorMessage)
 
@@ -154,7 +156,7 @@ function Register() {
                 <Grid item xs>
                     <form onSubmit={handleSubmit}>
                         <Grid container spacing={2} direction="column" alignItems="expand">
-                            {registerError?   <Alert severity="error">{registerErrorMessage}</Alert> : <></>}
+                            {registerError ? <Alert severity="error">{registerErrorMessage}</Alert> : <></>}
                             <Grid item>
                                 <TextField
                                     error={usernameError !== null}
@@ -214,7 +216,9 @@ function Register() {
                                 </TextField>
                             </Grid>
                             <Grid item xs mt={2}>
-                                <Button type="submit" variant="contained" size={'large'} fullWidth={true} >Register</Button>
+                                <LoadingButton loading={registerLoading} type="submit" variant="contained" size={'large'} fullWidth={true} >
+                                    Register
+                                </LoadingButton>
                             </Grid>
                         </Grid>
                     </form>
