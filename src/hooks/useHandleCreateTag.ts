@@ -3,6 +3,8 @@ import Tag from "types/Tag";
 import { useAppDispatch } from "./useAppDispatch";
 import { addTag } from "features/tasksSlice";
 import { useAppSelector } from "./useAppSelector";
+import { setSnackbar } from "features/appSlice";
+import { setSnackbarError } from "features/appSlice";
 
 export default function useHandleCreateTag() {
     const [createTag, { data, error, isLoading }] = usePostTagMutation()
@@ -18,10 +20,11 @@ export default function useHandleCreateTag() {
             const response = await createTag(tagPostInfo).unwrap()
             console.log(response)
             dispatch(addTag(newtag))
-
+            dispatch(setSnackbar("Tag created!"))
         }
         catch (error) {
-
+            console.log(error)
+            dispatch(setSnackbarError("Error creating tag"))
         }
     }
 

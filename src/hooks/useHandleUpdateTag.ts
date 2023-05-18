@@ -3,7 +3,7 @@ import { useAppDispatch } from "./useAppDispatch";
 import { useAppSelector } from "./useAppSelector";
 import { usePostTagMutation, useUpdateTagMutation } from "features/api/apiSlice";
 import { updateTag } from "features/tasksSlice";
-
+import { setSnackbar, setSnackbarError } from "features/appSlice"
 
 //Updates a certain task
 export default function useHandleUpdateTag() {
@@ -19,9 +19,11 @@ export default function useHandleUpdateTag() {
             }).unwrap()
             console.log(response)
             dispatch(updateTag({newTag: newTag}))
+            dispatch(setSnackbar("Tag updated!"))
         }
         catch (error) {
             console.log(error)
+            dispatch(setSnackbarError("Error updating tag"))
         }
     }
 
