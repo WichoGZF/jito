@@ -8,6 +8,8 @@ import PropTypes from 'prop-types';
 import { useAppDispatch } from "hooks/useAppDispatch"
 import { useAppSelector } from "hooks/useAppSelector"
 import { useUpdateSettingsMutation } from "features/api/apiSlice";
+import { setSnackbar } from "../../features/appSlice";
+import { setSnackbarError } from "../../features/appSlice";
 
 interface PropTypes {
     open: boolean,
@@ -74,9 +76,11 @@ export default function DialogSettings(props: PropTypes) {
             })
             console.log(result)
             dispatch(updateSettings(newSettings))
+            dispatch(setSnackbar("Settings saved!"))
         }
         catch (error) {
             console.log(error)
+            dispatch(setSnackbarError("Error saving settings!"))
         }
     }
 
