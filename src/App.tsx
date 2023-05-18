@@ -4,7 +4,7 @@ import TaskList from './components/tasks/TaskList';
 import Grid from '@mui/material/Grid'
 import { ThemeProvider, responsiveFontSizes } from "@mui/material/styles";
 import Calendar from './components/timerSection/Calendar';
-import { Container, Divider, Stack, Box } from '@mui/material';
+import { Container, Divider, Stack, Box, Alert, Snackbar } from '@mui/material';
 import Footer from 'components/bottom/Footer';
 import PaginationPanel from 'components/bottom/PaginationPanel';
 import { lightTheme, darkTheme } from 'theme';
@@ -13,12 +13,27 @@ import Subscribe from 'components/subscription/Subscribe';
 import useMidnightClock from 'hooks/useMidnightClock';
 import useGetUserData from 'hooks/useGetUserData';
 import CompletedDialog from 'components/tasks/CompletedDialog';
+import { useAppDispatch } from 'hooks/useAppDispatch';
+import {unsetSnackbar, unsetSnackbarError} from 'features/appSlice';
 
 function App() {
+  const dispatch = useAppDispatch()
   const [subscribeDialogOpen, setSusbcribeDialogOpen] = useState<boolean>(false);
 
   const handleCloseSubscripe = () => {
     setSusbcribeDialogOpen(false);
+  }
+  //For snackbar handling
+  const snackbar = useAppSelector((state) => state.app.snackbar)
+  const snackbarMessage = useAppSelector((state) => state.app.snackbarMessage)
+  const snackbarError = useAppSelector((state) => state.app.snackbarError)
+  const snackbarErrorMessage = useAppSelector((state) => state.app.snackbarErrorMessage)
+
+  const handleClose = () => { 
+    dispatch(unsetSnackbar())
+  }
+  const handleCloseError = () => {
+    dispatch(unsetSnackbarError())
   }
 
   const colorTheme = useAppSelector((state) => state.settings.colorTheme)
@@ -62,6 +77,12 @@ function App() {
       </Box>
       <CompletedDialog key="completed"></CompletedDialog>
       <Subscribe open={subscribeDialogOpen} handleClose={handleCloseSubscripe}></Subscribe>
+      <Snackbar open={snackbar} autoHideDuration={5000} message={snackbarMessage} onClose={handleClose}/>
+      <Snackbar open={snackbarError} autoHideDuration={5000} onClose={handleCloseError}>
+        <Alert onClose={handleCloseError} severity="error" sx={{ width: '100%' }}>
+          Error: {snackbarErrorMessage}
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }

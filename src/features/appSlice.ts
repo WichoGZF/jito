@@ -173,12 +173,20 @@ const appSlice = createSlice({
         setSnackbarError: (state, action: PayloadAction<string>) => {
             state.snackbarError = true
             state.snackbarErrorMessage = action.payload
+        },
+        unsetSnackbar: (state) => { 
+            state.snackbar = false
+            state.snackbarMessage = ""
+        },
+        unsetSnackbarError: (state) => {
+            state.snackbarError = false, 
+            state.snackbarErrorMessage = ""
         }
     }
 })
 //Could wrap the three 'current' reducers into a single one
 export const { startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, setCalendarDate, currentTag, currentIndex, 
     currentType, initialize, startNewDay, establishPomodoroTime, handleCompletedRegular, setStoredTime, setNormalTriggeredRest, 
-    disableNormalTriggeredRest, resetPomodoros, increasePomodoros, setSnackbar, setSnackbarError} = appSlice.actions
+    disableNormalTriggeredRest, resetPomodoros, increasePomodoros, setSnackbar, setSnackbarError, unsetSnackbar, unsetSnackbarError} = appSlice.actions
 export default appSlice.reducer
 
