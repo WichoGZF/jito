@@ -26,34 +26,39 @@ export default function TimerControl() {
   const timerStarted = useAppSelector(state => state.app.timerStarted)
   const rest = useAppSelector(state => state.app.rest)
   const pomodoros = useAppSelector(state => state.app.pomodoros)
-  //Task info 
+
+  const [postHistoric, postResult] = usePostHistoricTaskMutation();
+  const userid = useAppSelector(state => state.auth.userid)
   //Dispatch
   const dispatch = useAppDispatch()
 
-
-  const dispatchPomodoro = () => {
+  //* Callback for adding a pomodoro to the historic and sending back end call.
+  const dispatchPomodoro = async () => {
     const newHistoricTask = {
       id: 0,
       completeDate: todayDate,
       time: settings.pomodoroDuration,
       tag: actualTag!,
     }
-    postHistoric(
-      {
-        userId: userid!,
-        historicTask: newHistoricTask
-      }
-    ).unwrap().then(fulfilled => console.log(fulfilled)).catch(rejected => console.log(rejected))
-    dispatch(addTimeEntry(todayDate, settings.pomodoroDuration * 60, actualTag))
+    try {
+      const response = await postHistoric(
+        {
+          userId: userid!,
+          historicTask: newHistoricTask
+        }
+      ).unwrap()
+      console.log(response)
+      dispatch(addTimeEntry(todayDate, settings.pomodoroDuration * 60, actualTag!))
+    }
+    catch (error) {
+      console.log(error)
+    }
   }
 
   const [progress, changeTimerState, resetTimer] = useTimerControl(dispatchPomodoro)
 
   const [showWarning, setShowWarning] = useState(true)
   const [warningDialog, setWarningDialog] = useState(false);
-
-  const [postHistoric, postResult] = usePostHistoricTaskMutation();
-  const userid = useAppSelector(state => state.auth.userid)
 
   //Callback for handling user deciding to skip warning dialog.
   const handleSkipCallback = () => {
