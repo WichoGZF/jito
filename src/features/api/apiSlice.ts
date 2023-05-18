@@ -4,6 +4,7 @@ import Task from 'types/Task'
 import Tag from 'types/Tag'
 import Setting from 'types/Setting'
 import HistoricTask from 'types/HistoricTask'
+import { batch } from 'react-redux'
 
 //Types related to API calls.
 type userID = number
@@ -21,7 +22,7 @@ interface CompleteData {
   settings: Setting,
   tasks: Task[],
   tags: Tag[],
-  historicTask: HistoricTask[],
+  history: HistoricTask[],
 }
 //Task query
 interface TaskPostInfo {
@@ -36,19 +37,17 @@ interface TaskDeleteInfo {
 
 interface TaskUpdateInfo {
   userId: number,
-  taskId: number,
   task: Task,
 }
 //Tag queries
 interface TagPostInfo {
   userId: number,
-  tag: Task,
+  tag: Tag,
 }
 
 interface TagUpdateInfo {
   userId: number,
-  tagId: number,
-  tag: Task,
+  tag: Tag,
 }
 
 interface TagDeleteInfo {
@@ -68,10 +67,23 @@ interface SettingsUpdateInfo {
   settings: Setting
 }
 
+interface BatchInitializeInfo {
+  userId: number,
+  date: string,
+  deleteIds: number[],
+  updateIds: number[]
+}
+
+interface BatchRestartInfo {
+  userId: number,
+  restartIds: number[]
+}
+
+const clientURL = 'http://localhost:8000'
 // Define a service using a base URL and expected endpoints
 export const apiSlice = createApi({
   reducerPath: 'pomodoroApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:8000/', credentials: "include" }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'http://127.0.0.1:3000/', credentials: "include", headers: { 'Origin': clientURL } }),
   endpoints: (builder) => ({
     //USER ENDPOINTS
     authenticateUser: builder.query<void, LoginInfo>({
@@ -92,6 +104,7 @@ export const apiSlice = createApi({
       query: (id) => ({
         url: `users/${id}`,
         method: 'GET',
+        credentials: "include"
       })
     }),
     //TASK ENDPOINTS
@@ -109,16 +122,16 @@ export const apiSlice = createApi({
       })
     }),
     updateTask: builder.mutation<void, TaskUpdateInfo>({
-      query: (taskDeleteInfo) => ({
-        url: `users/${taskDeleteInfo.userId}/tasks/${taskDeleteInfo.taskId}`,
+      query: (taskUpdateInfo) => ({
+        url: `users/${taskUpdateInfo.userId}/tasks/${taskUpdateInfo.task.id}`,
         method: 'PUT',
-        body: taskDeleteInfo.task
+        body: taskUpdateInfo.task
       }),
     }),
     //TAGS ENDPOINTS
     updateTag: builder.mutation<void, TagUpdateInfo>({
       query: (tagUpdateInfo) => ({
-        url: `users/${tagUpdateInfo.userId}/tags/${tagUpdateInfo.tagId}`,
+        url: `users/${tagUpdateInfo.userId}/tags/${tagUpdateInfo.tag.id}`,
         method: 'PUT',
         body: tagUpdateInfo.tag
       }),
@@ -131,7 +144,7 @@ export const apiSlice = createApi({
     }),
     postTag: builder.mutation<void, TagPostInfo>({
       query: (tagPostInfo) => ({
-        url: `users/${tagPostInfo.userId}/tags/`,
+        url: `users/${tagPostInfo.userId}/tags`,
         method: 'POST',
         body: tagPostInfo.tag
       }),
@@ -139,7 +152,7 @@ export const apiSlice = createApi({
     //SETTINGS ENDPOINTS
     updateSettings: builder.mutation<void, SettingsUpdateInfo>({
       query: (settingsUpdateInfo) => ({
-        url: `users/${settingsUpdateInfo.userId}/settings/`,
+        url: `users/${settingsUpdateInfo.userId}/settings`,
         method: 'PUT',
         body: settingsUpdateInfo.settings
       }),
@@ -147,16 +160,33 @@ export const apiSlice = createApi({
     //HISTORIC TASK ENDPOINTS 
     postHistoricTask: builder.mutation<void, HistoricTaskInfo>({
       query: (historicTaskInfo) => ({
-        url: `users/${historicTaskInfo.userId}/histasks/`,
+        url: `users/${historicTaskInfo.userId}/histasks`,
         method: 'POST',
         body: historicTaskInfo.historicTask
+      }),
+    }),
+    postBatchInitialize: builder.mutation<void, BatchInitializeInfo>({
+      query: (batchInitializeInfo) => ({
+        url: `users/${batchInitializeInfo.userId}/tasks:batchInitialize`,
+        method: 'POST',
+        body: batchInitializeInfo
+      }),
+    }),
+    postBatchRestart: builder.mutation<void, BatchRestartInfo>({
+      query: (batchRestartInfo) => ({
+        url: `users/${batchRestartInfo.userId}/tasks:batchRestart`,
+        method: 'POST',
+        body: batchRestartInfo
       }),
     }),
   }),
 })
 
+
 // Export hooks for usage in functional components, which are
 // auto-generated based on the defined endpoints
-export const { useLazyAuthenticateUserQuery, useRegisterUserMutation, useLazyGetUserDataQuery,
+export const {
+  useLazyGetUserDataQuery,
   usePostTaskMutation, useDeleteTaskMutation, useUpdateTaskMutation, useUpdateTagMutation, useDeleteTagMutation, usePostTagMutation,
-  useUpdateSettingsMutation, usePostHistoricTaskMutation } = apiSlice 
+  useUpdateSettingsMutation, usePostHistoricTaskMutation, usePostBatchInitializeMutation, usePostBatchRestartMutation,
+} = apiSlice 
