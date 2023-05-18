@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { format } from 'date-fns'
+import { act } from 'react-dom/test-utils'
 
 const fullDate = new Date
 const todayDate = format(fullDate, 'MM/dd/yyyy')
@@ -34,6 +35,10 @@ interface StateType {
     normalTriggeredRest: boolean, 
     storedTime: number, 
     pomodoros: number, 
+    snackbar: boolean,
+    snackbarMessage: string,
+    snackbarError: boolean,
+    snackbarErrorMessage: string,
 }
 
 //Type property is not used, should be removed. 
@@ -58,6 +63,10 @@ const initialState: StateType = {
     normalTriggeredRest: false,
     storedTime: 0, //The time stored
     pomodoros: 0, //The ammount of pomodoros until now that have been completed. 
+    snackbar: false, 
+    snackbarMessage: '',
+    snackbarError: false,
+    snackbarErrorMessage: '',
 }
 
 const appSlice = createSlice({
@@ -156,11 +165,20 @@ const appSlice = createSlice({
         },
         increasePomodoros: (state) => { 
             state.pomodoros++; 
+        },
+        setSnackbar: (state, action: PayloadAction<string>) => {
+            state.snackbar = true
+            state.snackbarMessage = action.payload
+        }, 
+        setSnackbarError: (state, action: PayloadAction<string>) => {
+            state.snackbarError = true
+            state.snackbarErrorMessage = action.payload
         }
     }
 })
 //Could wrap the three 'current' reducers into a single one
-export const { startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, setCalendarDate, currentTag, currentIndex, currentType, initialize,
-    startNewDay, establishPomodoroTime, handleCompletedRegular, setStoredTime, setNormalTriggeredRest, disableNormalTriggeredRest, resetPomodoros, increasePomodoros} = appSlice.actions
+export const { startRunning, stopRunning, startRest, endRest, timerHasStarted, timerNotStarted, setCalendarDate, currentTag, currentIndex, 
+    currentType, initialize, startNewDay, establishPomodoroTime, handleCompletedRegular, setStoredTime, setNormalTriggeredRest, 
+    disableNormalTriggeredRest, resetPomodoros, increasePomodoros, setSnackbar, setSnackbarError} = appSlice.actions
 export default appSlice.reducer
 
