@@ -4,10 +4,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, ListItem, IconButton, ListItemText, Input, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
 import { changeTagColor, deleteTag, changeTagName } from 'features/tasksSlice';
 import React, { useState, useRef, useEffect } from 'react';
-import { TwitterPicker } from 'react-color';
-import { useDispatch } from 'react-redux';
-import { useAppDispatch } from 'hooks';
+import { TwitterPicker } from "react-color";
+import { useAppDispatch } from 'hooks/useAppDispatch';
+import useHandleDeleteTag from 'hooks/useHandleDeleteTag';
+import useHandleUpdateTag from 'hooks/useHandleUpdateTag';
 
+/*
+  This component is used to display a tag in the list of tags. Alongside the editing and delete functionality.
+*/
 
 export default function TagEntry(props) {
   const dispatch = useAppDispatch()
@@ -19,11 +23,14 @@ export default function TagEntry(props) {
   const [deleteDialog, setDeleteDialog] = useState(false)
   const [colorPos, setColorPos] = useState([0, 0])
 
-  const colorRef = useRef<HTMLElement>(null)!; 
+  const colorRef = useRef<HTMLElement>(null)!;
+
+  const [deleteTagMut] = useHandleDeleteTag()
+  const [updateTag] = useHandleUpdateTag()
 
   useEffect(() => {
     const colorBounding = colorRef.current!.getBoundingClientRect()
-    
+
     const colorX = colorBounding.x - 260 + 16
     const colorY = colorBounding.y + 24 + 12
 
@@ -39,7 +46,13 @@ export default function TagEntry(props) {
   const handleChangeColor = (color) => {
     setColor(color.hex);
     if (color !== props.color) {
-      dispatch(changeTagColor(props.tag, color.hex))
+      updateTag(
+        {
+          id: props.id,
+          name: props.tag,
+          color: color.hex
+        }
+      )
     }
     setColorPick(!colorPick)
   }
@@ -49,13 +62,17 @@ export default function TagEntry(props) {
   }
 
   const dispatchDelete = () => {
-    dispatch(deleteTag(props.tag))
+    deleteTagMut(props.id)
     handleDeleteDialog()
   }
 
   const dispatchEdit = () => {
     if (tagName !== props.tag) {
-      dispatch(changeTagName(props.tag, tagName))
+      updateTag({
+        id: props.id,
+        name: props.tag,
+        color: props.color
+      })
     }
     handleEditName()
   }
