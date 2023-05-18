@@ -19,7 +19,11 @@ export default function useHandleCreateTag() {
             }
             const response = await createTag(tagPostInfo).unwrap()
             console.log(response)
-            dispatch(addTag(newtag))
+            const newTagWithId = {
+                ...newtag,
+                id: response, 
+            }
+            dispatch(addTag(newTagWithId))
             dispatch(setSnackbar("Tag created!"))
         }
         catch (error) {
