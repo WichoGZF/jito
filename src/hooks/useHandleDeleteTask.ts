@@ -4,21 +4,20 @@ import { useAppDispatch } from "./useAppDispatch"
 import { deleteTask } from "features/tasksSlice"
 import { setSnackbar, setSnackbarError } from "features/appSlice"
 //Actions to do on delete task
-export default function useHandleDeleteTask(taskid: number, index: number, onDelete: () => void) { 
+export default function useHandleDeleteTask() { 
     const userid = useAppSelector(state => state.auth.userid)
     const dispatch = useAppDispatch()
 
     const [deleteTaskMut, deleteResult] = useDeleteTaskMutation()
 
-    async function handleDeleteTask() { 
+    async function handleDeleteTask(taskId: number) { 
         try{
             const response = deleteTaskMut({
                 userId: userid!,
-                taskId: taskid
+                taskId: taskId
             }).unwrap() 
             console.log(response)
-            dispatch(deleteTask(index));
-            onDelete()
+            dispatch(deleteTask(taskId));
             dispatch(setSnackbar("Task deleted!"))
         }
         catch(error){ 
