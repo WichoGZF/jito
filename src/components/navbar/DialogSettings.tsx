@@ -42,6 +42,7 @@ export default function DialogSettings(props: PropTypes) {
     const [updateSettingsMut, updateResult] = useUpdateSettingsMutation()
 
     const userid = useAppSelector(state => state.auth.userid)
+    const hasSession = useAppSelector(state => state.auth.hasSession)
 
     const saveSettings = async () => {
         if (settings.pomodoroDuration !== pomodoroDuration) {
@@ -70,11 +71,13 @@ export default function DialogSettings(props: PropTypes) {
             colorTheme: colorTheme,
         }
         try {
-            const result = await updateSettingsMut({
-                userId: userid!,
-                settings: newSettings
-            })
-            console.log(result)
+            if (hasSession && userid !== null) {
+                const result = await updateSettingsMut({
+                    userId: userid!,
+                    settings: newSettings
+                })
+                console.log(result)
+            }
             dispatch(updateSettings(newSettings))
             dispatch(setSnackbar("Settings saved!"))
         }
