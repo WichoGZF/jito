@@ -9,7 +9,7 @@ export default function useHandleCreateHistoric() {
     const [postHistoric, { data, error, isLoading }] = usePostHistoricTaskMutation()
     const dispatch = useAppDispatch()
     const userId = useAppSelector((state) => state.auth.userid)
-
+    const hasSession = useAppSelector((state) => state.auth.hasSession)
     const actualTag = useAppSelector(state => state.app.tag)
     const todayDate = useAppSelector(state => state.app.todayDate)
     const pomodoroDuration = useAppSelector(state => state.settings.pomodoroDuration)
@@ -23,11 +23,13 @@ export default function useHandleCreateHistoric() {
 
     const createHistoric = async () => {
         try {
-            const response = await postHistoric({
-                userId: userId!,
-                historicTask: newHistoricTask
-            }).unwrap()
-            console.log(response)
+            if (hasSession && (userId !== null)) {
+                const response = await postHistoric({
+                    userId: userId!,
+                    historicTask: newHistoricTask
+                }).unwrap()
+                console.log(response)
+            }
             dispatch(addTimeEntry(todayDate, pomodoroDuration * 60, actualTag!))
             dispatch(setSnackbar("Historic created!"))
         }
