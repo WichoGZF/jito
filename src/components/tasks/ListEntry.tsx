@@ -13,17 +13,7 @@ import Task from "types/Task"
 import useHandleDnd from "hooks/useHandleDnd"
 import useHandleDeleteTask from "hooks/useHandleDeleteTask"
 import useHandleCreateHistoric from "hooks/useHandleCreateHistoric"
-
-//Dispatches the time entry for the statistics and also dispatches the 'rest' time accumulated. 
-const composeCompleteEntry = (tag) => (dispatch, getState) => {
-  const rest = getState().app.rest
-
-  const secondsRemaining = getState().app.minutes * 60 + getState().app.seconds
-  const totalSeconds = getState().settings.pomodoroDuration * 60
-  const todayDate = getState().app.todayDate
-  const secondsElapsed = totalSeconds - secondsRemaining
-  dispatch(addTimeEntry(todayDate, secondsElapsed, tag))
-}
+import useHandleUpdateTask from "hooks/useHandleUpdateTask"
 
 interface PropTypes {
   index: number,
@@ -53,14 +43,27 @@ export default function ListEntry({ task, firstTask, index }: PropTypes) {
     setDropDownRef(null);
   }
   
+  const [MutEditTask] = useHandleUpdateTask()
   const [dispatchHistoric] = useHandleCreateHistoric()
-  const [dispatchDelete] = useHandleDeleteTask(task.id, index, handleCloseDropDown)
+  const [MutDeleteTask] = useHandleDeleteTask()
 
   const handleEditTask = () => {
     setEditTask(!editTask);
     dropDownRef && handleCloseDropDown()
   }
   
+  const onFinishedNormalMut = () => { 
+    if(task.repeat === "no-repeat") {
+      MutDeleteTask(task.id)
+    }
+    else{ 
+      MutEditTask({
+        ...task, 
+        completed: true,
+      })
+    }
+  }
+
   const openDropDown = Boolean(dropDownRef)
 
   let entryIcon
@@ -75,7 +78,8 @@ export default function ListEntry({ task, firstTask, index }: PropTypes) {
             dispatchHistoric()
             dispatch(handleCompletedRegular())
           }
-          dispatch(completeTask(index))
+          onFinishedNormalMut()
+          dispatch(completeTask(task.id))
           dispatch(stopRunning())
         }
 
@@ -141,7 +145,10 @@ export default function ListEntry({ task, firstTask, index }: PropTypes) {
               }}
             >
               <MenuItem onClick={handleEditTask}>Edit task</MenuItem>
-              <MenuItem onClick={dispatchDelete} >Delete task</MenuItem>
+              <MenuItem onClick={() => { 
+                MutDeleteTask(task.id)
+                handleCloseDropDown()
+              }}>Delete task</MenuItem>
 
             </Menu>
           </>
