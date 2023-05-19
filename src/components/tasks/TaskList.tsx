@@ -1,8 +1,5 @@
 import { useEffect } from 'react';
-import { Typography } from '@mui/material';
-import { Grid } from '@mui/material';
-import { Box } from '@mui/system';
-import { Divider } from '@mui/material';
+import { Typography, Grid, Box, Divider, List } from '@mui/material';
 import {
   currentTag, currentIndex, currentType
 } from '../../features/appSlice'
@@ -13,26 +10,15 @@ import NewTask from './NewTask';
 import Task from '../../types/Task'
 import { useAppSelector } from 'hooks/useAppSelector'
 import { useAppDispatch } from 'hooks/useAppDispatch'
-import Tag from 'types/Tag';
 import useInitializeTasks from 'hooks/useInitializeTasks';
 
-function taskToListEntry(task: Task, firstTask: boolean, index: number, tags: Tag[]) {
+function taskToListEntry(task: Task, firstTask: boolean, index: number ) {
   return (
     <ListEntry
       key={task.tag + task.id}
-      id={task.id}
-      text={task.name}
-      description={task.description}
-      index={index}
-      date={task.date}
-      type={task.type}
-      blocks={task.blocks}
-      repeat={task.repeat}
-      repeatOn={task.repeatOn}
-      tag={task.tag}
-      tags={tags}
       firstTask={firstTask}
-      completed={task.completed}
+      index={index}
+      task={task}
     ></ListEntry>
   )
 }
@@ -49,6 +35,8 @@ function getDayOfTheWeek(date: string): number {
   return realCalendarDate.getDay();
 }
 
+/*Component in charge of task section rendering and functionality. */
+
 export default function TaskList() {
   const dispatch = useAppDispatch()
 
@@ -63,7 +51,7 @@ export default function TaskList() {
   const [overdueNormals] = useInitializeTasks(tasks, initialized)
 
   const dayOfTheWeek = getDayOfTheWeek(todayDate)
-
+  
   let allTagTasks: any[] = [] //React array
   // For overDue normals dialog  //
   let firstTaskInfo: FirstTaskInfo
@@ -75,7 +63,7 @@ export default function TaskList() {
         if (!allTagTasks.length) {
           firstTaskInfo = { index: index, tag: task.tag, type: task.type }
         }
-        allTagTasks.push(taskToListEntry(task, !allTagTasks.length, index, tags))
+        allTagTasks.push(taskToListEntry(task, !allTagTasks.length, index))
       };
     }
     else {
@@ -85,14 +73,14 @@ export default function TaskList() {
             if (!allTagTasks.length) {
               firstTaskInfo = { index: index, tag: task.tag, type: task.type }
             }
-            allTagTasks.push(taskToListEntry(task, !allTagTasks.length, index, tags))
+            allTagTasks.push(taskToListEntry(task, !allTagTasks.length, index))
           }
         }
         else if (task.repeat === 'daily') {
           if (!allTagTasks.length) {
             firstTaskInfo = { index: index, tag: task.tag, type: task.type }
           }
-          allTagTasks.push(taskToListEntry(task, !allTagTasks.length, index, tags));
+          allTagTasks.push(taskToListEntry(task, !allTagTasks.length, index));
         }
       }
     }
@@ -113,7 +101,9 @@ export default function TaskList() {
       <Grid >
         <Divider key="divider"></Divider>
         <NewTask key="newTask"></NewTask>
-        {allTagTasks}
+        <List>
+          {allTagTasks}
+        </List>
         <OverdueTaskList key="overdues" open={!initialized && !!overdueNormals.length} tasks={overdueNormals}></OverdueTaskList>
         <CompletedDialog key="completed"></CompletedDialog>
       </Grid>
