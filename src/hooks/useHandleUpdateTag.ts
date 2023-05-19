@@ -9,16 +9,19 @@ import { setSnackbar, setSnackbarError } from "features/appSlice"
 export default function useHandleUpdateTag() {
     const [updateTagMutation, updateTagResult] = useUpdateTagMutation()
     const userid = useAppSelector(state => state.auth.userid)
+    const hasSession = useAppSelector(state => state.auth.hasSession)
     const dispatch = useAppDispatch()
 
     const saveTag = async (newTag: Tag) => {
         try {
-            const response = updateTagMutation({
-                tag: newTag,
-                userId: userid!
-            }).unwrap()
-            console.log(response)
-            dispatch(updateTag({newTag: newTag}))
+            if (hasSession && (userid !== null)) {
+                const response = updateTagMutation({
+                    tag: newTag,
+                    userId: userid!
+                }).unwrap()
+                console.log(response)
+            }
+            dispatch(updateTag({ newTag: newTag }))
             dispatch(setSnackbar("Tag updated!"))
         }
         catch (error) {
