@@ -72,7 +72,7 @@ const tasksSlice = createSlice({
                 const completedEntry = action.payload
                 state.history.push(completedEntry)
             },
-            prepare(date:string, time:number, tag:string) {
+            prepare(date: string, time: number, tag: string) {
                 return {
                     payload: {
                         id: 0,
@@ -118,21 +118,39 @@ const tasksSlice = createSlice({
             const newTagName = action.payload
             state.tags.unshift(newTagName)
         },
-        deleteTag: (state, action: PayloadAction<string>) => {
-            const tagToDelete = action.payload
+        deleteTag: (state, action: PayloadAction<{ id: number }>) => {
+            const { id } = action.payload
 
-            const tagToChangeIndex = state.tags.findIndex((tag) => {
-                return (tag.name === tagToDelete)
+            const tagToDeleteIndex = state.tags.findIndex((tag) => {
+                return (tag.id === id)
             })
 
-            state.tags.splice(tagToChangeIndex, 1)
+            const tagToDelete = state.tags[tagToDeleteIndex]
+
+            state.tags.splice(tagToDeleteIndex, 1)
 
             state.tasks.forEach((task, index) => {
-                if (task.tag === tagToDelete) {
+                if (task.tag === tagToDelete.name) {
                     state.tasks.splice(index, 1)
                 }
             })
 
+        },
+        updateTag: (state, action: PayloadAction<{ newTag: Tag }>) => {
+            const { newTag } = action.payload
+
+            const tagToChangeIndex = state.tags.findIndex((tag) => {
+                return (tag.id === newTag.id)
+            })
+
+            const oldTag = state.tags[tagToChangeIndex]
+            state.tags[tagToChangeIndex] = newTag
+
+            state.tasks.forEach((task, index) => {
+                if (task.tag === oldTag.name) {
+                    state.tasks[index].tag = newTag.name;
+                }
+            })
         },
 
         changeTagName: {
@@ -179,6 +197,9 @@ const tasksSlice = createSlice({
             },
 
         },
+        /*
+        Handles the completion of a block. Depending on task type performs the adequate actions upon the task. 
+        */
         updateBlocks: (state, action: PayloadAction<number>) => {
             const index = action.payload;
             const repeat = state.tasks[index].repeat
@@ -201,10 +222,13 @@ const tasksSlice = createSlice({
             }
         },
         restartTask: (state, action: PayloadAction<number[]>) => {
-            const indexes = action.payload;
-            indexes.forEach((taskIndex) => {
-                state.tasks[taskIndex].completed = false;
-                state.tasks[taskIndex].blocks = state.tasks[taskIndex].defaultBlocks
+            const ids = action.payload;
+
+            state.tasks.forEach((task, index) => {
+                if (ids.includes(task.id)) {
+                    state.tasks[index].completed = false;
+                    state.tasks[index].blocks = state.tasks[index].defaultBlocks
+                }
             })
         },
         completeTask: (state, action: PayloadAction<number>) => { //For normal task
@@ -249,6 +273,6 @@ const tasksSlice = createSlice({
 })
 
 export const { addTask, editTask, deleteTask, addTimeEntry, reorderTask,
-    addTag, deleteTag, changeTagName, changeTagColor, updateBlocks,
+    addTag, deleteTag, updateTag, changeTagName, changeTagColor, updateBlocks,
     restartTask, completeTask, updateDates, deleteDue, updateTaskSlice } = tasksSlice.actions
 export default tasksSlice.reducer
