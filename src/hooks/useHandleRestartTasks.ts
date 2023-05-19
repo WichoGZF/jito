@@ -8,6 +8,9 @@ import { setSnackbar } from "features/appSlice";
 
 export default function useHandleBatchRestart() {
     const [postBatchRestart, { data, error, isLoading }] = usePostBatchRestartMutation()
+    const userid = useAppSelector((state) => state.auth.userid)
+    const hasSession = useAppSelector((state) => state.auth.hasSession)
+    const dispatch = useAppDispatch()
 
     const toRestartIds = useAppSelector((state) => {
         return (
@@ -20,19 +23,19 @@ export default function useHandleBatchRestart() {
                 return false
             }).map((task: Task) => task.id))
     })
-    const userid = useAppSelector((state) => state.auth.userid)
-    const dispatch = useAppDispatch()
 
     //Restarts overdue repeatables
     async function restartTasks(): Promise<void> {
         try {
-            const response = postBatchRestart(
-                {
-                    userId: userid!,
-                    restartIds: toRestartIds
-                }
-            ).unwrap()
-            console.log(response)
+            if (hasSession && (userid !== null)) {
+                const response = postBatchRestart(
+                    {
+                        userId: userid!,
+                        restartIds: toRestartIds
+                    }
+                ).unwrap()
+                console.log(response)
+            }
             dispatch(restartTask(toRestartIds))
             dispatch(setSnackbar("Tasks restarted!"))
         }
