@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 import { List } from '@mui/material';
 import Button from '@mui/material/Button'
-import { useAppSelector, useAppDispatch } from "hooks";
-import { updateDates, deleteDue } from "features/tasksSlice";
+import { useAppDispatch } from "hooks/useAppDispatch"
+import { useAppSelector } from "hooks/useAppSelector"
 import { initialize } from "features/appSlice";
 import Task from "types/Task";
 import { DueTaskEntry } from "./DueTaskEntry";
+import useHandleBatchInitialize from "hooks/useHandleBatchInitialize";
+import useHandleBatchRestart from "hooks/useHandleRestartTasks";
 
 interface OverdueTasksProps {
     open: boolean,
@@ -14,27 +16,15 @@ interface OverdueTasksProps {
 }
 
 export default function OverdueTaskList({ open, tasks }: OverdueTasksProps) {
-    const [tasksChecklist, setTaskChecklist] = useState(() => {
-        return (tasks.map((task) => false))
-    })
+    const [tasksChecklist, setTaskChecklist] = useState(tasks.map(() => false))
+    
+    const [batchInitialize] = useHandleBatchInitialize()
+    const [batchRestart] = useHandleBatchRestart()
 
     const tags = useAppSelector((state) => state.tasks.tags)
     const dispatch = useAppDispatch()
 
-    const updateInitialized = () => {
-        dispatch(initialize())
-    }
-
-    const deleteDueTasks = (array) => {
-        dispatch(deleteDue(array))
-
-    }
-
-    const updateTasksDates = (array) => {
-        dispatch(updateDates(array))
-    }
-
-    const handleChecklist = (index:number) => {
+    const handleChecklist = (index: number) => {
         setTaskChecklist((oldState) => {
             const newState = [...oldState]
             newState[index] = !newState[index]
@@ -42,27 +32,19 @@ export default function OverdueTaskList({ open, tasks }: OverdueTasksProps) {
         })
     }
 
-    const indexToIdArray = (indexArray) => {
-        let idArray = [];
-        indexArray.forEach(index => {
-            idArray.push(tasks[index].id)
-        })
-        return idArray;
-    }
-
-    let tasksToUpdate = []
-    let tasksToDelete = []
+    let tasksToUpdate: number[] = []
+    let tasksToDelete: number[] = []
 
     tasksChecklist.forEach((checked, index) => {
         if (checked) {
-            tasksToUpdate.push(tasks[index])
+            tasksToUpdate.push(tasks[index].id)
         }
         else {
-            tasksToDelete.push(tasks[index])
+            tasksToDelete.push(tasks[index].id)
         }
     })
 
-    const getColor = (tagName) => {
+    const getColor = (tagName: string) => {
         const tag = tags.find(tag => tag.name === tagName)
         return tag.color
     }
@@ -78,7 +60,7 @@ export default function OverdueTaskList({ open, tasks }: OverdueTasksProps) {
                 tagName={task.tag}
                 date={task.date}
                 tagColor={getColor(task.tag)}
-                onClick={handleChecklist}/>
+                onClick={handleChecklist} />
         )
     })
 
@@ -92,14 +74,15 @@ export default function OverdueTaskList({ open, tasks }: OverdueTasksProps) {
             </DialogContent>
             <DialogActions>
                 <Button onClick={() => {
-                    updateInitialized()
+                    batchRestart()
+                    dispatch(initialize())
                 }}>
                     Discard
                 </Button>
                 <Button onClick={() => {
-                    updateTasksDates(indexToIdArray(tasksToUpdate))
-                    deleteDueTasks(indexToIdArray(tasksToDelete))
-                    updateInitialized()
+                    batchRestart()
+                    batchInitialize(tasksToUpdate, tasksToDelete)
+                    dispatch(initialize())
                 }}>Import</Button>
 
             </DialogActions>
