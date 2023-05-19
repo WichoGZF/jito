@@ -7,7 +7,11 @@ import { useAppSelector } from "hooks/useAppSelector"
 import CloseIcon from '@mui/icons-material/Close'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import CheckIcon from '@mui/icons-material/Check';
-import useHandleTagUpdate from "hooks/useHandleTagUpdate"
+import useHandleCreateTag from "hooks/useHandleCreateTag"
+
+/* 
+  This component is used to add a new tag to the list of tags.
+*/
 
 export default function AddTag() {
     const [colorPick, setColorPick] = useState(false)
@@ -16,11 +20,10 @@ export default function AddTag() {
     const [addNewTag, setAddNewTag] = useState(false)
     const [alert, setAlert] = useState(false)
   
-    const userId = useAppSelector((state) => state.auth.userid)
     const tags = useAppSelector((state) => state.tasks.tags)
     const dispatch = useAppDispatch()
   
-    const [saveTag] = useHandleTagUpdate()
+    const [saveTag] = useHandleCreateTag()
 
     const colorRef = useRef<HTMLElement>(null)
     const colorBounding = colorRef.current?.getBoundingClientRect()!
