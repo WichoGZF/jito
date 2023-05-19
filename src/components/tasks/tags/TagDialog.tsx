@@ -4,7 +4,7 @@ import AddTag from "./AddTag"
 import TagEntry from "./TagEntry"
 import EditIcon from '@mui/icons-material/Edit';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useAppSelector } from "hooks";
+import { useAppSelector } from "hooks/useAppSelector";
 
 interface PropTypes{
   tagSelected: string,
@@ -84,7 +84,7 @@ export default function TagDialog(props: PropTypes) {
             {
               tags.map((tagObject, index) => {
                 return (
-                  <TagEntry key={tagObject.name} tag={tagObject.name} color={tagObject.color} index={index}></TagEntry>
+                  <TagEntry key={tagObject.name} tag={tagObject.name} color={tagObject.color} id={tagObject.id} index={index}></TagEntry>
                 )
               })
             }
