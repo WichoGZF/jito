@@ -48,23 +48,17 @@ const tasksSlice = createSlice({
         },
         //Edit given task that matches ID
 
-        editTask: {
-            reducer(state, action: PayloadAction<{ task: Task, index: number }>) {
-                const { task, index } = action.payload
-                state.tasks[index] = task
-            },
-            prepare(task: Task, index: number) {
-                return {
-                    payload: {
-                        task: task,
-                        index: index,
-                    }
-                }
-            }
+        editTask: (state, action: PayloadAction<Task>) => {
+            const taskToEdit = action.payload
+            const index = state.tasks.findIndex(task => task.id === taskToEdit.id)
+            console.log('Editing task number: ', index, action.payload, action)
+            state.tasks[index] = taskToEdit
         },
+
         deleteTask: (state, action: PayloadAction<number>) => {
-            const index = action.payload
-            console.log('Deleting tag number: ', index, action.payload, action)
+            const id = action.payload
+            const index = state.tasks.findIndex(task => task.id === id)
+            console.log('Deleting task number: ', index, action.payload, action)
             state.tasks.splice(index, 1)
         },
         addTimeEntry: {
@@ -232,7 +226,8 @@ const tasksSlice = createSlice({
             })
         },
         completeTask: (state, action: PayloadAction<number>) => { //For normal task
-            const index = action.payload
+            const id = action.payload
+            const index = state.tasks.findIndex((task) => task.id === id)
 
             if (state.tasks[index].repeat === 'no-repeat') {
                 state.tasks.splice(index, 1)
