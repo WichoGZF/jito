@@ -12,8 +12,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel'
 import TagDialog from "./tags/TagDialog";
-import { useAppDispatch } from "hooks/useAppDispatch"
-import { useAppSelector } from "hooks/useAppSelector"
 import WeekPicker from './WeekPicker'
 import Task from "types/Task";
 
@@ -21,9 +19,7 @@ import Task from "types/Task";
 Input component for handling a new task. Handles both use cases of adding a new task and editing an existing one. 
 */
 export default function TaskInput({ task, tagColor, onSaveTask, onClose }
-    :{ task: Task, tagColor: string, onSaveTask: () => void, onClose: () => void }) {
-    const dateSelected = useAppSelector(state => state.app.calendarDate)
-    const dispatch = useAppDispatch()
+    :{ task: Task, tagColor: string, onSaveTask: (task:Task) => Promise<void>, onClose: () => void }) {
 
     const [taskVal, setTaskVal] = useState<Task>(task)
     //USE SELECTOR for color
