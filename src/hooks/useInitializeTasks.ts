@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react'
 import Task from 'types/Task'
 import { useAppDispatch } from './useAppDispatch'
+import { useAppSelector } from './useAppSelector'
 import isBefore from 'date-fns/isBefore'
 import { initialize } from 'features/appSlice'
 import useHandleBatchRestart from './useHandleRestartTasks'
@@ -11,7 +12,7 @@ Initializes completed or partially completed repeatables. Returns past tasks if 
 export default function useInitializeTasks(tasks: Task[], initialized: boolean): [overdueNormals: Task[]] {
     const dispatch = useAppDispatch()
     const [restartTasks] = useHandleBatchRestart()
-
+    const hasSession = useAppSelector(state => state.auth.hasSession)
     //Checks overdue tasks.
     function getInitializeTasks(): Task[] {
         const pastTasks: Task[] = [] //Normal tasks in the past
@@ -42,7 +43,9 @@ export default function useInitializeTasks(tasks: Task[], initialized: boolean):
             //If there are no overdue normals initialize the app
             if (overdueNormals.length === 0) {
                 dispatch(initialize())
-                restartTasks()
+                if (hasSession) {
+                    restartTasks()
+                }
             }
         }
     }, [initialized])
