@@ -108,7 +108,7 @@ export const apiSlice = createApi({
       })
     }),
     //TASK ENDPOINTS
-    postTask: builder.mutation<void, TaskPostInfo>({
+    postTask: builder.mutation<number, TaskPostInfo>({
       query: (taskPostInfo) => ({
         url: `users/${taskPostInfo.userId}/tasks`,
         method: 'POST',
@@ -142,7 +142,7 @@ export const apiSlice = createApi({
         method: 'DELETE',
       }),
     }),
-    postTag: builder.mutation<void, TagPostInfo>({
+    postTag: builder.mutation<number, TagPostInfo>({
       query: (tagPostInfo) => ({
         url: `users/${tagPostInfo.userId}/tags`,
         method: 'POST',
@@ -158,7 +158,7 @@ export const apiSlice = createApi({
       }),
     }),
     //HISTORIC TASK ENDPOINTS 
-    postHistoricTask: builder.mutation<void, HistoricTaskInfo>({
+    postHistoricTask: builder.mutation<number, HistoricTaskInfo>({
       query: (historicTaskInfo) => ({
         url: `users/${historicTaskInfo.userId}/histasks`,
         method: 'POST',
