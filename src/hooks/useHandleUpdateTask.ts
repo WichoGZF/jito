@@ -9,18 +9,19 @@ import { setSnackbar, setSnackbarError } from "features/appSlice"
 export default function useHandleUpdateTask() {
     const [updateTask, updateResult] = useUpdateTaskMutation()
     const userid = useAppSelector(state => state.auth.userid)
-
+    const hasSession = useAppSelector(state => state.auth.hasSession)
     const dispatch = useAppDispatch()
 
     async function dispatchEditTask(task: Task) {
         try {
-            const response = updateTask(
-                {
+            if (hasSession && (userid !== null)) {
+                const response = updateTask({
                     userId: userid!,
                     task: task
                 }
-            ).unwrap()
-            console.log(response)
+                ).unwrap()
+                console.log(response)
+            }
             dispatch(editTask(task))
             dispatch(setSnackbar("Task updated!"))
         }
