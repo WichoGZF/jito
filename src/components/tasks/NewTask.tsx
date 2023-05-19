@@ -1,11 +1,12 @@
 import { ListItem, Button } from "@mui/material";
-import React, { useState } from "react";
-import TaskInput from "./TaskInput";
+import { useState } from "react";
+import TaskCreate from "./TaskCreate";
 import AddTaskIcon from '@mui/icons-material/AddTask';
+
+/*Add new task button with a state change for showing the add a new task component */
 
 export default function NewTask() {
   const [addNewTask, setAddNewTask] = useState(false);
-  const [openTagSelect, setOpenTagSelect] = useState(false)
 
   const handleClickNewTask = () => {
     setAddNewTask(!addNewTask)
@@ -22,8 +23,9 @@ export default function NewTask() {
             Add new task
         </Button>
       </ListItem>
-      {addNewTask ? <TaskInput
-        edit={false} handleTaskSelectClose={handleClickNewTask}></TaskInput> : <></>}
+      {addNewTask ? 
+      <TaskCreate
+        onClose={handleClickNewTask}/> : <></>}
     </>
   )
 }
