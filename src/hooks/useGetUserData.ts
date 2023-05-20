@@ -4,6 +4,7 @@ import { updateSettings } from "features/settingsSlice"
 import { updateTaskSlice } from "features/tasksSlice"
 import { useLazyGetUserDataQuery } from "features/api/apiSlice"
 import {useEffect} from 'react'
+import { useCookies } from "react-cookie"
 
 /* 
 Fetches the backend data if the session cookie exists (user is logged in). On reject or lack of cookie assumes user is NOT logged in. 
@@ -15,10 +16,16 @@ export default function useGetUserData(){
     const userid = useAppSelector(state => state.auth.userid)
     
     const [getUserData, result] = useLazyGetUserDataQuery()
-    
+    const [cookies, setCookie] = useCookies(['userId'])
+
+    // If the user has a session cookie, fetch the data from the backend
+
     useEffect(() => {
       if (hasSession && (userid !== null)) {
         getUserData(userid)
+      }else if (cookies.userId){
+        if(typeof(cookies.userId) === "string" && cookies.userId !== undefined)
+        getUserData(parseInt(cookies.userId))
       }
     
     }, [hasSession])
