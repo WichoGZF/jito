@@ -94,7 +94,7 @@ export default function TagEntry(props) {
         </IconButton>
         {colorPick ? colorSelector : null}
         <ListItemText>{tagName}</ListItemText>
-        <IconButton onClick={handleEditName}><EditIcon></EditIcon></IconButton>
+        <IconButton onClick={handleEditName} data-cy="tag-open-edit"><EditIcon></EditIcon></IconButton>
       </ListItem>
     )
   }
@@ -104,13 +104,15 @@ export default function TagEntry(props) {
         <ListItem>
           <IconButton
             onClick={() => setColorPick(!colorPick)}
-            sx={{ marginRight: '12px' }}>
+            sx={{ marginRight: '12px' }}
+            data-cy="tag-open-color-picker"
+            >
             <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: color, borderRadius: '50%' }}></Box>
           </IconButton>
           {colorPick ? colorSelector : null}
-          <Input value={tagName} onChange={(event) => setTagName(event.target.value)}></Input>
-          <IconButton onClick={dispatchEdit}><CheckIcon></CheckIcon></IconButton>
-          <IconButton onClick={handleDeleteDialog}><DeleteIcon></DeleteIcon></IconButton>
+          <Input value={tagName} onChange={(event) => setTagName(event.target.value)} data-cy="tag-edit-name-input"></Input>
+          <IconButton onClick={dispatchEdit} data-cy="tag-save-edit-button"><CheckIcon></CheckIcon></IconButton>
+          <IconButton onClick={handleDeleteDialog} data-cy="tag-delete-open-button"><DeleteIcon></DeleteIcon></IconButton>
         </ListItem>
         <Dialog open={deleteDialog}>
           <DialogTitle>
@@ -123,7 +125,7 @@ export default function TagEntry(props) {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleDeleteDialog}>Cancel</Button>
-            <Button onClick={dispatchDelete}>Delete</Button>
+            <Button onClick={dispatchDelete} data-cy="tag-delete-button">Delete</Button>
           </DialogActions>
         </Dialog>
       </>

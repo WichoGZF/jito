@@ -23,7 +23,7 @@ interface PropTypes {
 //A single task list entry.
 export default function ListEntry({ task, firstTask, index }: PropTypes) {
   const dispatch = useAppDispatch()
-  
+
   const rest = useAppSelector((state) => state.app.rest)
   const todayDate = useAppSelector((state) => state.app.todayDate)
   const calendarDate = useAppSelector((state) => state.app.calendarDate)
@@ -42,7 +42,7 @@ export default function ListEntry({ task, firstTask, index }: PropTypes) {
   const handleCloseDropDown = () => {
     setDropDownRef(null);
   }
-  
+
   const [MutEditTask] = useHandleUpdateTask()
   const [dispatchHistoric] = useHandleCreateHistoric()
   const [MutDeleteTask] = useHandleDeleteTask()
@@ -51,14 +51,14 @@ export default function ListEntry({ task, firstTask, index }: PropTypes) {
     setEditTask(!editTask);
     dropDownRef && handleCloseDropDown()
   }
-  
-  const onFinishedNormalMut = () => { 
-    if(task.repeat === "no-repeat") {
+
+  const onFinishedNormalMut = () => {
+    if (task.repeat === "no-repeat") {
       MutDeleteTask(task.id)
     }
-    else{ 
+    else {
       MutEditTask({
-        ...task, 
+        ...task,
         completed: true,
       })
     }
@@ -109,7 +109,7 @@ export default function ListEntry({ task, firstTask, index }: PropTypes) {
   if (editTask) {
     return (
       <ListItem>
-        <TaskEdit task={task} tagColor={tagColor!} onClose={handleEditTask} index={index}/>
+        <TaskEdit task={task} tagColor={tagColor!} onClose={handleEditTask} index={index} />
       </ListItem>
     )
   }
@@ -118,7 +118,7 @@ export default function ListEntry({ task, firstTask, index }: PropTypes) {
       <ListItem
         ref={ref}
         sx={{
-          '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' }, 
+          '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
           borderBottom: borderBottom,
           borderTop: borderTop,
           borderColor: (timerStarted || timerState) ? "gray" : "primary.main"
@@ -131,7 +131,9 @@ export default function ListEntry({ task, firstTask, index }: PropTypes) {
               edge="end"
               aria-label="options"
               onClick={handleDropDown}
-              sx={onHover}>
+              sx={onHover}
+              data-cy={`task-options-menu"`}
+            >
               <MoreVertOutlinedIcon></MoreVertOutlinedIcon>
 
             </IconButton>
@@ -144,11 +146,13 @@ export default function ListEntry({ task, firstTask, index }: PropTypes) {
                 'aria-labelledby': 'options-button',
               }}
             >
-              <MenuItem onClick={handleEditTask}>Edit task</MenuItem>
-              <MenuItem onClick={() => { 
+              <MenuItem onClick={handleEditTask} data-cy={`task-options-menu-edit`}>Edit task</MenuItem>
+              <MenuItem onClick={() => {
                 MutDeleteTask(task.id)
                 handleCloseDropDown()
-              }}>Delete task</MenuItem>
+              }}
+                data-cy={`task-options-menu-delete`}
+              >Delete task</MenuItem>
 
             </Menu>
           </>

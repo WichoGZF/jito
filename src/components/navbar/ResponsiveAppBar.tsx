@@ -40,8 +40,8 @@ const ResponsiveAppBar = () => {
     else {
 
         buttonGroup = <Stack direction="row" gap={2}>
-            <Button variant="outlined" onClick={() => handleOpenDialog(3)}>Sign In</Button>
-            <Button variant="contained" onClick={() => handleOpenDialog(4)}>Sign Up</Button>
+            <Button variant="outlined" onClick={() => handleOpenDialog(3)} data-cy="navbar-signin_button">Sign In</Button>
+            <Button variant="contained" onClick={() => handleOpenDialog(4)} data-cy="navbar-signup_button">Sign Up</Button>
         </Stack>
     }
     return (

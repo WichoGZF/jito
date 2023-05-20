@@ -101,7 +101,7 @@ export default function TaskList() {
       <Grid >
         <Divider key="divider"></Divider>
         <NewTask key="newTask"></NewTask>
-        <List>
+        <List data-cy="task-list">
           {allTagTasks}
         </List>
         <OverdueTaskList key="overdues" open={!initialized && !!overdueNormals.length} tasks={overdueNormals}></OverdueTaskList>

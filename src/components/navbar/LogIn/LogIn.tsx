@@ -87,6 +87,7 @@ function Login({ handleSetRegister }: Props) {
                                             setUsernameError(null)
                                         }
                                     }}
+                                    data-cy="username-input"
                                 >
 
                                 </TextField>
@@ -110,10 +111,17 @@ function Login({ handleSetRegister }: Props) {
                                             setPasswordError(null)
                                         }
                                     }}
+                                    data-cy="password-input"
                                 ></TextField>
                             </Grid>
                             <Grid item xs>
-                                <LoadingButton loading={loginLoading} variant="contained" fullWidth={true} type='submit'>Log in</LoadingButton>
+                                <LoadingButton 
+                                loading={loginLoading} 
+                                variant="contained" 
+                                fullWidth={true} 
+                                type='submit'
+                                data-cy="login-button"
+                                >Log in</LoadingButton>
 \                            </Grid>
                             <Grid item xs>  
                                 <Button>Forgot your password?</Button>

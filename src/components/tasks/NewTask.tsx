@@ -19,7 +19,9 @@ export default function NewTask() {
           startIcon={<AddTaskIcon></AddTaskIcon>}
           variant='contained'
           onClick={handleClickNewTask}
-          sx={{ width: "100%" }}>
+          sx={{ width: "100%" }}
+          data-cy="add-new-task-button"
+          >
             Add new task
         </Button>
       </ListItem>

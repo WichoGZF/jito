@@ -80,7 +80,7 @@ export default function TagDialog(props: PropTypes) {
         <DialogTitle><IconButton onClick={handleOpenTagEdit} sx={{ mr: '5px' }}><ArrowBackIcon></ArrowBackIcon></IconButton>Edit tags</DialogTitle>
         <DialogContent>
           <AddTag></AddTag>
-          <List>
+          <List data-cy="tag-list">
             {
               tags.map((tagObject, index) => {
                 return (

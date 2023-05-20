@@ -19,7 +19,7 @@ import Task from "types/Task";
 Input component for handling a new task. Handles both use cases of adding a new task and editing an existing one. 
 */
 export default function TaskInput({ task, tagColor, onSaveTask, onClose }
-    :{ task: Task, tagColor: string, onSaveTask: (task:Task) => Promise<void>, onClose: () => void }) {
+    : { task: Task, tagColor: string, onSaveTask: (task: Task) => Promise<void>, onClose: () => void }) {
 
     const [taskVal, setTaskVal] = useState<Task>(task)
     //USE SELECTOR for color
@@ -121,7 +121,7 @@ export default function TaskInput({ task, tagColor, onSaveTask, onClose }
     /*Does some last stop validation and saves (calls function from save hook).*/
     function handleSaveTask() {
         onClose()
-        onSaveTask()
+        onSaveTask(taskVal)
     }
 
     return (
@@ -129,21 +129,23 @@ export default function TaskInput({ task, tagColor, onSaveTask, onClose }
             <Grid container direction='column' gap={1.5} sx={{ padding: "15px", border: '1px', borderStyle: 'solid', borderColor: "#e2e2e2", borderRadius: '25px' }}>
                 <TextField id="task-name"
                     value={taskVal.name}
-                    onChange={(e) => handleSetTaskName(e.target.value)}
+                    onChange={handleSetTaskName}
                     sx={{ flexGrow: 1, gridRow: '1', gridColumn: '2' }}
                     autoFocus={true}
                     label={<Typography variant='button'>Name</Typography>}
                     required
                     size='small'
                     inputProps={{ maxLength: 100 }}
+                    data-cy="task-input-name"
                 />
                 <TextField id="task-description"
                     value={taskVal.description}
-                    onChange={(e) => handleSetTaskDescription(e.target.value)}
+                    onChange={handleSetTaskDescription}
                     label={<Typography variant='button'>Details</Typography>}
                     multiline
                     size='small'
                     inputProps={{ maxLength: 200 }}
+                    data-cy="task-input-description"
                 />
                 <Stack direction="row" justifyContent="space-between" sx={{ marginTop: '10px' }}>
                     <FormControl>
@@ -159,8 +161,18 @@ export default function TaskInput({ task, tagColor, onSaveTask, onClose }
                             onChange={handleChangeTaskType}
                             row
                         >
-                            <FormControlLabel value="normal" control={<Radio></Radio>} label="Normal" sx={{ color: 'text.secondary' }} />
-                            <FormControlLabel value="block" control={<Radio />} label="Block" sx={{ color: 'text.secondary' }} />
+                            <FormControlLabel
+                                value="normal"
+                                control={<Radio></Radio>}
+                                label="Normal"
+                                sx={{ color: 'text.secondary' }}
+                                data-cy="type-normal-radio" />
+                            <FormControlLabel
+                                value="block"
+                                control={<Radio />}
+                                label="Block"
+                                sx={{ color: 'text.secondary' }}
+                                data-cy="type-block-radio" />
                         </RadioGroup>
                     </FormControl>
                     <Stack>
@@ -169,14 +181,25 @@ export default function TaskInput({ task, tagColor, onSaveTask, onClose }
                                 {taskVal.type === 'normal' ? 'Number of expected pomodoros' : 'Number of blocks'}
                             </Typography>
                         </FormLabel>
-                        <Input type="number" value={taskVal.blocks} onChange={handleBlocks}></Input>
+                        <Input
+                            type="number"
+                            value={taskVal.blocks}
+                            onChange={handleBlocks}
+                            data-cy="blocks-input"
+                        ></Input>
                     </Stack>
                 </Stack>
                 <Stack direction="row" justifyContent="space-between">
                     <FormLabel>
                         <Typography variant='button'>Tag</Typography>
                     </FormLabel>
-                    <Chip clickable onClick={handleOpenTagSelect} label={taskVal.tag} sx={{ backgroundColor: color }}></Chip>
+                    <Chip
+                        clickable
+                        onClick={handleOpenTagSelect}
+                        label={taskVal.tag}
+                        sx={{ backgroundColor: color }}
+                        data-cy="tag-chip"
+                        ></Chip>
                 </Stack>
                 <Stack direction="row" justifyContent={"space-between"}>
                     <Grid
@@ -195,10 +218,11 @@ export default function TaskInput({ task, tagColor, onSaveTask, onClose }
                         label="Repeat"
                         onChange={handleChangeRepeat}
                         size='small'
+                        data-cy="repeat-select"
                     >
-                        <MenuItem value="no-repeat">No repeat</MenuItem>
-                        <MenuItem value="daily">Daily</MenuItem>
-                        <MenuItem value="weekly">Weekly</MenuItem>
+                        <MenuItem value="no-repeat" data-cy="repeat-select-no-repeat">No repeat</MenuItem>
+                        <MenuItem value="daily" data-cy="repeat-select-daily-repeat">Daily</MenuItem>
+                        <MenuItem value="weekly" data-cy="repeat-select=weekly-repeat">Weekly</MenuItem>
                     </Select>
                 </Stack>
                 {taskVal.repeat === 'weekly' ?
@@ -212,7 +236,7 @@ export default function TaskInput({ task, tagColor, onSaveTask, onClose }
             </Grid>
             <Grid container direction="row" justifyContent='flex-end' alignItems={'center'} sx={{ marginTop: 2 }}>
                 <Button onClick={onClose}>Cancel</Button>
-                <Button onClick={handleSaveTask}>Save</Button>
+                <Button onClick={handleSaveTask} data-cy="save-task-button">Save</Button>
             </Grid>
             <TagDialog openTagSelect={openTagSelect}
                 handleOpenTagSelect={handleOpenTagSelect}

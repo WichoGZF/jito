@@ -168,6 +168,7 @@ function Register() {
                                     value={username}
                                     onChange={handleChangeUsername}
                                     helperText={usernameError}
+                                    data-cy="username-input"
                                 >
                                 </TextField>
                             </Grid>
@@ -183,6 +184,7 @@ function Register() {
                                     value={password}
                                     onChange={handleChangePassword}
                                     helperText={passwordError}
+                                    data-cy="password-input"
                                 >
                                 </TextField>
                             </Grid>
@@ -198,6 +200,7 @@ function Register() {
                                     value={confirmPassword}
                                     onChange={handleChangeConfirmPassword}
                                     helperText={confirmPasswordError}
+                                    data-cy="confirm-input"
                                 >
                                 </TextField>
                             </Grid>
@@ -212,11 +215,18 @@ function Register() {
                                     value={email}
                                     onChange={handleChangeEmail}
                                     helperText={emailError}
+                                    data-cy="email-input"
                                 >
                                 </TextField>
                             </Grid>
                             <Grid item xs mt={2}>
-                                <LoadingButton loading={registerLoading} type="submit" variant="contained" size={'large'} fullWidth={true} >
+                                <LoadingButton
+                                    loading={registerLoading}
+                                    type="submit"
+                                    variant="contained"
+                                    size={'large'}
+                                    fullWidth={true}
+                                    data-cy="register-button" >
                                     Register
                                 </LoadingButton>
                             </Grid>
