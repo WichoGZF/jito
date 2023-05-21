@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { format } from 'date-fns'
-import { act } from 'react-dom/test-utils'
 
 const fullDate = new Date
 const todayDate = format(fullDate, 'yyyy-LL-dd')
@@ -13,16 +12,14 @@ interface Time {
     seconds: number,
 }
 
-type FormattedDate = string
-
 type Tag = string
 
 type TaskType = 'normal' | 'block'
 
 interface StateType {
-    calendarDate: FormattedDate, 
-    initialized: FormattedDate, 
-    todayDate: FormattedDate, 
+    calendarDate: string, 
+    initialized: string, 
+    todayDate: string, 
     tag: Tag | null, 
     index: number | null, 
     type: TaskType | null, 
@@ -91,7 +88,7 @@ const appSlice = createSlice({
         timerNotStarted: (state) => {
             state.timerStarted = false
         },
-        setCalendarDate: (state, action: PayloadAction<FormattedDate>) => {
+        setCalendarDate: (state, action: PayloadAction<String>) => {
             const date = action.payload
             console.log(action.payload)
             state.calendarDate = date

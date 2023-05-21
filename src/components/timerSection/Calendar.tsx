@@ -14,8 +14,10 @@ export default function Calendar() {
     const timerStarted = useAppSelector((state) => state.app.timerStarted);
     const timerState = useAppSelector((state) => state.app.timerState);
 
-    const dispatchCalendarChange = (newDate) => {
-        dispatch(setCalendarDate(format(newDate, 'yyyy-LL-dd')))
+    const dispatchCalendarChange = (date: Date) => {
+        const newDate = format(date, 'yyyy-LL-dd')
+        console.log(newDate)
+        dispatch(setCalendarDate(newDate))
     }
 
     const dateDigits = calendarDate.split('-')

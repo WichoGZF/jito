@@ -1,17 +1,20 @@
-import Task from 'types/Task'
-import Tag from 'types/Tag'
-import HistoricTask from 'types/HistoricTask'
+import Task from 'types-Task'
+import Tag from 'types-Tag'
+import HistoricTask from 'types-HistoricTask'
 
 type StateType = {
-    tasks: Task[], 
-    tags: Tag[], 
-    history: HistoricTask[]
-}; 
+  tasks: Task[],
+  tags: Tag[],
+  history: HistoricTask[]
+};
 
-export const mockTasks: StateType  =
+export const mockTasks: StateType =
 {
   tags: [
-    { name: 'My tasks', color: '#FF6900' }, { name: 'escuela', color: '#FCB900' }, { name: 'programming', color: '#7BDCB5' }, { name: 'casa', color: '#00D084' }
+    { id: 0, name: 'My tasks', color: '#FF6900' },
+    { id: 2, name: 'escuela', color: '#FCB900' },
+    { id: 3, name: 'programming', color: '#7BDCB5' },
+    { id: 4, name: 'casa', color: '#00D084' }
   ],
   tasks: [
     {
@@ -19,91 +22,91 @@ export const mockTasks: StateType  =
       "tag": "escuela",
       "id": 1,
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
-      "date": "06/22/2022",
+      "date": "2022-06-22",
       "type": "normal",
       'completed': false,
       'defaultBlocks': 0,
       "blocks": null,
       "repeat": 'daily',
-      "repeatOn": [1, 1, 1, 1, 1, 1, 1],
+      "repeatOn": [true, true, true, true, true, true, true],
     },
     {
       "name": "Dos",
       "tag": "escuela",
       "id": 2,
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
-      "date": "06/21/2022",
+      "date": "2022-06-21",
       "type": "block",
       'completed': false,
       'defaultBlocks': 2,
       "blocks": 2,
-      "repeat": 'false',
-      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
+      "repeat": 'no-repeat',
+      "repeatOn": [false, false, false, false, false, false, false]
     },
     {
       "name": "Tres",
       "tag": "escuela",
       "id": 3,
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
-      "date": "06/23/2022",
+      "date": "2022-06-23",
       "type": "block",
       'completed': false,
       'defaultBlocks': 3,
       "blocks": 3,
-      "repeat": 'false',
-      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
+      "repeat": 'no-repeat',
+      "repeatOn": [false, false, false, false, false, false, false]
     },
     {
       "name": "Cuatro",
       "tag": "escuela",
       "id": 4,
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
-      "date": "06/21/2022",
+      "date": "2022-06-21",
       "type": "normal",
       'completed': false,
       'defaultBlocks': 0,
       "blocks": null,
-      "repeat": 'false',
-      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
+      "repeat": 'no-repeat',
+      "repeatOn": [false, false, false, false, false, false, false]
     },
     {
       "name": "Cinco",
       "tag": "escuela",
       "id": 5,
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
-      "date": "06/24/2022",
+      "date": "2022-06-24",
       "type": "normal",
       'completed': false,
       'defaultBlocks': 0,
       "blocks": null,
-      "repeat": 'false',
-      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
+      "repeat": 'no-repeat',
+      "repeatOn": [false, false, false, false, false, false, false]
     },
     {
       "name": "Seis",
       "tag": "escuela",
       "id": 6,
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
-      "date": "06/25/2022",
+      "date": "2022-06-24",
       "type": "normal",
       'completed': false,
       'defaultBlocks': 0,
       "blocks": null,
-      "repeat": 'false',
-      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
+      "repeat": 'no-repeat',
+      "repeatOn": [false, false, false, false, false, false, false]
     },
     {
       "name": "Siete",
       "tag": "escuela",
       "id": 7,
       "description": "In congue. Etiam justo. Etiam pretium iaculis justo.",
-      "date": "24/07/2022",
+      "date": "2022-07-24",
       "type": "normal",
       'completed': false,
       'defaultBlocks': 0,
       "blocks": null,
-      "repeat": 'false',
-      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
+      "repeat": 'no-repeat',
+      "repeatOn": [false, false, false, false, false, false, false]
     },
     {
       "name": "Ocho",
@@ -116,7 +119,7 @@ export const mockTasks: StateType  =
       'defaultBlocks': 0,
       "blocks": null,
       "repeat": 'daily',
-      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
+      "repeatOn": [false, false, false, false, false, false, false]
     },
     {
       "name": "Nueve",
@@ -129,7 +132,7 @@ export const mockTasks: StateType  =
       'defaultBlocks': 0,
       "blocks": null,
       "repeat": 'daily',
-      "repeatOn": [0, 0, 0, 0, 0, 0, 0],
+      "repeatOn": [false, false, false, false, false, false, false]
     },
     {
       "name": "Diez",
@@ -142,43 +145,11 @@ export const mockTasks: StateType  =
       'defaultBlocks': 0,
       "blocks": null,
       "repeat": 'weekly',
-      "repeatOn": [0, 1, 0, 0, 0, 1, 0],
+      "repeatOn": [false, true, true, false, false, false, false],
     },
 
   ],
-  history: [{
-    "completeDate": "06/06/2022",
-    "time": 1500,
-    "tag": "My tasks"
-  }, {
-    "completeDate": "06/16/2022",
-    "time": 7500,
-    "tag": "Programming"
-  }, {
-    "completeDate": "06/06/2022",
-    "time": 750,
-    "tag": "casa"
-  }, {
-    "completeDate": "06/05/2022",
-    "time": 3000,
-    "tag": "escuela"
-  }, {
-    "completeDate": "04/10/2022",
-    "time": 4500,
-    "tag": "programming"
-  }, {
-    "completeDate": "06/23/2022",
-    "time": 1250,
-    "tag": "My tasks"
-  }, {
-    "completeDate": "06/19/2022",
-    "time": 900,
-    "tag": "casa"
-  }, {
-    "completeDate": "05/19/2022",
-    "time": 900,
-    "tag": "casa"
-  }],
+  history: [],
 }
 
 
