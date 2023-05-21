@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 import { List } from '@mui/material';
 import Button from '@mui/material/Button'
@@ -17,7 +17,7 @@ interface OverdueTasksProps {
 
 export default function OverdueTaskList({ open, tasks }: OverdueTasksProps) {
     const [tasksChecklist, setTaskChecklist] = useState(tasks.map(() => false))
-    
+
     const [batchInitialize] = useHandleBatchInitialize()
     const [batchRestart] = useHandleBatchRestart()
 
@@ -35,14 +35,17 @@ export default function OverdueTaskList({ open, tasks }: OverdueTasksProps) {
     let tasksToUpdate: number[] = []
     let tasksToDelete: number[] = []
 
-    tasksChecklist.forEach((checked, index) => {
-        if (checked) {
-            tasksToUpdate.push(tasks[index].id)
-        }
-        else {
-            tasksToDelete.push(tasks[index].id)
-        }
-    })
+    if (tasks.length !== 0) {
+        tasksChecklist.forEach((checked, index) => {
+            if (checked) {
+                tasksToUpdate.push(tasks[index].id)
+            }
+            else {
+                tasksToDelete.push(tasks[index].id)
+            }
+        })
+    }
+
 
     const getColor = (tagName: string) => {
         const tag = tags.find(tag => tag.name === tagName)
@@ -63,6 +66,10 @@ export default function OverdueTaskList({ open, tasks }: OverdueTasksProps) {
                 onClick={handleChecklist} />
         )
     })
+    //Reset checklist when tasks change
+    useEffect(() => {
+        setTaskChecklist(tasks.map(() => false))
+    }, [tasks])
 
     return (
         <Dialog maxWidth='sm' scroll='paper' open={open}>
