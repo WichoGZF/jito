@@ -14,7 +14,7 @@ export default function useHandleBatchInitialize() {
     const dispatch = useAppDispatch()
 
     async function initializeTasks(initializeIds: number[], deleteIds: number[]): Promise<void> {
-        const date = format(new Date(), "dd/LL/yy")
+        const date = format(new Date(), "LL/dd/yy")
         try {
             if (hasSession && (userId !== null)) {
                 const response = await postBatchInitialize({
