@@ -45,14 +45,14 @@ export default function TagEntry(props) {
   //What type
   const handleChangeColor = (color) => {
     setColor(color.hex);
+    const newTag = {
+      id: props.id,
+      name: props.tag,
+      color: color.hex
+    }
+    console.log(newTag)
     if (color !== props.color) {
-      updateTag(
-        {
-          id: props.id,
-          name: props.tag,
-          color: color.hex
-        }
-      )
+      updateTag(newTag)
     }
     setColorPick(!colorPick)
   }
@@ -70,7 +70,7 @@ export default function TagEntry(props) {
     if (tagName !== props.tag) {
       updateTag({
         id: props.id,
-        name: props.tag,
+        name: tagName,
         color: props.color
       })
     }
@@ -106,7 +106,7 @@ export default function TagEntry(props) {
             onClick={() => setColorPick(!colorPick)}
             sx={{ marginRight: '12px' }}
             data-cy="tag-open-color-picker"
-            >
+          >
             <Box ref={colorRef} sx={{ height: '24px', width: '24px', backgroundColor: color, borderRadius: '50%' }}></Box>
           </IconButton>
           {colorPick ? colorSelector : null}
