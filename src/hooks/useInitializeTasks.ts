@@ -21,9 +21,8 @@ export default function useInitializeTasks(tasks: Task[], initialized: boolean):
         todayDate.setHours(0, 0, 0, 0)
         tasks.forEach((task: Task, index: number) => {
             if (task.repeat === 'no-repeat') {
-                console.log(task.date)
-                const dateArray: string[] = task.date!.split('/');
-                const taskDate = new Date(parseInt('20' + dateArray[2]), parseInt(dateArray[0]) - 1, parseInt(dateArray[1]))
+                const [year, month, day]: string[] = task.date!.split('-');
+                const taskDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
                 let dayIsBefore;
                 console.log('isBefore:',taskDate, todayDate)
                 dayIsBefore = isBefore(taskDate, todayDate)

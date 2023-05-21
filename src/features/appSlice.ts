@@ -3,7 +3,7 @@ import { format } from 'date-fns'
 import { act } from 'react-dom/test-utils'
 
 const fullDate = new Date
-const todayDate = format(fullDate, 'MM/dd/yyyy')
+const todayDate = format(fullDate, 'yyyy-LL-dd')
 const hours = fullDate.getHours()
 const minutes = fullDate.getMinutes()
 const minutesPastMidnight = minutes + (hours * 60)
@@ -45,7 +45,7 @@ interface StateType {
 const initialState: StateType = {
     //Dates
     calendarDate: todayDate,
-    initialized: format(new Date(2022, 5, 23), 'MM/dd/yyyy'), //move into tasks slice
+    initialized: format(new Date(2022, 5, 23), 'yyyy-LL-dd'), //move into tasks slice
     todayDate: todayDate,
     //First task properties
     tag: null,
@@ -109,12 +109,12 @@ const appSlice = createSlice({
             state.type = type
         },
         initialize: (state) => {
-            state.initialized = format(new Date, 'MM/dd/yyyy')
+            state.initialized = format(new Date, 'yyyy-LL-dd')
         },
         startNewDay: (state, action: PayloadAction<number>) => {
             //Calendar time
-            state.calendarDate = format(new Date, 'MM/dd/yyyy')
-            state.todayDate = format(new Date, 'MM/dd/yyyy')
+            state.calendarDate = format(new Date, 'yyyy-LL-dd')
+            state.todayDate = format(new Date, 'yyyy-LL-dd')
             //Other settings reset
             state.timerState = false
             state.rest = false

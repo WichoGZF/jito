@@ -33,12 +33,7 @@ const tasksSlice = createSlice({
         addTask: {
             reducer(state, action: PayloadAction<Task>) {
                 const task = action.payload
-                state.tasks.push(
-                    {
-                        ...task,
-                        completed: false,
-                        id: nextTodoId(state.tasks)
-                    })
+                state.tasks.push(task)
             },
             prepare(task: Task) {
                 return {
@@ -244,7 +239,7 @@ const tasksSlice = createSlice({
             tasksToUpdate.forEach((taskId) => {
                 const taskIndex = state.tasks.findIndex((task) => task.id === taskId)
                 console.log(taskIndex)
-                state.tasks[taskIndex].date = format(new Date, 'MM/dd/yyyy')
+                state.tasks[taskIndex].date = format(new Date, 'yyyy-LL-dd')
                 console.log('updating dates TaskId: ', taskId, 'TaskIndex', taskIndex);
             })
         },

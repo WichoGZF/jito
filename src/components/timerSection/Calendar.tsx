@@ -15,11 +15,11 @@ export default function Calendar() {
     const timerState = useAppSelector((state) => state.app.timerState);
 
     const dispatchCalendarChange = (newDate) => {
-        dispatch(setCalendarDate(format(newDate, 'MM/dd/yyyy')))
+        dispatch(setCalendarDate(format(newDate, 'yyyy-LL-dd')))
     }
 
-    const dateDigits = calendarDate.split('/') //mm/dd/yyyy
-    const [month, day, year] = dateDigits
+    const dateDigits = calendarDate.split('-')
+    const [year, month, day] = dateDigits
     const dateInDateType = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
 
     return (

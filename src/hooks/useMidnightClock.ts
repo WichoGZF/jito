@@ -29,7 +29,7 @@ export default function useMidnightClock() {
     //Check if the day has been shown yet 
     useEffect(() => {
         //Fetch actual date to see if todayDate is outdated
-        const actualDate = format(new Date(), 'MM/dd/yyyy')
+        const actualDate = format(new Date(), 'yyyy-LL-dd')
         if (actualDate !== todayDate) {
             dispatch(composeResetDay());
         }
