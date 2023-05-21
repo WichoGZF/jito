@@ -5,6 +5,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions'
 import { useAppDispatch } from "hooks/useAppDispatch";
 import { logoutSession } from "features/authSlice";
+import { useDisconnectUserMutation } from "features/api/apiSlice";
+import { useAppSelector } from "hooks/useAppSelector";
 
 interface PropTypes {
     handleClose: () => void
@@ -12,12 +14,17 @@ interface PropTypes {
 }
 
 export function DialogLogOff({ handleClose, open }: PropTypes) {
-
     const dispatch = useAppDispatch()
+    const [disconnectUser] = useDisconnectUserMutation()
+    const hasSession = useAppSelector(state => state.auth.hasSession)
 
     function handleCloseSession(){ 
         dispatch(logoutSession())
         handleClose()
+        if(hasSession){
+            disconnectUser()
+        }
+        window.location.reload();
     }
 
     return (

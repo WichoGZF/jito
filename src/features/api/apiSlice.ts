@@ -100,6 +100,13 @@ export const apiSlice = createApi({
         body: registerInfo
       })
     }),
+    //Terminates session.
+    disconnectUser: builder.mutation<void, void>({
+      query: () => ({
+        url: `users:terminate`,
+        method: 'POST',
+      })
+    }),
     getUserData: builder.query<CompleteData, number>({
       query: (id) => ({
         url: `users/${id}`,
@@ -188,5 +195,5 @@ export const apiSlice = createApi({
 export const {
   useLazyGetUserDataQuery,
   usePostTaskMutation, useDeleteTaskMutation, useUpdateTaskMutation, useUpdateTagMutation, useDeleteTagMutation, usePostTagMutation,
-  useUpdateSettingsMutation, usePostHistoricTaskMutation, usePostBatchInitializeMutation, usePostBatchRestartMutation,
+  useUpdateSettingsMutation, usePostHistoricTaskMutation, usePostBatchInitializeMutation, usePostBatchRestartMutation, useDisconnectUserMutation,
 } = apiSlice 
